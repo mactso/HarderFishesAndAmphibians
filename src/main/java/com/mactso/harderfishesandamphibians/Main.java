@@ -3,9 +3,11 @@ package com.mactso.harderfishesandamphibians;
 
 import com.mactso.harderfishesandamphibians.config.MyConfig;
 import com.mactso.harderfishesandamphibians.entities.ModEntities;
+import com.mactso.harderfishesandamphibians.sound.ModSounds;
 
 import net.minecraft.client.Minecraft;
 import net.minecraft.entity.EntityType;
+import net.minecraft.util.SoundEvent;
 import net.minecraftforge.api.distmarker.Dist;
 import net.minecraftforge.api.distmarker.OnlyIn;
 import net.minecraftforge.event.RegistryEvent;
@@ -62,6 +64,12 @@ public class Main {
 	        public static void onEntityRegistry(final RegistryEvent.Register<EntityType<?>> event)
 	        {
 	        	ModEntities.register(event.getRegistry());
+	        }
+	        
+	        @SubscribeEvent
+	        public static void onSoundRegistry(final RegistryEvent.Register<SoundEvent> event)
+	        {
+	        	ModSounds.register(event.getRegistry());
 	        }
 	        
 //		    @SubscribeEvent

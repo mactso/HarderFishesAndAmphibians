@@ -19,7 +19,7 @@ public class ModEntities {
 //	   public static final EntityType<ElderGuardianEntity> ELDER_GUARDIAN = register("elder_guardian", EntityType.Builder.<ElderGuardianEntity>create(ElderGuardianEntity::new, EntityClassification.MONSTER).size(1.9975F, 1.9975F).func_233606_a_(10));
 //	   public static final EntityType<GuardianEntity> GUARDIAN = register("guardian", EntityType.Builder.<GuardianEntity>create(GuardianEntity::new, EntityClassification.MONSTER).size(0.85F, 0.85F).func_233606_a_(8));
 	 
-	public static final EntityType<RiverGuardianEntity> RIVER_GUARDIAN = register("river_guardian", EntityType.Builder.create(RiverGuardianEntity::new, EntityClassification.MONSTER).size(0.6F, 0.6F));//.func_233606_a_(5));
+	public static final EntityType<RiverGuardianEntity> RIVER_GUARDIAN = register("river_guardian", EntityType.Builder.create(RiverGuardianEntity::new, EntityClassification.MONSTER).size(0.85F, 0.85F).func_233606_a_(5));
 
 	private static <T extends Entity> EntityType<T> register(String name, EntityType.Builder<T> builder)
 	{
@@ -50,7 +50,7 @@ public class ModEntities {
 	public static void addSpawnData()
 	{
 
-		SpawnData.copyBiomeSpawn(EntityType.SALMON, RIVER_GUARDIAN, 50, 1, 3);
+		SpawnData.copyBiomeSpawn(EntityType.SKELETON, RIVER_GUARDIAN, 10, 1, 2);
 	
 
 	}

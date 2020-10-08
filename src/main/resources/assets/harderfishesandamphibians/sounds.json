@@ -1,0 +1,7 @@
+
+{
+  "river_guardian_hurt": {
+    "subtitle": "subtitles.river.guardian.hurt",
+    "sounds": [{"name":"entity.guardian.hurt", "pitch": 0.33 }]
+  }
+}
