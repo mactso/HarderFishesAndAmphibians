@@ -13,9 +13,9 @@ apply plugin: 'net.minecraftforge.gradle'
 apply plugin: 'eclipse'
 apply plugin: 'maven-publish'
 
-version = '1.108.0.3'
+version = '1.108.0.1'
 group = 'com.mactso.poorgolems' // http://maven.apache.org/guides/mini/guide-naming-conventions.html
-archivesBaseName = 'PoorGolems-1.16.1'
+archivesBaseName = 'HostileWaterMonsters-1.16.1'
 
 sourceCompatibility = targetCompatibility = compileJava.sourceCompatibility = compileJava.targetCompatibility = '1.8' // Need this here so eclipse task generates correctly.
 

@@ -1,7 +1,28 @@
 
 {
-  "river_guardian_hurt": {
-    "subtitle": "subtitles.river.guardian.hurt",
-    "sounds": [{"name":"entity.guardian.hurt", "pitch": 0.33 }]
-  }
+  "river_guardian.hurt": {
+    "subtitle": "subtitles.river_guardian.hurt",
+    "sounds": [{"name":"entity.guardian.hurt", "pitch": 1.7, "type": "event" }]
+  },
+  "river_guardian.land_hurt": {
+    "subtitle": "subtitles.river_guardian.hurt",
+    "sounds": [{"name":"entity.guardian.hurt_land", "pitch": 1.7, "type": "event" }]
+  },
+  "river_guardian.death": {
+    "subtitle": "subtitles.river_guardian.death",
+    "sounds": [{"name":"entity.guardian.death", "pitch": 1.7, "type": "event"  }]
+  },
+  "river_guardian.death_land": {
+    "subtitle": "subtitles.river_guardian.death_land",
+    "sounds": [{"name":"entity.guardian.death_land", "pitch": 1.7, "type": "event" }]
+  },
+  "river_guardian.ambient": {
+    "subtitle": "subtitles.river_guardian.ambient",
+    "sounds": [{"name":"entity.guardian.ambient", "pitch": 1.7, "type": "event" }]
+  },
+  "river_guardian.flop": {
+    "subtitle": "subtitles.river_guardian.flop",
+    "sounds": [{"name":"entity.guardian.flop", "pitch": 1.7, "type": "event" }]
+  }  
 }
+
