@@ -1,4 +1,4 @@
-package com.mactso.harderfishesandamphibians.config;
+package com.mactso.hostilewatermobs.config;
 
 //16.1 - 0.0.0.0 harderfishesandamphibians
 
@@ -6,7 +6,7 @@ import org.apache.commons.lang3.tuple.Pair;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 
-import com.mactso.harderfishesandamphibians.Main;
+import com.mactso.hostilewatermobs.Main;
 
 import net.minecraft.entity.player.PlayerEntity;
 import net.minecraft.item.Item;

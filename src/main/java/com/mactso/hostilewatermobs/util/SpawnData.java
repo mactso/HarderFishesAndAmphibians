@@ -1,4 +1,4 @@
-package com.mactso.harderfishesandamphibians.util;
+package com.mactso.hostilewatermobs.util;
 
 // from package com.lupicus.nasty.util;
 

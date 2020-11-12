@@ -1,12 +1,12 @@
-package com.mactso.harderfishesandamphibians.entities;
+package com.mactso.hostilewatermobs.entities;
 
 import java.util.Random;
 import java.util.function.Predicate;
 
 import javax.annotation.Nullable;
 
-import com.mactso.harderfishesandamphibians.config.MyConfig;
-import com.mactso.harderfishesandamphibians.sound.ModSounds;
+import com.mactso.hostilewatermobs.config.MyConfig;
+import com.mactso.hostilewatermobs.sound.ModSounds;
 
 import net.minecraft.entity.Entity;
 import net.minecraft.entity.EntityType;
@@ -68,6 +68,7 @@ public class RiverGuardianEntity extends GuardianEntity {
 		}
 	}
 
+	
 	@Override
 	public ILivingEntityData onInitialSpawn(IWorld worldIn, DifficultyInstance difficultyIn, SpawnReason reason,
 			ILivingEntityData spawnDataIn, CompoundNBT dataTag) {
@@ -136,6 +137,12 @@ public class RiverGuardianEntity extends GuardianEntity {
 		return super.getTargetedEntity();
 	}
 
+	@Override
+	public void handleStatusUpdate(byte id) {
+		
+		super.handleStatusUpdate(id);
+	}
+	
 	public static AttributeModifierMap.MutableAttribute registerAttributes() {
 		return GuardianEntity.func_234292_eK_().createMutableAttribute(Attributes.MOVEMENT_SPEED, (double) 0.65F)
 				.createMutableAttribute(Attributes.FOLLOW_RANGE, 24.0D)
@@ -171,9 +178,6 @@ public class RiverGuardianEntity extends GuardianEntity {
 		int riverGuardianCap = MyConfig.getRiverGuardianSpawnCap();
 		int riverGuardianSpawnRoll = randomIn.nextInt(30);
 
-		// TODO remove this debug statement
-		MyConfig.setaDebugLevel(2);
-
 		if (isDeep) {
 			riverGuardianCap += 6;
 			riverGuardianSpawnChance += 9;
@@ -185,7 +189,7 @@ public class RiverGuardianEntity extends GuardianEntity {
 		Biome biome = world.getBiome(pos);
 		Category bC = biome.getCategory();
 		if (bC == Category.OCEAN) {
-			if (pos.getY() > 35) {
+			if (pos.getY() > 33) {
 				return false;
 			}
 			if (world.getLight(pos) > 8) {
@@ -288,6 +292,9 @@ public class RiverGuardianEntity extends GuardianEntity {
 
 		public boolean test(@Nullable LivingEntity entity) {
 
+			// silence river guardian attack unless attacking a player or an entity close to a player.
+
+
 			if (entity instanceof ServerPlayerEntity) {
 				ServerPlayerEntity s = (ServerPlayerEntity) entity;
 				if (s.isCreative()) {
@@ -306,7 +313,9 @@ public class RiverGuardianEntity extends GuardianEntity {
 				return false;
 			}
 
-			World w = entity.getEntityWorld();
+			World w = entity.getEntityWorld();			
+			boolean nearbyPlayer = (w.getClosestPlayer(entity, 24) != null);
+			
 			// Ignore other River Guardians while it is Raining.
 			boolean isRiverGuardianEntity = entity instanceof RiverGuardianEntity;
 			if (w.isRaining() && isRiverGuardianEntity) {
@@ -315,7 +324,7 @@ public class RiverGuardianEntity extends GuardianEntity {
 
 			// ignore monsters
 			boolean isMonster = entity instanceof MonsterEntity;
-			if (isMonster && !isRiverGuardianEntity) {
+			if (isMonster && !isRiverGuardianEntity && !entity.isChild()) {
 				return false;
 			}
 
@@ -324,7 +333,7 @@ public class RiverGuardianEntity extends GuardianEntity {
 					|| entity instanceof ChickenEntity || entity instanceof RabbitEntity || entity.isChild();
 
 			int subtype = parentEntity.getSubType();
-			System.out.println("Subtype:" + subtype);
+
 			int huntingRange = 37;
 			if (subtype == ALBINO_RIVER_GUARDIAN) {
 				if (entity instanceof BatEntity) {
@@ -348,8 +357,10 @@ public class RiverGuardianEntity extends GuardianEntity {
 
 			}
 
+		
 			if (preyAnimal) {
 				if (distanceSq < huntingRange) {
+					parentEntity.setSilent(!(nearbyPlayer));
 					return true;
 				}
 				return false;
@@ -382,6 +393,7 @@ public class RiverGuardianEntity extends GuardianEntity {
 			int lightLevel = w.getLight(pos);
 			aggressionRange = aggressionRange + ((10 - lightLevel) * 10);
 			if (aggressionRange > distanceSq) {
+				parentEntity.setSilent(!(nearbyPlayer));
 				return true;
 			}
 
@@ -391,13 +403,15 @@ public class RiverGuardianEntity extends GuardianEntity {
 					aggressionRange -= 36;
 				}
 				if (aggressionRange > distanceSq) {
+					parentEntity.setSilent(!(nearbyPlayer));
 					return true;
-				}
+		 		}
 				return false;
 			}
 
 			if (aggressionRange > distanceSq) {
 				if (entity instanceof PlayerEntity) {
+					parentEntity.setSilent(false);
 					return true;
 				}
 			}

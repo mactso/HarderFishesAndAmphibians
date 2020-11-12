@@ -1,6 +1,6 @@
-package com.mactso.harderfishesandamphibians.sound;
+package com.mactso.hostilewatermobs.sound;
 
-import com.mactso.harderfishesandamphibians.Main;
+import com.mactso.hostilewatermobs.Main;
 
 import net.minecraft.util.ResourceLocation;
 import net.minecraft.util.SoundEvent;

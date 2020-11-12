@@ -1,0 +1,10 @@
+{
+    "subtitles.river_guardian.hurt" : "River guardian hurt",
+	"subtitles.river_guardian.land_hurt" : "River guardian hurt on land",
+	"subtitles.river_guardian.death": "River guardian dies",
+	"subtitles.river_guardian.death_land" : "River guardian dies on land",
+	"subtitles.river_guardian.ambient": "River guardian burbles",
+	"subtitles.river_guardian.flop": "River guardian flops around",
+	"entity.hostilewatermobs.river_guardian" : "River Guardian",
+	"item.hostilewatermobs.river_guardian_spawn_egg": "River Guardian Spawn Egg"	
+}

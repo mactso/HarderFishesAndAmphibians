@@ -1,8 +1,8 @@
-package com.mactso.harderfishesandamphibians.entities;
+package com.mactso.hostilewatermobs.entities;
 
-import com.mactso.harderfishesandamphibians.Main;
-import com.mactso.harderfishesandamphibians.renderer.RiverGuardianRenderer;
-import com.mactso.harderfishesandamphibians.util.SpawnData;
+import com.mactso.hostilewatermobs.Main;
+import com.mactso.hostilewatermobs.renderer.RiverGuardianRenderer;
+import com.mactso.hostilewatermobs.util.SpawnData;
 
 import net.minecraft.client.renderer.entity.EntityRendererManager;
 import net.minecraft.entity.Entity;

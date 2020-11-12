@@ -1,0 +1,8 @@
+{
+    "subtitles.river_guardian.hurt" : "river guardian hurt",
+	"subtitles.river_guardian.land_hurt" : "river guardian hurt on land",
+	"subtitles.river_guardian.death": "river guardian dies",
+	"subtitles.river_guardian.death_land" : "river guardian dies on land",
+	"subtitles.river_guardian.ambient": "river guardian burbles",
+	"subtitles.river_guardian.flop": "river guardian flops around"
+}

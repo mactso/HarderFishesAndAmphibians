@@ -1,12 +1,14 @@
 // 16.2+ harder farther
-package com.mactso.harderfishesandamphibians;
+package com.mactso.hostilewatermobs;
 
-import com.mactso.harderfishesandamphibians.config.MyConfig;
-import com.mactso.harderfishesandamphibians.entities.ModEntities;
-import com.mactso.harderfishesandamphibians.sound.ModSounds;
+import com.mactso.hostilewatermobs.config.MyConfig;
+import com.mactso.hostilewatermobs.entities.ModEntities;
+import com.mactso.hostilewatermobs.item.ModItems;
+import com.mactso.hostilewatermobs.sound.ModSounds;
 
 import net.minecraft.client.Minecraft;
 import net.minecraft.entity.EntityType;
+import net.minecraft.item.Item;
 import net.minecraft.util.SoundEvent;
 import net.minecraftforge.api.distmarker.Dist;
 import net.minecraftforge.api.distmarker.OnlyIn;
@@ -21,10 +23,10 @@ import net.minecraftforge.fml.event.server.FMLServerStartingEvent;
 import net.minecraftforge.fml.event.server.FMLServerStoppingEvent;
 import net.minecraftforge.fml.javafmlmod.FMLJavaModLoadingContext;
 
-@Mod("harderfishesandamphibians")
+@Mod("hostilewatermobs")
 public class Main {
 
-	    public static final String MODID = "harderfishesandamphibians"; 
+	    public static final String MODID = "hostilewatermobs"; 
 	    
 	    public Main()
 	    {
@@ -60,6 +62,12 @@ public class Main {
 	    public static class ModEvents
 	    {
 
+	    	@SubscribeEvent
+	    	public static void onItemsRegistry(final RegistryEvent.Register<Item> event)
+	    	{
+	    		ModItems.register(event.getRegistry());
+	    	}
+			
 	        @SubscribeEvent
 	        public static void onEntityRegistry(final RegistryEvent.Register<EntityType<?>> event)
 	        {
@@ -72,12 +80,6 @@ public class Main {
 	        	ModSounds.register(event.getRegistry());
 	        }
 	        
-//		    @SubscribeEvent
-//		    public static void onItemsRegistry(final RegistryEvent.Register<Item> event)
-//		    {
-////		        ModItems.register(event.getRegistry());
-//		    }
-
 	    }	
 		
 	    @Mod.EventBusSubscriber()

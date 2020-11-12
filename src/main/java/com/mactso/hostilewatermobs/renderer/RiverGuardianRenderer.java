@@ -1,6 +1,6 @@
-package com.mactso.harderfishesandamphibians.renderer;
-import com.mactso.harderfishesandamphibians.Main;
-import com.mactso.harderfishesandamphibians.entities.RiverGuardianEntity;
+package com.mactso.hostilewatermobs.renderer;
+import com.mactso.hostilewatermobs.Main;
+import com.mactso.hostilewatermobs.entities.RiverGuardianEntity;
 import com.mojang.blaze3d.matrix.MatrixStack;
 
 import net.minecraft.client.renderer.IRenderTypeBuffer;
