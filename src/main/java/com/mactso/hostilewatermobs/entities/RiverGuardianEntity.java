@@ -38,17 +38,21 @@ import net.minecraft.network.datasync.EntityDataManager;
 import net.minecraft.tags.FluidTags;
 import net.minecraft.util.ClassInheritanceMultiMap;
 import net.minecraft.util.DamageSource;
+import net.minecraft.util.RegistryKey;
+import net.minecraft.util.ResourceLocation;
 import net.minecraft.util.SoundEvent;
 import net.minecraft.util.math.BlockPos;
+import net.minecraft.util.registry.Registry;
 import net.minecraft.world.Difficulty;
 import net.minecraft.world.DifficultyInstance;
+import net.minecraft.world.IServerWorld;
 import net.minecraft.world.IWorld;
 import net.minecraft.world.World;
 import net.minecraft.world.biome.Biome;
 import net.minecraft.world.biome.Biome.Category;
-import net.minecraft.world.biome.Biome.TempCategory;
 import net.minecraft.world.chunk.Chunk;
 import net.minecraft.world.server.ServerWorld;
+import net.minecraftforge.common.BiomeDictionary;
 
 public class RiverGuardianEntity extends GuardianEntity {
 
@@ -70,23 +74,30 @@ public class RiverGuardianEntity extends GuardianEntity {
 
 	
 	@Override
-	public ILivingEntityData onInitialSpawn(IWorld worldIn, DifficultyInstance difficultyIn, SpawnReason reason,
+
+	public ILivingEntityData onInitialSpawn(IServerWorld worldIn, DifficultyInstance difficultyIn, SpawnReason reason,
 			ILivingEntityData spawnDataIn, CompoundNBT dataTag) {
 		BlockPos pos = getPosition(); // getPosition
+		
 		Biome biome = worldIn.getBiome(pos);
-		String biomename = biome.getRegistryName().toString();
+		ResourceLocation biomeNameResourceKey = worldIn.func_241828_r().getRegistry(Registry.BIOME_KEY).getKey(biome);
+		String biomename = biomeNameResourceKey.toString();
+		RegistryKey<Biome> biomeKey = RegistryKey.getOrCreateKey(Registry.BIOME_KEY, biomeNameResourceKey);
+		
 		int workingSubType = DEFAULT_RIVER_GUARDIAN;
 		if (MyConfig.getaDebugLevel() > 0) {
 			System.out.println("default");
 		}
 
-		TempCategory tC = biome.getTempCategory();
-		boolean isCold = false;
-		isCold = biomename.contains("cold") || biomename.contains("frozen") || biomename.contains("icy")
-				|| biomename.contains("ice_spikes") || biomename.contains("snowy")
-				|| biome.doesSnowGenerate(worldIn, pos) || tC == TempCategory.COLD;
+		
+//		TempCategory tC = biome. getTempCategory();
+		
+//		boolean isCold = BiomeDictionary.hasType(biomeKey, BiomeDictionary.Type.COLD);
+//		isCold = biomename.contains("cold") || biomename.contains("frozen") || biomename.contains("icy")
+//				|| biomename.contains("ice_spikes") || biomename.contains("snowy")
+//				|| biome.doesSnowGenerate(worldIn, pos) || BiomeDictionary.hasType(biomeKey, BiomeDictionary.Type.COLD);
 
-		if (isCold) {
+		if (BiomeDictionary.hasType(biomeKey, BiomeDictionary.Type.COLD)) {
 			if (MyConfig.getaDebugLevel() > 0) {
 				System.out.println("cold");
 			}
@@ -99,11 +110,11 @@ public class RiverGuardianEntity extends GuardianEntity {
 			}
 		}
 
-		boolean isWarm = false;
-		isWarm = (biomename.contains("warm") && !(biomename.contains("lukewarm"))) || biomename.contains("swamp")
-				|| biomename.contains("jungle") || biomename.contains("desert") || tC == TempCategory.WARM;
+//		boolean isWarm = false;
+//		isWarm = (biomename.contains("warm") && !(biomename.contains("lukewarm"))) || biomename.contains("swamp")
+//				|| biomename.contains("jungle") || biomename.contains("desert") || tC == TempCategory.WARM;
 
-		if (isWarm) {
+		if (BiomeDictionary.hasType(biomeKey, BiomeDictionary.Type.HOT)) {
 			workingSubType = WARM_RIVER_GUARDIAN;
 			if (MyConfig.getaDebugLevel() > 0) {
 				System.out.println("warm");
@@ -313,9 +324,12 @@ public class RiverGuardianEntity extends GuardianEntity {
 				return false;
 			}
 
-			World w = entity.getEntityWorld();			
+			World w = entity.getEntityWorld();
+			if (entity instanceof PlayerEntity) {
+				System.out.println("player entity");
+			}
 			boolean nearbyPlayer = (w.getClosestPlayer(entity, 24) != null);
-			
+			int x =3 ;
 			// Ignore other River Guardians while it is Raining.
 			boolean isRiverGuardianEntity = entity instanceof RiverGuardianEntity;
 			if (w.isRaining() && isRiverGuardianEntity) {
@@ -379,7 +393,7 @@ public class RiverGuardianEntity extends GuardianEntity {
 			BlockPos pos = entity.getPosition();
 			Biome biome = w.getBiome(pos);
 			Category bC = biome.getCategory();
-			TempCategory tC = biome.getTempCategory();
+//			TempCategory tC = biome.getTempCategory();
 
 			// more aggressive in some biomes
 			if (bC == Category.OCEAN) {

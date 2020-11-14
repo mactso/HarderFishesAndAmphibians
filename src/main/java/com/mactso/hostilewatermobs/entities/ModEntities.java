@@ -1,8 +1,9 @@
 package com.mactso.hostilewatermobs.entities;
 
+import java.util.List;
+
 import com.mactso.hostilewatermobs.Main;
 import com.mactso.hostilewatermobs.renderer.RiverGuardianRenderer;
-import com.mactso.hostilewatermobs.util.SpawnData;
 
 import net.minecraft.client.renderer.entity.EntityRendererManager;
 import net.minecraft.entity.Entity;
@@ -10,16 +11,15 @@ import net.minecraft.entity.EntityClassification;
 import net.minecraft.entity.EntitySpawnPlacementRegistry;
 import net.minecraft.entity.EntityType;
 import net.minecraft.entity.ai.attributes.GlobalEntityTypeAttributes;
+import net.minecraft.world.biome.MobSpawnInfo.Spawners;
 import net.minecraft.world.gen.Heightmap;
 import net.minecraftforge.api.distmarker.Dist;
 import net.minecraftforge.api.distmarker.OnlyIn;
 import net.minecraftforge.registries.IForgeRegistry;
 
 public class ModEntities {
-//	   public static final EntityType<ElderGuardianEntity> ELDER_GUARDIAN = register("elder_guardian", EntityType.Builder.<ElderGuardianEntity>create(ElderGuardianEntity::new, EntityClassification.MONSTER).size(1.9975F, 1.9975F).func_233606_a_(10));
-//	   public static final EntityType<GuardianEntity> GUARDIAN = register("guardian", EntityType.Builder.<GuardianEntity>create(GuardianEntity::new, EntityClassification.MONSTER).size(0.85F, 0.85F).func_233606_a_(8));
-	 
-	public static final EntityType<RiverGuardianEntity> RIVER_GUARDIAN = register("river_guardian", EntityType.Builder.create(RiverGuardianEntity::new, EntityClassification.MONSTER).size(0.85F, 0.85F).func_233606_a_(5));
+
+	public static final EntityType<RiverGuardianEntity> RIVER_GUARDIAN = register("river_guardian", EntityType.Builder.create(RiverGuardianEntity::new, EntityClassification.MONSTER).size(0.85F, 0.85F).trackingRange(5));
 
 	private static <T extends Entity> EntityType<T> register(String name, EntityType.Builder<T> builder)
 	{
@@ -47,16 +47,23 @@ public class ModEntities {
 		
 	}
 
-	public static void addSpawnData()
+	public static void getBiomeSpawnData(List<EntityType<?>> mobs, List<Spawners> spawns)
 	{
-
-		SpawnData.copyBiomeSpawn(EntityType.SKELETON, RIVER_GUARDIAN, 10, 1, 2);
-	
-
+		int weight = 100;
+		int min = 1;
+		int max = 2;
+		mobs.add(EntityType.SKELETON);
+		spawns.add(new Spawners(RIVER_GUARDIAN, weight, 1, 2));
 	}
 	
-	public static void removeSpawnData()
+	public static void getFeatureSpawnData(List<EntityType<?>> mobs, List<Spawners> spawns)
 	{
-		SpawnData.removeBiomeSpawn(RIVER_GUARDIAN);
+		int weight = 100;
+		int min = 1;
+		int max = 2;
+		mobs.add(EntityType.SKELETON);
+		spawns.add(new Spawners(RIVER_GUARDIAN, weight, 1, 2));
+
 	}
+
 }
