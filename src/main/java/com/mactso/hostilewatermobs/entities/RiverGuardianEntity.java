@@ -325,9 +325,7 @@ public class RiverGuardianEntity extends GuardianEntity {
 			}
 
 			World w = entity.getEntityWorld();
-			if (entity instanceof PlayerEntity) {
-				System.out.println("player entity");
-			}
+
 			boolean nearbyPlayer = (w.getClosestPlayer(entity, 24) != null);
 			int x =3 ;
 			// Ignore other River Guardians while it is Raining.
