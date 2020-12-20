@@ -1,4 +1,4 @@
-package com.mactso.hostilewatermobs.renderer;
+package com.mactso.hostilewatermobs.client.renderer;
 import com.mactso.hostilewatermobs.Main;
 import com.mactso.hostilewatermobs.entities.RiverGuardianEntity;
 import com.mojang.blaze3d.matrix.MatrixStack;

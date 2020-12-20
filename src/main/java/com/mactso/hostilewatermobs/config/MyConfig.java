@@ -53,10 +53,20 @@ public class MyConfig {
 		return riverGuardianSpawnCap;
 	}
 	
+	public static int getSlipperyBiterSpawnChance() {
+		return slipperyBiterSpawnChance;
+	}
+
+
+	public static int getSlipperyBiterSpawnCap() {
+		return slipperyBiterSpawnCap;
+	}
+
 	private static int      aDebugLevel;
 	private static int 	    riverGuardianSpawnChance;
 	private static int 	    riverGuardianSpawnCap;
-
+	private static int 	    slipperyBiterSpawnChance;
+	private static int 	    slipperyBiterSpawnCap;
 
 	public static final int KILLER_ANY   = 0;
 	public static final int KILLER_MOB_OR_PLAYER = 1;
@@ -77,6 +87,8 @@ public class MyConfig {
 		COMMON.debugLevel.set(aDebugLevel);
 		COMMON.riverGuardianSpawnChance.set(riverGuardianSpawnChance);
 		COMMON.riverGuardianSpawnCap.set(riverGuardianSpawnCap);
+		COMMON.slipperyBiterSpawnCap.set(slipperyBiterSpawnCap);
+		COMMON.slipperyBiterSpawnChance.set(slipperyBiterSpawnChance);
 	}
 	
 	// remember need to push each of these values separately once we have commands.
@@ -97,6 +109,8 @@ public class MyConfig {
 		public final IntValue debugLevel;
 		public final IntValue riverGuardianSpawnChance;
 		public final IntValue riverGuardianSpawnCap;
+		public final IntValue slipperyBiterSpawnChance;
+		public final IntValue slipperyBiterSpawnCap;	
 		
 		public Common(ForgeConfigSpec.Builder builder) {
 			builder.push("Hostile Water Mobs");
@@ -115,6 +129,16 @@ public class MyConfig {
 					.comment("riverGuardianSpawnCap")
 					.translation(Main.MODID + ".config." + "riverGuardianSpawnCap")
 					.defineInRange("riverGuardianSpawnCap", () -> 41, 0, 100);
+
+			slipperyBiterSpawnChance = builder
+					.comment("slipperyBiterSpawnChance")
+					.translation(Main.MODID + ".config." + "slipperyBiterSpawnChance")
+					.defineInRange("slipperyBiterSpawnChance", () -> 6, 0, 100);
+
+			slipperyBiterSpawnCap = builder
+					.comment("slipperyBiterSpawnChance")
+					.translation(Main.MODID + ".config." + "slipperyBiterSpawnChance")
+					.defineInRange("slipperyBiterSpawnChance", () -> 41, 0, 100);
 			
 			builder.pop();
 			
