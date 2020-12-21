@@ -1,7 +1,9 @@
 package com.mactso.hostilewatermobs.client.model;
 
 import com.google.common.collect.ImmutableList;
+import com.mactso.hostilewatermobs.entities.SlipperyBiterEntity;
 
+import net.minecraft.client.renderer.entity.model.GuardianModel;
 import net.minecraft.client.renderer.entity.model.SegmentedModel;
 import net.minecraft.client.renderer.model.ModelRenderer;
 import net.minecraft.entity.Entity;
@@ -20,10 +22,9 @@ public class SlipperyBiterModel<T extends Entity> extends SegmentedModel<T> {
 	private final ModelRenderer fin_back_1;
 	private final ModelRenderer fin_back_2;
 	private final ModelRenderer tail;
-	
 
 	public SlipperyBiterModel() {
-		
+
 		this.textureWidth = 32;
 		this.textureHeight = 32;
 
@@ -37,12 +38,12 @@ public class SlipperyBiterModel<T extends Entity> extends SegmentedModel<T> {
 		body_front = new ModelRenderer(this);
 		body_front.setRotationPoint(0.0F, 18.0F, -4.0F);
 		body_front.setTextureOffset(0, 0).addBox(-1.5F, -2.5F, 0.0F, 3.0F, 5.0F, 8.0F, 0.0F, false);
-		
+
 		fin_back_1 = new ModelRenderer(this);
 		fin_back_1.setRotationPoint(0.0F, -4.5F, 5.0F);
 		body_front.addChild(fin_back_1);
 		fin_back_1.setTextureOffset(4, 2).addBox(0.0F, 0.0F, 1.0F, 0.0F, 2.0F, 2.0F, 0.0F, false);
-		
+
 		fin_left = new ModelRenderer(this);
 		fin_left.setRotationPoint(-1.5F, 1.5F, 0.0F);
 		body_front.addChild(fin_left);
@@ -82,11 +83,10 @@ public class SlipperyBiterModel<T extends Entity> extends SegmentedModel<T> {
 //		fin_back_2.render(matrixStack, buffer, packedLight, packedOverlay);
 //		tail.render(matrixStack, buffer, packedLight, packedOverlay);
 //	}
-	
+
 	@Override
 	public Iterable<ModelRenderer> getParts() {
-	return (Iterable<ModelRenderer>) ImmutableList.of( this.body_front, this.body_rear,
-				 this.head);
+		return (Iterable<ModelRenderer>) ImmutableList.of(this.body_front, this.body_rear, this.head);
 
 	}
 
@@ -95,51 +95,34 @@ public class SlipperyBiterModel<T extends Entity> extends SegmentedModel<T> {
 		modelRenderer.rotateAngleY = y;
 		modelRenderer.rotateAngleZ = z;
 	}
-	
+
 	@Override
 	public void setRotationAngles(final T entity, final float limbSwing, final float limbSwingAmount,
-			final float ageInTicks, final float netHeadYaw, final float headPitch
-			) {
-		
-		if ((ageInTicks/1000)% 3 == 0) {
-			setRotationAngle(fin_left, -1.5708F, -0.2F * MathHelper.cos(ageInTicks/20 * 0.3F), -0.7854F);
-			setRotationAngle(fin_right, -1.5708F, -0.2F * MathHelper.cos(ageInTicks/20 * 0.3F), 0.7854F);
-		}
-		else {
-			setRotationAngle(fin_left, -1.5708F, -0.2F , -0.7854F);
+			final float ageInTicks, final float netHeadYaw, final float headPitch) {
+
+		final float age = ageInTicks - entity.ticksExisted;
+
+		if ((ageInTicks / 1000) % 3 == 0) {
+			setRotationAngle(fin_left, -1.5708F, -0.2F * MathHelper.cos(ageInTicks / 20 * 0.3F), -0.7854F);
+			setRotationAngle(fin_right, -1.5708F, -0.2F * MathHelper.cos(ageInTicks / 20 * 0.3F), 0.7854F);
+		} else {
+			setRotationAngle(fin_left, -1.5708F, -0.2F, -0.7854F);
 			setRotationAngle(fin_right, -1.5708F, -0.2F, 0.7854F);
 		}
-		
-		if ((ageInTicks/10000)% 3 == 0) {
-			fin_back_1.rotateAngleZ = -0.2F * MathHelper.cos(ageInTicks/4 * 0.2F);
-			fin_back_2.rotateAngleZ = -0.2F * MathHelper.cos(ageInTicks/4 * 0.2F);
-		} else {
-			fin_back_1.rotateAngleZ = 0.0f;
-			fin_back_2.rotateAngleZ = 0.0f;
-		}
-		
-		float baseTailFlipSpeed_ = 0.7f;			
-		float currentTimeTailFlipValue = 0.7f;
-		float animationSpeed = ageInTicks/4;
 
-		Vector3d m = entity.getMotion();
-		if (m.length() < 0.1f){
-			baseTailFlipSpeed_ = 0.2f;			
-			currentTimeTailFlipValue = 0.2f;
-			animationSpeed = ageInTicks/8;
+		float tailSwingMagnitude = 0.2f;
+		if (((SlipperyBiterEntity) entity).isMoving()) {
+			tailSwingMagnitude = 1.0f;
 		}
+		fin_back_1.rotateAngleZ = 0.0f;
+		/* linear interpolation */
+		SlipperyBiterEntity s = (SlipperyBiterEntity) entity;
+		
+		final float lerpTailValue = MathHelper.lerp(age, s.getClientSideTailAnimationO(),
+				s.getClientSideTailAnimation());
+		this.body_rear.rotateAngleZ = MathHelper.sin(lerpTailValue) * 3.1415927f * 0.05f * tailSwingMagnitude;
+		this.fin_back_2.rotateAngleZ = MathHelper.sin(lerpTailValue) * 3.1415927f * 0.1f * tailSwingMagnitude;
 
-		if (!entity.isInWater()) {
-			baseTailFlipSpeed_ = 0.7f;
-			currentTimeTailFlipValue = 0.9f;
-			animationSpeed = ageInTicks;
-			entity.rotationYaw = 0.90f;
-		}
-		
-		
-		this.body_rear.rotateAngleY = -baseTailFlipSpeed_ * 0.25f * MathHelper.sin(currentTimeTailFlipValue * 0.6f * animationSpeed);
-		this.tail.rotateAngleY = -baseTailFlipSpeed_ * 0.25f * MathHelper.sin(currentTimeTailFlipValue * 0.6f * animationSpeed);
 	}
-
 
 }

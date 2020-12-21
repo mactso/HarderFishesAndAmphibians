@@ -23,7 +23,7 @@ import net.minecraftforge.registries.IForgeRegistry;
 public class ModEntities {
 
 	public static final EntityType<RiverGuardianEntity> RIVER_GUARDIAN = register("river_guardian", EntityType.Builder.create(RiverGuardianEntity::new, EntityClassification.MONSTER).size(0.85F, 0.85F).trackingRange(5));
-	public static final EntityType<SlipperyBiterEntity> SLIPPERY_BITER = register("slippery_biter", EntityType.Builder.create(SlipperyBiterEntity::new, EntityClassification.MONSTER).size(1.05F, 1.05F).trackingRange(21));
+	public static final EntityType<SlipperyBiterEntity> SLIPPERY_BITER = register("slippery_biter", EntityType.Builder.create(SlipperyBiterEntity::new, EntityClassification.MONSTER).size(0.9F, 0.7F).trackingRange(21));
 
 	private static <T extends Entity> EntityType<T> register(String name, EntityType.Builder<T> builder)
 	{
@@ -79,9 +79,9 @@ public class ModEntities {
 			spawns.add(new Spawners(SLIPPERY_BITER, weight = 50, min=1, max=1));
 		} else
 		if (biomeCategory == Biome.Category.OCEAN) {
-			spawns.add(new Spawners(SLIPPERY_BITER, weight = 50, min=1, max=1));
+			spawns.add(new Spawners(SLIPPERY_BITER, weight = 50, min=1, max=3));
 		} else {
-			spawns.add(new Spawners(SLIPPERY_BITER, weight = 20, min=1, max=1 ));
+			spawns.add(new Spawners(SLIPPERY_BITER, weight = 20, min=1, max=2 ));
 		}
 
 	}

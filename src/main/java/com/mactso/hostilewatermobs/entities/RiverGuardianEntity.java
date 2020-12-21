@@ -79,6 +79,7 @@ public class RiverGuardianEntity extends GuardianEntity {
 			ILivingEntityData spawnDataIn, CompoundNBT dataTag) {
 		BlockPos pos = getPosition(); // getPosition
 		
+		System.out.println ("riverguardian on intialspawn at " + pos.toString());
 		Biome biome = worldIn.getBiome(pos);
 		ResourceLocation biomeNameResourceKey = worldIn.func_241828_r().getRegistry(Registry.BIOME_KEY).getKey(biome);
 		String biomename = biomeNameResourceKey.toString();
