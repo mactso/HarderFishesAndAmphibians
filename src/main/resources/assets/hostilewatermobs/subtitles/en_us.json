@@ -4,5 +4,11 @@
 	"subtitles.river_guardian.death": "river guardian dies",
 	"subtitles.river_guardian.death_land" : "river guardian dies on land",
 	"subtitles.river_guardian.ambient": "river guardian burbles",
-	"subtitles.river_guardian.flop": "river guardian flops around"
+	"subtitles.river_guardian.flop": "river guardian flops around",
+    "subtitles.slippery_biter.hurt" : "river guardian hurt",
+	"subtitles.slippery_biter.land_hurt" : "river guardian hurt on land",
+	"subtitles.slippery_biter.death": "river guardian dies",
+	"subtitles.slippery_biter.death_land" : "river guardian dies on land",
+	"subtitles.slippery_biter.ambient": "river guardian burbles",
+	"subtitles.slippery_biter.flop": "river guardian flops around"
 }

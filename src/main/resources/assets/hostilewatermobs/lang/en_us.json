@@ -6,5 +6,16 @@
 	"subtitles.river_guardian.ambient": "River guardian burbles",
 	"subtitles.river_guardian.flop": "River guardian flops around",
 	"entity.hostilewatermobs.river_guardian" : "River Guardian",
-	"item.hostilewatermobs.river_guardian_spawn_egg": "River Guardian Spawn Egg"	
+	"item.hostilewatermobs.river_guardian_spawn_egg": "River Guardian Spawn Egg",	
+    "item.hostilewatermobs.river_guardian_scales": "River Guardian Scales",
+    "subtitles.slippery_biter.hurt" : "Slippery biter hurt",
+	"subtitles.slippery_biter.land_hurt" : "Slippery biter hurt on land",
+	"subtitles.slippery_biter.death": "Slippery biter dies",
+	"subtitles.slippery_biter.death_land" : "Slippery biter dies on land",
+	"subtitles.slippery_biter.ambient": "Slippery biter burbles",
+	"subtitles.slippery_biter.flop": "Slippery biter flops around",
+	"entity.hostilewatermobs.slippery_biter" : "Slippery Biter",
+	"item.hostilewatermobs.slippery_biter_spawn_egg": "Slippery Biter Spawn Egg",	
+    "item.hostilewatermobs.slippery_biter_scales": "Slippery Biter Scales",
+    "item.hostilewatermobs.slippery_biter_gland": "Slippery Biter Gland"	
 }

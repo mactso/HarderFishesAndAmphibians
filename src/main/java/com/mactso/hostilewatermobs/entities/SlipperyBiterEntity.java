@@ -8,7 +8,9 @@ import java.util.function.Predicate;
 import javax.annotation.Nullable;
 
 import com.mactso.hostilewatermobs.config.MyConfig;
+import com.mactso.hostilewatermobs.sound.ModSounds;
 
+import net.minecraft.entity.CreatureEntity;
 import net.minecraft.entity.Entity;
 import net.minecraft.entity.EntitySize;
 import net.minecraft.entity.EntityType;
@@ -21,6 +23,7 @@ import net.minecraft.entity.ai.attributes.AttributeModifier.Operation;
 import net.minecraft.entity.ai.attributes.AttributeModifierMap;
 import net.minecraft.entity.ai.attributes.Attributes;
 import net.minecraft.entity.ai.attributes.ModifiableAttributeInstance;
+import net.minecraft.entity.ai.controller.DolphinLookController;
 import net.minecraft.entity.ai.controller.LookController;
 import net.minecraft.entity.ai.controller.MovementController;
 import net.minecraft.entity.ai.goal.FindWaterGoal;
@@ -30,10 +33,9 @@ import net.minecraft.entity.ai.goal.Goal.Flag;
 import net.minecraft.entity.ai.goal.HurtByTargetGoal;
 import net.minecraft.entity.ai.goal.LookAtGoal;
 import net.minecraft.entity.ai.goal.LookRandomlyGoal;
-import net.minecraft.entity.ai.goal.MoveTowardsRestrictionGoal;
+import net.minecraft.entity.ai.goal.MeleeAttackGoal;
 import net.minecraft.entity.ai.goal.NearestAttackableTargetGoal;
 import net.minecraft.entity.ai.goal.RandomSwimmingGoal;
-import net.minecraft.entity.ai.goal.RandomWalkingGoal;
 import net.minecraft.entity.ai.goal.ResetAngerGoal;
 import net.minecraft.entity.monster.MonsterEntity;
 import net.minecraft.entity.player.PlayerEntity;
@@ -45,8 +47,10 @@ import net.minecraft.particles.ParticleTypes;
 import net.minecraft.pathfinding.PathNodeType;
 import net.minecraft.tags.FluidTags;
 import net.minecraft.util.ClassInheritanceMultiMap;
+import net.minecraft.util.DamageSource;
 import net.minecraft.util.RangedInteger;
 import net.minecraft.util.SoundCategory;
+import net.minecraft.util.SoundEvent;
 import net.minecraft.util.SoundEvents;
 import net.minecraft.util.TickRangeConverter;
 import net.minecraft.util.math.BlockPos;
@@ -72,12 +76,13 @@ public class SlipperyBiterEntity extends MonsterEntity implements IAngerable {
 	
 	private int angerTime;
 	private UUID angerTarget;
-	protected RandomWalkingGoal wander;
+	protected RandomSwimmingGoal myRandomSwimmingGoal;
+	protected MeleeAttackGoal myMeleeAttackGoal;
 	private LivingEntity targetedEntity;
 
 	public static final float SIZE = EntityType.SALMON.getWidth() * 1.05f;
-	private static final DataParameter<Boolean> MOVING =  EntityDataManager.createKey((Class) SlipperyBiterEntity.class, DataSerializers.BOOLEAN);
-	private static final DataParameter<Integer> TARGET_ENTITY = EntityDataManager.createKey((Class) SlipperyBiterEntity.class, DataSerializers.VARINT);
+	private static final DataParameter<Boolean> MOVING =  EntityDataManager.createKey( SlipperyBiterEntity.class, DataSerializers.BOOLEAN);
+	private static final DataParameter<Integer> TARGET_ENTITY = EntityDataManager.createKey( SlipperyBiterEntity.class, DataSerializers.VARINT);
 	private static final DataParameter<Integer> SUB_TYPE = EntityDataManager.createKey(SlipperyBiterEntity.class,
 			DataSerializers.VARINT);
 	private static int DEFAULT_SLIPPERY_BITER = 0;
@@ -122,7 +127,7 @@ public class SlipperyBiterEntity extends MonsterEntity implements IAngerable {
 		Biome biome = world.getBiome(pos);
 		Category bC = biome.getCategory();
 		if (bC == Category.OCEAN) {
-			if (world.getLight(pos) > 8) {
+			if (world.getLight(pos) > 13) {
 				return false;
 			}
 		}
@@ -161,6 +166,7 @@ public class SlipperyBiterEntity extends MonsterEntity implements IAngerable {
 			if (aL[height].getByClass(SlipperyBiterEntity.class).size() > 5) {
 				return false;
 			}
+			MyConfig.setaDebugLevel(1);
 			if (MyConfig.getaDebugLevel() > 0) {
 				System.out.println("spawn slipperyBiter true at " + pos.getX() + " " + pos.getY() + " " + pos.getZ());
 			}
@@ -205,9 +211,25 @@ public class SlipperyBiterEntity extends MonsterEntity implements IAngerable {
 		this.experienceValue = 7;
 		this.setPathPriority(PathNodeType.WATER, 0.0f);
 		this.moveController = new MoveHelperController(this);
-		if (this.wander != null) {
-			this.wander.setExecutionChance(400);
+		if (this.myRandomSwimmingGoal != null) {
+			this.myRandomSwimmingGoal.setExecutionChance(400);
 		}
+		this.lookController = new DolphinLookController(this, 10);
+	}
+	
+	protected SoundEvent getAmbientSound() {
+
+		return ModSounds.SLIPPERY_BITER_AMBIENT;
+	}
+
+	@Override
+	protected SoundEvent getDeathSound() {
+		 return ModSounds.SLIPPERY_BITER_DEATH;
+	}
+
+	@Override
+	protected SoundEvent getHurtSound(DamageSource damageSourceIn) {
+		return ModSounds.RIVER_GUARDIAN_HURT;
 	}
 	
 	public boolean canBreatheUnderwater() {
@@ -276,21 +298,19 @@ public class SlipperyBiterEntity extends MonsterEntity implements IAngerable {
 
 	protected void registerGoals() {
 
-		this.wander = new RandomWalkingGoal(this, 1.0, 80); // 4 seconds...
-		
-		this.targetSelector.addGoal(0, new HurtByTargetGoal(this));
 		this.goalSelector.addGoal(0, new FindWaterGoal(this));
-//		this.goalSelector.addGoal(2, new RandomSwimmingGoal(this, 1.0D, 1));
-//		this.goalSelector.addGoal(3, new FollowBoatGoal(this));
-		this.goalSelector.addGoal(4, new AttackGoal(this));
-//		MoveTowardsRestrictionGoal targetEntity = new MoveTowardsRestrictionGoal(this, 1.0D);
-//		targetEntity.setMutexFlags(EnumSet.of(Flag.MOVE, Flag.LOOK));
-//		this.goalSelector.addGoal(5, targetEntity);
-//		this.targetSelector.addGoal(7, new ResetAngerGoal<>(this, true));
-		this.goalSelector.addGoal(7, (Goal)this.wander);
-		this.goalSelector.addGoal(8, new LookAtGoal(this, PlayerEntity.class, 8.0F));
-//		this.goalSelector.addGoal(9, new LookRandomlyGoal(this));
-//		this.wander.setMutexFlags(EnumSet.of(Flag.MOVE, Flag.LOOK));
+		this.goalSelector.addGoal(1, new MeleeAttackGoal(this, 1.0D, false));
+		this.myRandomSwimmingGoal = new RandomSwimmingGoal((CreatureEntity)this, 1.0, 80);
+		this.goalSelector.addGoal(2, (Goal)this.myRandomSwimmingGoal);
+		this.myRandomSwimmingGoal.setMutexFlags((EnumSet<Flag>)EnumSet.of(Goal.Flag.MOVE, Goal.Flag.LOOK));
+		this.goalSelector.addGoal(3, new FollowBoatGoal(this));
+		this.goalSelector.addGoal(4, new LookAtGoal(this, PlayerEntity.class, 7.0F));
+		this.goalSelector.addGoal(9, new LookRandomlyGoal(this));
+
+		this.targetSelector.addGoal(0, new HurtByTargetGoal(this).setCallsForHelp());
+        this.targetSelector.addGoal(1, new NearestAttackableTargetGoal<>(this, LivingEntity.class, 10, true, false, (Predicate<LivingEntity>)new TargetPredicate(this)));
+	    this.targetSelector.addGoal(2, new ResetAngerGoal<>(this, true));
+		
 		super.registerGoals();
 	}
 
@@ -343,6 +363,9 @@ public class SlipperyBiterEntity extends MonsterEntity implements IAngerable {
 			}		
 			
 			if (!targetInWater) {
+				this.parentEntity.setAngerTarget(null);
+				this.parentEntity.setAttackTarget(null);
+				this.parentEntity.setTargetedEntity(0);
 				return false;
 			}
 
@@ -371,161 +394,85 @@ public class SlipperyBiterEntity extends MonsterEntity implements IAngerable {
 				return false;
 			}
 			
+
+			
 			// Slippery Biter can teleport behind the player if they are too far away.
 			BlockPos biterPos = this.parentEntity.getPosition();
-			if (distanceSq > 150) {
-				w.addParticle(ParticleTypes.POOF,biterPos.getX(),biterPos.getY(),biterPos.getZ(), 0.05, -0.05, 0.05);
-				w.addParticle(ParticleTypes.POOF,biterPos.getX(),biterPos.getY(),biterPos.getZ(), 0.05, -0.05, 0.05);
-				w.addParticle(ParticleTypes.POOF,biterPos.getX(),biterPos.getY(),biterPos.getZ(), 0.05, -0.05, 0.05);
-				w.playSound((PlayerEntity)entity, biterPos, SoundEvents.ENTITY_ENDERMAN_TELEPORT, SoundCategory.HOSTILE, 0.5f, 0.5f);
-				// water collapsing into resulting void
-				w.playSound((PlayerEntity)entity, biterPos, SoundEvents.ITEM_TRIDENT_THUNDER, SoundCategory.AMBIENT, 0.25f, 0.25f);
+			if (distanceSq > 64) {
 				Vector3d v = entity.getLookVec();
-				v.mul(-3.0d,-0.5d,-3.0d);
-				Vector3i vI = new Vector3i(v.getX(),v.getY(),v.getZ());
-				BlockPos tempPos = new BlockPos (vI.getX(),vI.getY(),vI.getZ());
-				if (w.getFluidState(entity.getPosition()).isTagged(FluidTags.WATER)) {
+				Vector3i vI = new Vector3i(v.getX()*-7,v.getY()*-2,v.getZ()*-7);
+				BlockPos tempPos = new BlockPos (entity.getPosX() + vI.getX(),entity.getPosY() + vI.getY(), entity.getPosZ() + vI.getZ());
+				if (w.getFluidState(tempPos).isTagged(FluidTags.WATER)) {
+					w.addParticle(ParticleTypes.BUBBLE_POP,biterPos.getX(),biterPos.getY(),biterPos.getZ(), 0.04, -0.05, 0.05);
+					w.addParticle(ParticleTypes.BUBBLE,biterPos.getX(),biterPos.getY(),biterPos.getZ(), 0.05, -0.05, 0.05);
+					w.addParticle(ParticleTypes.BUBBLE,biterPos.getX(),biterPos.getY(),biterPos.getZ(), 0.06, -0.05, 0.05);
+					w.playSound((PlayerEntity)null, biterPos, SoundEvents.ENTITY_ENDERMAN_TELEPORT, SoundCategory.HOSTILE, 0.5f, 0.5f);
+					// water collapsing into resulting void
+					w.playSound((PlayerEntity)null, biterPos, SoundEvents.ITEM_TRIDENT_THUNDER, SoundCategory.AMBIENT, 0.25f, 0.25f);
 					this.parentEntity.setPositionAndUpdate(tempPos.getX(), tempPos.getY(), tempPos.getZ());
 				}
+				int debug = 3;
 			}
+			this.parentEntity.setTargetedEntity(entity.getEntityId());
 			return true;
 		}
 	}	
 	
 	
-	static class AttackGoal extends Goal {
-		private final SlipperyBiterEntity slipperyBiter;
-		private int tickCounter;
-		
-		public AttackGoal(final SlipperyBiterEntity slipperyBiterIn) {
-			this.slipperyBiter = slipperyBiterIn;
-			this.setMutexFlags((EnumSet) EnumSet.of(Goal.Flag.MOVE, Goal.Flag.LOOK));
-		}
-
-		public void resetTask() {
-			this.slipperyBiter.setTargetedEntity(0);
-			this.slipperyBiter.setAttackTarget((LivingEntity) null);
-			this.slipperyBiter.wander.makeUpdate();
-		}
-
-		public boolean shouldContinueExecuting() {
-			return super.shouldContinueExecuting();
-		}
-
-		public boolean shouldExecute() {
-			final LivingEntity targetEntity = this.slipperyBiter.getAttackTarget();
-			return targetEntity != null && targetEntity.isAlive();
-		}
-
-
-		public void startExecuting() {
-			this.tickCounter = -10;
-			this.slipperyBiter.getNavigator().clearPath();
-			this.slipperyBiter.getLookController().setLookPositionWithEntity((Entity) this.slipperyBiter.getAttackTarget(), 90.0f,
-					90.0f);
-		}
-		
-
-		public void tick() {
-			
-			final LivingEntity thisLivingEntity = this.slipperyBiter.getAttackTarget();
-			this.slipperyBiter.getNavigator().clearPath();
-			this.slipperyBiter.getLookController().setLookPositionWithEntity((Entity) thisLivingEntity, 90.0f, 90.0f);
-
-			if (!this.slipperyBiter.canEntityBeSeen((Entity) thisLivingEntity)) {
-				this.slipperyBiter.setAttackTarget((LivingEntity) null);
-				return;
-			}
-
-            ++this.tickCounter;
-            if (this.tickCounter == 0) {
-                this.slipperyBiter.setTargetedEntity(this.slipperyBiter.getAttackTarget().getEntityId());
-            }
-			
-			if (this.slipperyBiter.onGround) {
-				Vector3d newMotion = this.slipperyBiter.getMotion();
-				newMotion.add(new Vector3d(0.0f,-0.2f,0.0f));
-				this.slipperyBiter.setMotion(newMotion);
-                this.slipperyBiter.rotationYaw = this.slipperyBiter.rand.nextFloat() * 360.0f;
-                this.slipperyBiter.onGround = false;
-                this.slipperyBiter.isAirBorne = true;
-	            }
-			super.tick();
-
-			this.slipperyBiter.getNavigator().tryMoveToEntityLiving(thisLivingEntity, 5);		
-			
-		}
-	}
 	static class MoveHelperController extends MovementController {
 		private final SlipperyBiterEntity workSlipperyBiterEntity;
 
+		// TODO final vs not final?
 		public MoveHelperController(final SlipperyBiterEntity slipperyBiterEntityIn) {
 			super(slipperyBiterEntityIn);
 			this.workSlipperyBiterEntity = slipperyBiterEntityIn;
 
 		}
 
-		public void tick() {
-			if (this.action != MovementController.Action.MOVE_TO
-					|| this.workSlipperyBiterEntity.getNavigator().noPath()) {
 
-				this.workSlipperyBiterEntity.setAIMoveSpeed(0.0f);
-				this.workSlipperyBiterEntity.setMoving(false);
-				return;
 
-			}
-
-			final Vector3d vecSlipperyBiterLocationChange = new Vector3d(
-					this.posX - this.workSlipperyBiterEntity.getPosX(),
-					this.posY - this.workSlipperyBiterEntity.getPosY(),
-					this.posZ - this.workSlipperyBiterEntity.getPosZ());
-
-			final double locationVectorLength = vecSlipperyBiterLocationChange.length();
-
-			final double xChange = vecSlipperyBiterLocationChange.x / locationVectorLength;
-			final double yChange = vecSlipperyBiterLocationChange.y / locationVectorLength;
-			final double zChange = vecSlipperyBiterLocationChange.z / locationVectorLength;
-			final double workTan = MathHelper.atan2(vecSlipperyBiterLocationChange.z, vecSlipperyBiterLocationChange.x)
-					* 57.2957763671875;
-			final float lvt_10_1_ = (float) (workTan - 90.0f);
-
-			this.workSlipperyBiterEntity.rotationYaw = this.limitAngle(this.workSlipperyBiterEntity.rotationYaw,
-					lvt_10_1_, 90.0f);
-			this.workSlipperyBiterEntity.renderYawOffset = this.workSlipperyBiterEntity.rotationYaw;
-
-			final float lvt_11_1_ = (float) (this.speed
-					* this.workSlipperyBiterEntity.getAttributeValue(Attributes.MOVEMENT_SPEED));
-			final float lvt_12_1_ = MathHelper.lerp(0.125f, this.workSlipperyBiterEntity.getAIMoveSpeed(), lvt_11_1_);
-			this.workSlipperyBiterEntity.setAIMoveSpeed(lvt_12_1_);
-			final double lvt_13_1_ = Math
-					.sin((this.workSlipperyBiterEntity.ticksExisted + this.workSlipperyBiterEntity.getEntityId()) * 0.25)
-					* 0.03;
-			final double lvt_15_1_ = Math.cos(this.workSlipperyBiterEntity.rotationYaw * 0.012453292f);
-			final double lvt_17_1_ = Math.sin(this.workSlipperyBiterEntity.rotationYaw * 0.012453292f);
-			final double lvt_19_1_ = Math.sin(
-					(this.workSlipperyBiterEntity.ticksExisted + this.workSlipperyBiterEntity.getEntityId()) * 0.35)
-					* 0.03;
-
-			this.workSlipperyBiterEntity.setMotion(this.workSlipperyBiterEntity.getMotion().add(lvt_13_1_ * lvt_15_1_,
-					lvt_19_1_ * (lvt_17_1_ + lvt_15_1_) * 0.25 + lvt_12_1_ * yChange * 0.1, lvt_13_1_ * lvt_17_1_));
-
-			final LookController lvt_21_1_ = this.workSlipperyBiterEntity.getLookController();
-			final double lvt_22_1_ = this.workSlipperyBiterEntity.getPosX() + xChange * 2.0;
-			final double lvt_24_1_ = this.workSlipperyBiterEntity.getPosYEye() + yChange / locationVectorLength;
-			final double lvt_26_1_ = this.workSlipperyBiterEntity.getPosZ() + zChange * 2.0;
-			double lvt_28_1_ = lvt_21_1_.getLookPosX();
-			double lvt_30_1_ = lvt_21_1_.getLookPosY();
-			double lvt_32_1_ = lvt_21_1_.getLookPosZ();
-			if (!lvt_21_1_.getIsLooking()) {
-				lvt_28_1_ = lvt_22_1_;
-				lvt_30_1_ = lvt_24_1_;
-				lvt_32_1_ = lvt_26_1_;
-			}
-			this.workSlipperyBiterEntity.getLookController().setLookPosition(
-					MathHelper.lerp(0.125, lvt_28_1_, lvt_22_1_), MathHelper.lerp(0.125, lvt_30_1_, lvt_24_1_),
-					MathHelper.lerp(0.125, lvt_32_1_, lvt_26_1_), 10.0f, 40.0f);
-			this.workSlipperyBiterEntity.setMoving(true);
-		}
+@Override
+public void tick() {
+	if (this.workSlipperyBiterEntity.isInWater()) {
+		this.workSlipperyBiterEntity.setMotion(this.workSlipperyBiterEntity.getMotion().add(0.0D, 0.005D, 0.0D));
 	}
 
+	if (this.action == MovementController.Action.MOVE_TO && !this.workSlipperyBiterEntity.getNavigator().noPath()) {
+		double d0 = this.posX - this.workSlipperyBiterEntity.getPosX();
+		double d1 = this.posY - this.workSlipperyBiterEntity.getPosY();
+		double d2 = this.posZ - this.workSlipperyBiterEntity.getPosZ();
+		double d3 = d0 * d0 + d1 * d1 + d2 * d2;
+		if (d3 < (double) 2.5000003E-7F) {
+			this.mob.setMoveForward(0.0F);
+		} else {
+			float f = (float) (MathHelper.atan2(d2, d0) * (double) (180F / (float) Math.PI)) - 90.0F;
+			this.workSlipperyBiterEntity.rotationYaw = this.limitAngle(this.workSlipperyBiterEntity.rotationYaw, f,
+					10.0F);
+			this.workSlipperyBiterEntity.renderYawOffset = this.workSlipperyBiterEntity.rotationYaw;
+			this.workSlipperyBiterEntity.rotationYawHead = this.workSlipperyBiterEntity.rotationYaw;
+			float f1 = (float) (this.speed * this.workSlipperyBiterEntity.getAttributeValue(Attributes.MOVEMENT_SPEED));
+			if (this.workSlipperyBiterEntity.isInWater()) {
+				this.workSlipperyBiterEntity.setAIMoveSpeed(f1 * 0.02F);
+				float f2 = -((float) (MathHelper.atan2(d1, MathHelper.sqrt(d0 * d0 + d2 * d2))
+						* (double) (180F / (float) Math.PI)));
+				f2 = MathHelper.clamp(MathHelper.wrapDegrees(f2), -85.0F, 85.0F);
+				this.workSlipperyBiterEntity.rotationPitch = this.limitAngle(this.workSlipperyBiterEntity.rotationPitch,
+						f2, 5.0F);
+				float f3 = MathHelper.cos(this.workSlipperyBiterEntity.rotationPitch * ((float) Math.PI / 180F));
+				float f4 = MathHelper.sin(this.workSlipperyBiterEntity.rotationPitch * ((float) Math.PI / 180F));
+				this.workSlipperyBiterEntity.moveForward = f3 * f1;
+				this.workSlipperyBiterEntity.moveVertical = -f4 * f1;
+			} else {
+				this.workSlipperyBiterEntity.setAIMoveSpeed(f1 * 0.1F);
+			}
+
+		}
+	} else {
+		this.workSlipperyBiterEntity.setAIMoveSpeed(0.0F);
+		this.workSlipperyBiterEntity.setMoveStrafing(0.0F);
+		this.workSlipperyBiterEntity.setMoveVertical(0.0F);
+		this.workSlipperyBiterEntity.setMoveForward(0.0F);
+	}
+}
+}
 }

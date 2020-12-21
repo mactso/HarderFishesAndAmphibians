@@ -98,7 +98,8 @@ public class MyConfig {
 		aDebugLevel = COMMON.debugLevel.get();
 		riverGuardianSpawnChance = COMMON.riverGuardianSpawnChance.get();
 		riverGuardianSpawnCap = COMMON.riverGuardianSpawnCap.get();
-		
+		slipperyBiterSpawnChance = COMMON.slipperyBiterSpawnChance.get();
+		slipperyBiterSpawnCap = COMMON.slipperyBiterSpawnCap.get();
 		if (aDebugLevel > 0) {
 			System.out.println("Harder Farther Debug Level: " + aDebugLevel );
 		}
@@ -128,17 +129,17 @@ public class MyConfig {
 			riverGuardianSpawnCap = builder
 					.comment("riverGuardianSpawnCap")
 					.translation(Main.MODID + ".config." + "riverGuardianSpawnCap")
-					.defineInRange("riverGuardianSpawnCap", () -> 41, 0, 100);
+					.defineInRange("riverGuardianSpawnCap", () -> 41, 1, 100);
 
 			slipperyBiterSpawnChance = builder
 					.comment("slipperyBiterSpawnChance")
 					.translation(Main.MODID + ".config." + "slipperyBiterSpawnChance")
-					.defineInRange("slipperyBiterSpawnChance", () -> 6, 0, 100);
+					.defineInRange("slipperyBiterSpawnChance", () -> 6, 1, 100);
 
 			slipperyBiterSpawnCap = builder
-					.comment("slipperyBiterSpawnChance")
-					.translation(Main.MODID + ".config." + "slipperyBiterSpawnChance")
-					.defineInRange("slipperyBiterSpawnChance", () -> 41, 0, 100);
+					.comment("slipperyBiterSpawnCap")
+					.translation(Main.MODID + ".config." + "slipperyBiterSpawnCap")
+					.defineInRange("slipperyBiterSpawnCap", () -> 27, 0, 100);
 			
 			builder.pop();
 			

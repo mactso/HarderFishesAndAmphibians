@@ -15,6 +15,10 @@ public class ModSounds
 	public static final SoundEvent RIVER_GUARDIAN_DEATH_LAND = create("river_guardian.death_land");
 	public static final SoundEvent RIVER_GUARDIAN_AMBIENT = create("river_guardian.ambient");
 	public static final SoundEvent RIVER_GUARDIAN_FLOP= create("river_guardian.flop");
+
+	public static final SoundEvent SLIPPERY_BITER_HURT = create("slippery_biter.hurt");
+	public static final SoundEvent SLIPPERY_BITER_DEATH = create("slippery_biter.death");
+	public static final SoundEvent SLIPPERY_BITER_AMBIENT = create("slippery_biter.ambient");
 	
 	private static SoundEvent create(String key)
 	{
@@ -32,5 +36,9 @@ public class ModSounds
 		registry.register(RIVER_GUARDIAN_DEATH_LAND);
 		registry.register(RIVER_GUARDIAN_AMBIENT);
 		registry.register(RIVER_GUARDIAN_FLOP);
+
+		registry.register(SLIPPERY_BITER_HURT);
+		registry.register(SLIPPERY_BITER_DEATH);
+
 	}
 }
