@@ -10,6 +10,9 @@ import javax.annotation.Nullable;
 import com.mactso.hostilewatermobs.config.MyConfig;
 import com.mactso.hostilewatermobs.sound.ModSounds;
 
+import net.minecraft.block.Blocks;
+import net.minecraft.client.audio.GuardianSound;
+import net.minecraft.client.renderer.entity.GuardianRenderer;
 import net.minecraft.entity.CreatureEntity;
 import net.minecraft.entity.Entity;
 import net.minecraft.entity.EntitySize;
@@ -17,6 +20,7 @@ import net.minecraft.entity.EntityType;
 import net.minecraft.entity.IAngerable;
 import net.minecraft.entity.ILivingEntityData;
 import net.minecraft.entity.LivingEntity;
+import net.minecraft.entity.MoverType;
 import net.minecraft.entity.SpawnReason;
 import net.minecraft.entity.ai.attributes.AttributeModifier;
 import net.minecraft.entity.ai.attributes.AttributeModifier.Operation;
@@ -37,7 +41,9 @@ import net.minecraft.entity.ai.goal.MeleeAttackGoal;
 import net.minecraft.entity.ai.goal.NearestAttackableTargetGoal;
 import net.minecraft.entity.ai.goal.RandomSwimmingGoal;
 import net.minecraft.entity.ai.goal.ResetAngerGoal;
+import net.minecraft.entity.monster.GuardianEntity;
 import net.minecraft.entity.monster.MonsterEntity;
+import net.minecraft.entity.passive.WaterMobEntity;
 import net.minecraft.entity.player.PlayerEntity;
 import net.minecraft.nbt.CompoundNBT;
 import net.minecraft.network.datasync.DataParameter;
@@ -71,7 +77,7 @@ import net.minecraft.world.server.ServerWorld;
 import net.minecraftforge.api.distmarker.Dist;
 import net.minecraftforge.api.distmarker.OnlyIn;
 
-public class SlipperyBiterEntity extends MonsterEntity implements IAngerable {
+public class SlipperyBiterEntity extends WaterMobEntity implements IAngerable {
 
 	private int angerTime;
 	private UUID angerTarget;
@@ -92,7 +98,7 @@ public class SlipperyBiterEntity extends MonsterEntity implements IAngerable {
 	private static int DEFAULT_SLIPPERY_BITER = 0;
 	private static final RangedInteger rangedInteger = TickRangeConverter.convertRange(20, 39);
 
-	public SlipperyBiterEntity(EntityType<? extends MonsterEntity> type, World worldIn) {
+	public SlipperyBiterEntity(EntityType<? extends WaterMobEntity> type, World worldIn) {
 
 		super(type, worldIn);
 		this.experienceValue = 7;
@@ -190,7 +196,7 @@ public class SlipperyBiterEntity extends MonsterEntity implements IAngerable {
 			if (aL[height].getByClass(SlipperyBiterEntity.class).size() > 5) {
 				return false;
 			}
-			MyConfig.setaDebugLevel(1);
+
 			if (MyConfig.getaDebugLevel() > 0) {
 				System.out.println("spawn slipperyBiter true at " + pos.getX() + " " + pos.getY() + " " + pos.getZ());
 			}
@@ -223,9 +229,9 @@ public class SlipperyBiterEntity extends MonsterEntity implements IAngerable {
 	}
 
 	public static AttributeModifierMap.MutableAttribute registerAttributes() {
-		return MonsterEntity.func_234295_eP_().createMutableAttribute(Attributes.MOVEMENT_SPEED, (double) 0.8F)
+		return MonsterEntity.func_234295_eP_().createMutableAttribute(Attributes.MOVEMENT_SPEED, (double) 1.2F)
 				.createMutableAttribute(Attributes.FOLLOW_RANGE, 24.0D)
-				.createMutableAttribute(Attributes.ATTACK_DAMAGE, 3.5D)
+				.createMutableAttribute(Attributes.ATTACK_DAMAGE, 2.5D)
 				.createMutableAttribute(Attributes.MAX_HEALTH, 11.0D);
 	}
 
@@ -373,7 +379,8 @@ public class SlipperyBiterEntity extends MonsterEntity implements IAngerable {
 
 	static class TargetPredicate implements Predicate<LivingEntity> {
 		private final SlipperyBiterEntity parentEntity;
-
+		private static int aa = 0;
+		
 		public TargetPredicate(SlipperyBiterEntity biter) {
 			this.parentEntity = biter;
 		}
@@ -384,6 +391,14 @@ public class SlipperyBiterEntity extends MonsterEntity implements IAngerable {
 				return false;
 			}
 
+			if (this.parentEntity.getAttackTarget() != null) {
+				if (entity == this.parentEntity.getAttackingEntity()) {
+					return true;
+				} else {
+					return false;
+				}
+			}
+
 			World w = entity.getEntityWorld();
 
 			boolean targetInWater = false;
@@ -391,7 +406,9 @@ public class SlipperyBiterEntity extends MonsterEntity implements IAngerable {
 					|| (w.getFluidState(entity.getPosition().up()).isTagged(FluidTags.WATER))) {
 				targetInWater = true;
 			}
-
+			
+			aa++;
+			
 			if (!targetInWater) {
 				this.parentEntity.setAngerTarget(null);
 				this.parentEntity.setAttackTarget(null);
@@ -409,49 +426,67 @@ public class SlipperyBiterEntity extends MonsterEntity implements IAngerable {
 
 			// 1 to ~500
 			int distanceSq = (int) entity.getDistanceSq(this.parentEntity);
-
 			Biome biome = w.getBiome(this.parentEntity.getPosition());
 			Category bC = biome.getCategory();
 
-			// less aggressive in swamps
+			// a little less aggressive in swamps
 			if ((bC == Category.SWAMP) && (distanceSq > 255)) {
+				if (aa%3 == 0) {
+					w.playSound((PlayerEntity) entity, entity.getPosition(), ModSounds.SLIPPERY_BITER_AMBIENT,
+							SoundCategory.HOSTILE, 1.0f, 1.0f);					
+				}
 				return false;
 			}
 
 			// less aggressive in light, more aggressive in the dark
 			int lightLevel = w.getLight(this.parentEntity.getPosition());
-			if ((lightLevel > 13) && (distanceSq > 100)) {
+			if ((lightLevel > 13) && (distanceSq > 255)) {
+				if (aa%3 == 0) {
+					w.playSound((PlayerEntity) entity, entity.getPosition(), ModSounds.SLIPPERY_BITER_AMBIENT,
+							SoundCategory.HOSTILE, 1.0f, 1.0f);					
+				}
 				return false;
 			}
 
-			// Slippery Biter can teleport behind the player if they are too far away.
-			BlockPos biterPos = this.parentEntity.getPosition();
-			if (distanceSq > 64) {
-				Vector3d v = entity.getLookVec();
-				Vector3i vI = new Vector3i(v.getX() * -7, v.getY() * -2, v.getZ() * -7);
-				BlockPos tempPos = new BlockPos(entity.getPosX() + vI.getX(), entity.getPosY() + vI.getY(),
-						entity.getPosZ() + vI.getZ());
-				if (w.getFluidState(tempPos).isTagged(FluidTags.WATER)) {
-					w.addParticle(ParticleTypes.BUBBLE_POP, biterPos.getX(), biterPos.getY(), biterPos.getZ(), 0.04,
-							-0.05, 0.05);
-					w.addParticle(ParticleTypes.BUBBLE, biterPos.getX(), biterPos.getY(), biterPos.getZ(), 0.05, -0.05,
-							0.05);
-					w.addParticle(ParticleTypes.BUBBLE, biterPos.getX(), biterPos.getY(), biterPos.getZ(), 0.06, -0.05,
-							0.05);
-					w.playSound((PlayerEntity) null, biterPos, SoundEvents.ENTITY_ENDERMAN_TELEPORT,
-							SoundCategory.HOSTILE, 0.5f, 0.5f);
-					// water collapsing into resulting void
-					w.playSound((PlayerEntity) null, biterPos, SoundEvents.ITEM_TRIDENT_THUNDER, SoundCategory.AMBIENT,
-							0.25f, 0.25f);
-					this.parentEntity.setPositionAndUpdate(tempPos.getX(), tempPos.getY(), tempPos.getZ());
+			if (distanceSq > 524) {
+				if (aa%3 == 0) {
+					w.playSound((PlayerEntity) entity, entity.getPosition(), ModSounds.SLIPPERY_BITER_AMBIENT,
+							SoundCategory.HOSTILE, 1.0f, 1.0f);					
 				}
-				int debug = 3;
+				return false;
 			}
+			
+			this.parentEntity.setAttackTarget(entity);
 			this.parentEntity.setTargetedEntity(entity.getEntityId());
+			w.playSound((PlayerEntity) null, entity.getPosition(), ModSounds.SLIPPERY_BITER_AMBIENT,
+					SoundCategory.HOSTILE, 1.0f, 1.0f);
 			return true;
 		}
 	}
+	
+	@Override
+	public void travel(Vector3d travelVector) {
+		if (this.isServerWorld() && this.isInWater()) {
+			if (this.getAttackTarget() != null) {
+				if (travelVector.length() != 0) {
+					int x=3;
+				}
+			}
+//			float aispeed = this.getAIMoveSpeed();
+//			Vector3d thisVmotion = this.getMotion();
+//			thisVmotion = this.getMotion().scale(0.5D);
+			this.moveRelative(this.getAIMoveSpeed() * 0.9f, travelVector);
+			this.move(MoverType.SELF, this.getMotion());
+			this.setMotion(this.getMotion().scale(0.9D));
+			if (this.getAttackTarget() == null) {
+				this.setMotion(this.getMotion().add(0.0D, -0.005D, 0.0D));
+			}
+		} else {
+			super.travel(travelVector);
+		}
 
+	}
+	
 	@Override
 	public void livingTick() {
 		if (this.isAlive()) {
@@ -459,7 +494,7 @@ public class SlipperyBiterEntity extends MonsterEntity implements IAngerable {
 
 				this.clientSideTailAnimationO = this.clientSideTailAnimation;
 				if (!this.isInWater()) {
-					this.clientSideTailAnimationSpeed = 2.0f;
+					this.clientSideTailAnimationSpeed = 1.8f;
 					final Vector3d workMotion = this.getMotion();
 					if (workMotion.y > 0.0 && this.clientSideTouchedGround && !this.isSilent()) {
 						this.world.playSound(this.getPosX(), this.getPosY(), this.getPosZ(), this.getFlopSound(),
@@ -523,11 +558,16 @@ public class SlipperyBiterEntity extends MonsterEntity implements IAngerable {
 
 		@Override
 		public void tick() {
+			
+			// mild buoyancy
 			if (this.workSlipperyBiterEntity.isInWater()) {
 				this.workSlipperyBiterEntity
 						.setMotion(this.workSlipperyBiterEntity.getMotion().add(0.0D, 0.005D, 0.0D));
 			}
 
+			// Slippery Biter can teleport behind the player if they are 9 to 15 meters away.
+			trySlipperyDartingMove();
+			
 			if (this.action == MovementController.Action.MOVE_TO
 					&& !this.workSlipperyBiterEntity.getNavigator().noPath()) {
 				double d0 = this.posX - this.workSlipperyBiterEntity.getPosX();
@@ -545,7 +585,7 @@ public class SlipperyBiterEntity extends MonsterEntity implements IAngerable {
 					float f1 = (float) (this.speed
 							* this.workSlipperyBiterEntity.getAttributeValue(Attributes.MOVEMENT_SPEED));
 					if (this.workSlipperyBiterEntity.isInWater()) {
-						this.workSlipperyBiterEntity.setAIMoveSpeed(f1 * 1.0F);
+						this.workSlipperyBiterEntity.setAIMoveSpeed(f1 * 0.02F);
 						float f2 = -((float) (MathHelper.atan2(d1, MathHelper.sqrt(d0 * d0 + d2 * d2))
 								* (double) (180F / (float) Math.PI)));
 						f2 = MathHelper.clamp(MathHelper.wrapDegrees(f2), -85.0F, 85.0F);
@@ -567,6 +607,33 @@ public class SlipperyBiterEntity extends MonsterEntity implements IAngerable {
 				this.workSlipperyBiterEntity.setMoveStrafing(0.0F);
 				this.workSlipperyBiterEntity.setMoveVertical(0.0F);
 				this.workSlipperyBiterEntity.setMoveForward(0.0F);
+			}
+		}
+
+		private void trySlipperyDartingMove() {
+			BlockPos biterPos = this.workSlipperyBiterEntity.getPosition();
+			LivingEntity entity = this.workSlipperyBiterEntity.getAttackTarget();
+			if (entity != null) {
+				int distanceSq = (int) entity.getDistanceSq(this.workSlipperyBiterEntity);
+				if ((distanceSq > 125) && (distanceSq < 160)) {
+					World w = workSlipperyBiterEntity.getEntityWorld();
+					Vector3d v = entity.getLookVec();
+					Vector3i vI = new Vector3i(v.getX() * -4, v.getY() , v.getZ() * -4);
+					BlockPos tempPos = new BlockPos(entity.getPosX() + vI.getX(), entity.getPosY() +1 + vI.getY(),
+							entity.getPosZ() + vI.getZ());
+					System.out.println("Darting Distance: " + distanceSq +" TempPos:" + tempPos);
+					if (w.getFluidState(tempPos).isTagged(FluidTags.WATER)) {
+						w.setBlockState(biterPos, Blocks.AIR.getDefaultState());
+						w.playSound((PlayerEntity) null, biterPos, SoundEvents.ENTITY_ENDERMAN_TELEPORT,
+								SoundCategory.HOSTILE, 0.5f, 0.5f);
+						// water collapsing into resulting void
+						w.playSound((PlayerEntity) null, biterPos, SoundEvents.ENTITY_GENERIC_EXPLODE, SoundCategory.AMBIENT,
+								0.25f, 0.25f);
+						this.workSlipperyBiterEntity.setPositionAndUpdate(tempPos.getX(), tempPos.getY(), tempPos.getZ());
+						
+					}
+				}
+				
 			}
 		}
 	}

@@ -277,7 +277,7 @@ public class RiverGuardianEntity extends GuardianEntity {
 
 	protected SoundEvent getAmbientSound() {
 
-		return this.isInWaterOrBubbleColumn() ? ModSounds.RIVER_GUARDIAN_AMBIENT : ModSounds.RIVER_GUARDIAN_LAND_HURT;
+		return this.isInWaterOrBubbleColumn() ? ModSounds.RIVER_GUARDIAN_AMBIENT : ModSounds.RIVER_GUARDIAN_HURT_LAND;
 	}
 
 	@Override
@@ -292,7 +292,7 @@ public class RiverGuardianEntity extends GuardianEntity {
 
 	// TODO Raise Pitch because smaller
 	protected SoundEvent getHurtSound(DamageSource damageSourceIn) {
-		return this.isInWaterOrBubbleColumn() ? ModSounds.RIVER_GUARDIAN_HURT : ModSounds.RIVER_GUARDIAN_LAND_HURT;
+		return this.isInWaterOrBubbleColumn() ? ModSounds.RIVER_GUARDIAN_HURT : ModSounds.RIVER_GUARDIAN_HURT_LAND;
 	}
 
 	static class TargetPredicate implements Predicate<LivingEntity> {

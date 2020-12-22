@@ -5,40 +5,14 @@
 			"rolls": 1,
 			"entries": [
 				{
-					"type": "minecraft:item",
-					"functions": [
-						{
-							"function": "minecraft:set_count",
-							"count": {
-								"min": 0.0,
-								"max": 2.0,
-								"type": "minecraft:uniform"
-							}
-						},
-						{
-							"function": "minecraft:looting_enchant",
-							"count": {
-								"min": 0.0,
-								"max": 1.0
-							}
-						}
-					],
-					"name": "minecraft:prismarine_shard"
-				}
-			]
-		},
-		{
-			"rolls": 1,
-			"entries": [
-				{
-					"weight": 20,
+					"weight": 15,
 					"type": "minecraft:item",
 					"functions": [
 						{
 							"function": "minecraft:set_count",
 							"count": {
 								"min": 1.0,
-								"max": 1.0,
+								"max": 2.0,
 								"type": "minecraft:uniform"
 							}
 						},
@@ -53,7 +27,7 @@
 					"name": "hostilewatermobs:slippery_biter_scales"
 				},
 				{
-					"weight": 20,
+					"weight": 15,
 					"type": "minecraft:item",
 					"functions": [
 						{
@@ -101,10 +75,10 @@
 							]
 						}
 					],
-					"name": "minecraft:cod"
+					"name": "minecraft:salmon"
 				},
 				{
-					"weight": 10,
+					"weight": 15,
 					"type": "minecraft:loot_table",
 					"name": "minecraft:gameplay/fishing/junk"
 				},
@@ -123,7 +97,7 @@
 					"name": "minecraft:prismarine_crystals"
 				},
 				{
-					"weight": 10,
+					"weight": 5,
 					"type": "minecraft:loot_table",
 					"name": "minecraft:gameplay/fishing/treasure",
 					"conditions": [
@@ -142,6 +116,29 @@
 			"rolls": 1,
 			"entries": [
 				{
+					"weight": 15,
+					"type": "minecraft:item",
+					"functions": [
+						{
+							"function": "minecraft:set_count",
+							"count": {
+								"min": 1.0,
+								"max": 1.0,
+								"type": "minecraft:uniform"
+							}
+						},
+						{
+							"function": "minecraft:looting_enchant",
+							"count": {
+								"min": 0.0,
+								"max": 1.0
+							}
+						}
+					],
+					"name": "hostilewatermobs:slippery_biter_gland"
+				},			
+				{
+					"weight": 20,
 					"type": "minecraft:loot_table",
 					"name": "minecraft:gameplay/fishing/fish"
 				}

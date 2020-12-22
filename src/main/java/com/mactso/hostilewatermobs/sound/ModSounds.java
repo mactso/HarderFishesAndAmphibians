@@ -10,7 +10,7 @@ public class ModSounds
 {
 	
 	public static final SoundEvent RIVER_GUARDIAN_HURT = create("river_guardian.hurt");
-	public static final SoundEvent RIVER_GUARDIAN_LAND_HURT = create("river_guardian.land_hurt");
+	public static final SoundEvent RIVER_GUARDIAN_HURT_LAND = create("river_guardian.hurt_land");
 	public static final SoundEvent RIVER_GUARDIAN_DEATH = create("river_guardian.death");
 	public static final SoundEvent RIVER_GUARDIAN_DEATH_LAND = create("river_guardian.death_land");
 	public static final SoundEvent RIVER_GUARDIAN_AMBIENT = create("river_guardian.ambient");
@@ -32,7 +32,7 @@ public class ModSounds
 	public static void register(IForgeRegistry<SoundEvent> registry)
 	{
 		registry.register(RIVER_GUARDIAN_HURT);
-		registry.register(RIVER_GUARDIAN_LAND_HURT);
+		registry.register(RIVER_GUARDIAN_HURT_LAND);
 		registry.register(RIVER_GUARDIAN_DEATH);
 		registry.register(RIVER_GUARDIAN_DEATH_LAND);
 		registry.register(RIVER_GUARDIAN_AMBIENT);

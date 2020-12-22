@@ -4,8 +4,8 @@
     "subtitle": "subtitles.river_guardian.hurt",
     "sounds": [{"name":"entity.guardian.hurt", "pitch": 1.7, "type": "event" }]
   },
-  "river_guardian.land_hurt": {
-    "subtitle": "subtitles.river_guardian.hurt",
+  "river_guardian.hurt_land": {
+    "subtitle": "subtitles.river_guardian.hurt_land",
     "sounds": [{"name":"entity.guardian.hurt_land", "pitch": 1.7, "type": "event" }]
   },
   "river_guardian.death": {
@@ -24,29 +24,31 @@
     "subtitle": "subtitles.river_guardian.flop",
     "sounds": [{"name":"entity.guardian.flop", "pitch": 1.7, "type": "event" }]
   }  ,
-  "slipper_biter.hurt": {
+  "slippery_biter.hurt": {
     "subtitle": "subtitles.slippery_biter.hurt",
     "sounds": [{"name":"entity.guardian.hurt", "pitch": 1.7, "type": "event" }]
   },
-  "slipper_biter.land_hurt": {
-    "subtitle": "subtitles.slippery_biter.hurt",
+  "slippery_biter.land_hurt": {
+    "subtitle": "subtitles.slippery_biter.hurt_land",
     "sounds": [{"name":"entity.guardian.hurt_land", "pitch": 1.5, "type": "event" }]
   },
-  "slipper_biter.death": {
+  "slippery_biter.death": {
     "subtitle": "subtitles.slippery_biter.death",
     "sounds": [{"name":"entity.guardian.death", "pitch": 1.8, "type": "event"  }]
   },
-  "slipper_biter.death_land": {
+  "slippery_biter.death_land": {
     "subtitle": "subtitles.slippery_biter.death_land",
     "sounds": [{"name":"entity.guardian.death_land", "pitch": 1.7, "type": "event" }]
   },
-  "slipper_biter.ambient": {
+    "slippery_biter.ambient": {
     "subtitle": "subtitles.slippery_biter.ambient",
-    "sounds": [{"name":"entity.guardian.ambient", "pitch": 1.9, "type": "event" }]
+    "sounds": [
+      "hostilewatermobs:entity/slippery_biter.ambient"
+    ]
   },
-  "slipper_biter.flop": {
+  "slippery_biter.flop": {
     "subtitle": "subtitles.slippery_biter.flop",
     "sounds": [{"name":"entity.guardian.flop", "pitch": 1.5, "type": "event" }]
   }  
 }
-
+	
