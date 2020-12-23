@@ -24,8 +24,28 @@
 							}
 						}
 					],
-					"name": "hostilewatermobs:slippery_biter_scales"
+					"name": "hostilewatermobs:slipperybiter_scales",
+					"conditions": [
+						{
+							"condition": "minecraft:killed_by_player"
+						}
+					]
 				},
+				{
+					"weight": 1,
+					"type": "minecraft:item",
+					"functions": [
+						{
+							"function": "minecraft:set_count",
+							"count": {
+								"min": 1.0,
+								"max": 2.0,
+								"type": "minecraft:uniform"
+							}
+						}
+					],
+					"name": "hostilewatermobs:slipperybiter_scales"
+				},				
 				{
 					"weight": 15,
 					"type": "minecraft:item",
@@ -46,9 +66,13 @@
 							}
 						}
 					],
-					"name": "hostilewatermobs:slippery_biter_gland"
+					"name": "hostilewatermobs:slipperybiter_gland",
+					"conditions": [
+						{
+							"condition": "minecraft:killed_by_player"
+						}
+					]
 				},
-			
 				{
 					"type": "minecraft:item",
 					"weight": 20,
@@ -78,7 +102,7 @@
 					"name": "minecraft:salmon"
 				},
 				{
-					"weight": 15,
+					"weight": 10,
 					"type": "minecraft:loot_table",
 					"name": "minecraft:gameplay/fishing/junk"
 				},
@@ -94,10 +118,10 @@
 							}
 						}
 					],
-					"name": "minecraft:prismarine_crystals"
+					"name": "hostilewatermobs:slipperybiter_scales"
 				},
 				{
-					"weight": 5,
+					"weight": 3,
 					"type": "minecraft:loot_table",
 					"name": "minecraft:gameplay/fishing/treasure",
 					"conditions": [
@@ -107,7 +131,7 @@
 					]
 				},
 				{
-					"weight": 20,
+					"weight": 27,
 					"type": "minecraft:empty"
 				}
 			]
@@ -116,7 +140,7 @@
 			"rolls": 1,
 			"entries": [
 				{
-					"weight": 15,
+					"weight": 30,
 					"type": "minecraft:item",
 					"functions": [
 						{
@@ -135,10 +159,14 @@
 							}
 						}
 					],
-					"name": "hostilewatermobs:slippery_biter_gland"
+					"name": "hostilewatermobs:slipperybiter_gland"
+				},
+				{
+					"weight": 62,
+					"type": "minecraft:empty"
 				},			
 				{
-					"weight": 20,
+					"weight": 8,
 					"type": "minecraft:loot_table",
 					"name": "minecraft:gameplay/fishing/fish"
 				}

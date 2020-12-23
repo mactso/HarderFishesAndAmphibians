@@ -5,6 +5,7 @@ import java.util.List;
 import com.mactso.hostilewatermobs.Main;
 import com.mactso.hostilewatermobs.client.renderer.RiverGuardianRenderer;
 import com.mactso.hostilewatermobs.client.renderer.SlipperyBiterRenderer;
+import com.mactso.hostilewatermobs.config.MyConfig;
 
 import net.minecraft.client.renderer.entity.EntityRendererManager;
 import net.minecraft.entity.Entity;
@@ -12,7 +13,10 @@ import net.minecraft.entity.EntityClassification;
 import net.minecraft.entity.EntitySpawnPlacementRegistry;
 import net.minecraft.entity.EntityType;
 import net.minecraft.entity.ai.attributes.GlobalEntityTypeAttributes;
+import net.minecraft.entity.passive.fish.CodEntity;
 import net.minecraft.world.biome.Biome;
+import net.minecraft.world.biome.Biomes;
+import net.minecraft.world.biome.MobSpawnInfo;
 import net.minecraft.world.biome.MobSpawnInfo.Spawners;
 import net.minecraft.world.gen.Heightmap;
 import net.minecraft.world.gen.feature.structure.Structure;
@@ -23,7 +27,7 @@ import net.minecraftforge.registries.IForgeRegistry;
 public class ModEntities {
 
 	public static final EntityType<RiverGuardianEntity> RIVER_GUARDIAN = register("river_guardian", EntityType.Builder.create(RiverGuardianEntity::new, EntityClassification.MONSTER).size(0.85F, 0.85F).trackingRange(5));
-	public static final EntityType<SlipperyBiterEntity> SLIPPERY_BITER = register("slippery_biter", EntityType.Builder.create(SlipperyBiterEntity::new, EntityClassification.MONSTER).size(0.9F, 0.7F).trackingRange(21));
+	public static final EntityType<SlipperyBiterEntity> SLIPPERY_BITER = register("slipperybiter", EntityType.Builder.create(SlipperyBiterEntity::new, EntityClassification.MONSTER).size(0.9F, 0.7F).trackingRange(21));
 
 	private static <T extends Entity> EntityType<T> register(String name, EntityType.Builder<T> builder)
 	{
@@ -64,13 +68,21 @@ public class ModEntities {
 			spawns.add(new Spawners(RIVER_GUARDIAN, weight =5, min=1, max=3));
 		} else
 		if (biomeCategory == Biome.Category.RIVER) {
-			spawns.add(new Spawners(RIVER_GUARDIAN, weight = 100, min=1, max=1));
-		} else
+			spawns.add(new Spawners(RIVER_GUARDIAN, weight = 80, min=1, max=1));
+			spawns.add(new Spawners(EntityType.COD, weight = MyConfig.getCodSpawnBoost(), min = 1, max = 5));
+			spawns.add(new Spawners(EntityType.SALMON, weight = MyConfig.getSalmonSpawnBoost(), min = 1, max = 5));
+			spawns.add(new Spawners(EntityType.SQUID, weight = MyConfig.getSquidSpawnBoost(), min = 1, max = 4));
+			spawns.add(new Spawners(EntityType.DOLPHIN, weight = MyConfig.getDolphinSpawnboost(), min = 1, max = 2));		
+			} else
 		if (biomeCategory == Biome.Category.SWAMP) {
 			spawns.add(new Spawners(RIVER_GUARDIAN, weight = 50, min=1, max=1));
 		} else
 		if (biomeCategory == Biome.Category.OCEAN) {
 			spawns.add(new Spawners(RIVER_GUARDIAN, weight = 50, min=1, max=1));
+			spawns.add(new Spawners(EntityType.COD, weight = MyConfig.getCodSpawnBoost(), min = 1, max = 5));
+			spawns.add(new Spawners(EntityType.SALMON, weight = MyConfig.getSalmonSpawnBoost(), min = 1, max = 5));
+			spawns.add(new Spawners(EntityType.SQUID, weight = MyConfig.getSquidSpawnBoost(), min = 1, max = 4));
+			spawns.add(new Spawners(EntityType.DOLPHIN, weight = MyConfig.getDolphinSpawnboost(), min = 1, max = 2));		
 		} else {
 			spawns.add(new Spawners(RIVER_GUARDIAN, weight = 10, min=1, max=1 ));
 		}
@@ -80,10 +92,15 @@ public class ModEntities {
 		} else
 		if (biomeCategory == Biome.Category.OCEAN) {
 			spawns.add(new Spawners(SLIPPERY_BITER, weight = 50, min=1, max=3));
+			spawns.add(new Spawners(EntityType.COD, weight = MyConfig.getCodSpawnBoost(), min = 1, max = 5));
+			spawns.add(new Spawners(EntityType.SALMON, weight = MyConfig.getSalmonSpawnBoost(), min = 1, max = 5));
+			spawns.add(new Spawners(EntityType.SQUID, weight = MyConfig.getSquidSpawnBoost(), min = 1, max = 4));
+			spawns.add(new Spawners(EntityType.DOLPHIN, weight = MyConfig.getDolphinSpawnboost(), min = 1, max = 2));
 		} else {
 			spawns.add(new Spawners(SLIPPERY_BITER, weight = 20, min=1, max=2 ));
 		}
-
+		
+		
 	}
 	
 	

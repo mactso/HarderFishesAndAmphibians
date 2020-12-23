@@ -1,7 +1,10 @@
 package com.mactso.hostilewatermobs.client.renderer;
 
+import javax.xml.bind.annotation.adapters.XmlJavaTypeAdapter.DEFAULT;
+
 import com.mactso.hostilewatermobs.Main;
 import com.mactso.hostilewatermobs.client.model.SlipperyBiterModel;
+import com.mactso.hostilewatermobs.entities.RiverGuardianEntity;
 import com.mactso.hostilewatermobs.entities.SlipperyBiterEntity;
 import com.mojang.blaze3d.matrix.MatrixStack;
 
@@ -26,9 +29,20 @@ public class SlipperyBiterRenderer extends MobRenderer<SlipperyBiterEntity, Slip
 		super(renderManagerIn, new SlipperyBiterModel<>(), 0.3f);
 	}
 
-	protected void preRenderCallback(SlipperyBiterEntity entitylivingbaseIn, MatrixStack matrixStackIn,
+	protected void preRenderCallback(SlipperyBiterEntity entityIn, MatrixStack matrixStackIn,
 			float partialTickTime) {
-		matrixStackIn.scale(SlipperyBiterEntity.SIZE, SlipperyBiterEntity.SIZE, SlipperyBiterEntity.SIZE);
+		  int subtype = ((SlipperyBiterEntity) entityIn).getSubType();
+		  int eSize = (((SlipperyBiterEntity) entityIn).getEntityId()%16)-8;
+		  float uniqueSize = (float)eSize/48;
+		  subtype = (2 + subtype) %2;
+		  if (subtype == SlipperyBiterEntity.LARGE_SLIPPERY_BITER) {
+//			  System.out.println ("Large ("+SlipperyBiterEntity.LARGE_SIZE+") + "+uniqueSize);
+				matrixStackIn.scale(SlipperyBiterEntity.LARGE_SIZE+uniqueSize+0.4f, SlipperyBiterEntity.LARGE_SIZE+uniqueSize+0.35f, SlipperyBiterEntity.LARGE_SIZE+uniqueSize+0.4f);
+		  } else {
+//			  System.out.println ("Normal ("+SlipperyBiterEntity.SIZE+") + " + uniqueSize);
+				matrixStackIn.scale(SlipperyBiterEntity.SIZE+uniqueSize, SlipperyBiterEntity.SIZE+uniqueSize, SlipperyBiterEntity.SIZE+uniqueSize);
+			  
+		  }
 	}
 
 	public void render(SlipperyBiterEntity entityIn, float entityYaw, float partialTicks, MatrixStack matrixStackIn,

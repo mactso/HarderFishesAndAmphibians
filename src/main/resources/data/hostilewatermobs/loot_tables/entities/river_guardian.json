@@ -5,6 +5,7 @@
 			"rolls": 1,
 			"entries": [
 				{
+					"weight": 15,
 					"type": "minecraft:item",
 					"functions": [
 						{
@@ -23,7 +24,58 @@
 							}
 						}
 					],
-					"name": "minecraft:prismarine_shard"
+					"name": "minecraft:prismarine_shard",
+					"conditions": [
+						{
+							"condition": "minecraft:killed_by_player"
+						}
+					]
+				},
+				{
+					"weight": 2,
+					"type": "minecraft:item",
+					"functions": [
+						{
+							"function": "minecraft:set_count",
+							"count": {
+								"min": 0.0,
+								"max": 1.0,
+								"type": "minecraft:uniform"
+							}
+						}
+					],
+					"name": "hostilewatermobs:river_guardian_scales"
+				},
+				{
+					"weight": 20,
+					"type": "minecraft:item",
+					"functions": [
+						{
+							"function": "minecraft:set_count",
+							"count": {
+								"min": 0.0,
+								"max": 2.0,
+								"type": "minecraft:uniform"
+							}
+						},
+						{
+							"function": "minecraft:looting_enchant",
+							"count": {
+								"min": 0.0,
+								"max": 1.0
+							}
+						}
+					],
+					"name": "hostilewatermobs:river_guardian_scales",
+					"conditions": [
+						{
+							"condition": "minecraft:killed_by_player"
+						}
+					]
+				},
+				{
+					"weight": 20,
+					"type": "minecraft:empty"
 				}
 			]
 		},
@@ -50,7 +102,12 @@
 							}
 						}
 					],
-					"name": "hostilewatermobs:river_guardian_scales"
+					"name": "hostilewatermobs:river_guardian_scales",
+					"conditions": [
+						{
+							"condition": "minecraft:killed_by_player"
+						}
+					]
 				},
 				{
 					"type": "minecraft:item",
@@ -83,7 +140,12 @@
 				{
 					"weight": 20,
 					"type": "minecraft:loot_table",
-					"name": "minecraft:gameplay/fishing/junk"
+					"name": "minecraft:gameplay/fishing/junk",
+					"conditions": [
+						{
+							"condition": "minecraft:killed_by_player"
+						}
+					]
 				},
 				{
 					"type": "minecraft:item",
@@ -97,7 +159,7 @@
 							}
 						}
 					],
-					"name": "minecraft:prismarine_crystals"
+					"name": "hostilewatermobs:river_guardian_scales"
 				},
 				{
 					"weight": 15,

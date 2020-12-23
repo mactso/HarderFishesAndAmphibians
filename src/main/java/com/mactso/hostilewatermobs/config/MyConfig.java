@@ -62,11 +62,33 @@ public class MyConfig {
 		return slipperyBiterSpawnCap;
 	}
 
+	public static int getCodSpawnBoost() {
+		return CodSpawnBoost;
+	}
+	
+	public static int getSalmonSpawnBoost() {
+		return SalmonSpawnBoost;
+	}
+	
+	public static int getSquidSpawnBoost() {
+		return SquidSpawnBoost;
+	}
+	
+	public static int getDolphinSpawnboost() {
+		return DolphinSpawnboost;
+	}
+	
 	private static int      aDebugLevel;
 	private static int 	    riverGuardianSpawnChance;
 	private static int 	    riverGuardianSpawnCap;
 	private static int 	    slipperyBiterSpawnChance;
 	private static int 	    slipperyBiterSpawnCap;
+	private static int 	    CodSpawnBoost;
+	private static int 	    SalmonSpawnBoost;
+	private static int 	    SquidSpawnBoost;
+	private static int 	    DolphinSpawnboost;
+	
+
 
 	public static final int KILLER_ANY   = 0;
 	public static final int KILLER_MOB_OR_PLAYER = 1;
@@ -112,6 +134,10 @@ public class MyConfig {
 		public final IntValue riverGuardianSpawnCap;
 		public final IntValue slipperyBiterSpawnChance;
 		public final IntValue slipperyBiterSpawnCap;	
+		public final IntValue     codSpawnBoost;
+		public final IntValue     salmonSpawnBoost;
+		public final IntValue 	    squidSpawnBoost;
+		public final IntValue 	    dolphinSpawnBoost;
 		
 		public Common(ForgeConfigSpec.Builder builder) {
 			builder.push("Hostile Water Mobs");
@@ -140,6 +166,25 @@ public class MyConfig {
 					.comment("slipperyBiterSpawnCap")
 					.translation(Main.MODID + ".config." + "slipperyBiterSpawnCap")
 					.defineInRange("slipperyBiterSpawnCap", () -> 27, 0, 100);
+
+			
+			codSpawnBoost = builder
+					.comment("codSpawnBoost")
+					.translation(Main.MODID + ".config." + "codSpawnBoost")
+					.defineInRange("codSpawnBoost", () -> 15, 0, 100);
+			salmonSpawnBoost = builder
+					.comment("salmonSpawnBoost")
+					.translation(Main.MODID + ".config." + "salmonSpawnBoost")
+					.defineInRange("salmonSpawnBoost", () -> 15, 0, 100);
+			squidSpawnBoost = builder
+					.comment("squidSpawnBoost")
+					.translation(Main.MODID + ".config." + "squidSpawnBoost")
+					.defineInRange("squidSpawnBoost", () -> 10, 0, 100);
+			dolphinSpawnBoost = builder
+					.comment("dolphinSpawnBoost")
+					.translation(Main.MODID + ".config." + "dolphinSpawnBoost")
+					.defineInRange("dolphinSpawnBoost", () -> 10, 0, 100);
+									
 			
 			builder.pop();
 			

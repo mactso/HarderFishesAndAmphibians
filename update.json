@@ -1,6 +1,8 @@
 {
     "homepage": "https://www.curseforge.com/minecraft/mc-mods/harderfishesandamphibians",
     "promos": {
-        "1.16.1-latest": "1.108.0.1"
+        "1.16.1-latest": "1.108.0.1",
+        "1.16.3-latest": "1.1.0.5",
+        "1.16.4-latest": "1.1.0.5"
 	}
 }

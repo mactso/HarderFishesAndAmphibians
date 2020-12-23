@@ -1,14 +1,14 @@
 {
-    "subtitles.river_guardian.hurt" : "river guardian hurt",
-	"subtitles.river_guardian.land_hurt" : "river guardian hurt on land",
-	"subtitles.river_guardian.death": "river guardian dies",
-	"subtitles.river_guardian.death_land" : "river guardian dies on land",
-	"subtitles.river_guardian.ambient": "river guardian burbles",
-	"subtitles.river_guardian.flop": "river guardian flops around",
-    "subtitles.slippery_biter.hurt" : "river guardian hurt",
-	"subtitles.slippery_biter.land_hurt" : "river guardian hurt on land",
-	"subtitles.slippery_biter.death": "river guardian dies",
-	"subtitles.slippery_biter.death_land" : "river guardian dies on land",
-	"subtitles.slippery_biter.ambient": "river guardian burbles",
-	"subtitles.slippery_biter.flop": "river guardian flops around"
+    "subtitles.river_guardian.hurt" : "xriver guardian hurt",
+	"subtitles.river_guardian.land_hurt" : "xriver guardian hurt on land",
+	"subtitles.river_guardian.death": "xriver guardian dies",
+	"subtitles.river_guardian.death_land" : "xriver guardian dies on land",
+	"subtitles.river_guardian.ambient": "xriver guardian burbles",
+	"subtitles.river_guardian.flop": "xriver guardian flops around",
+    "subtitles.slipperybiter.hurt" : "xriver guardian hurt",
+	"subtitles.slipperybiter.land_hurt" : "xriver guardian hurt on land",
+	"subtitles.slipperybiter.death": "xriver guardian dies",
+	"subtitles.slipperybiter.death_land" : "xriver guardian dies on land",
+	"subtitles.slipperybiter.ambient": "xriver guardian burbles",
+	"subtitles.slipperybiter.flop": "xriver guardian flops around"
 }

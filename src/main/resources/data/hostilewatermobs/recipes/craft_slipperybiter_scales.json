@@ -1,0 +1,11 @@
+{
+  "type": "minecraft:crafting_shapeless",
+  "ingredients": [
+    {
+      "item": "hostilewatermobs:slipperybiter_scales"
+    }
+  ],
+  "result": {
+    "item": "minecraft:prismarine_crystals"
+  }
+}

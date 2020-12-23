@@ -4,12 +4,14 @@ package com.mactso.hostilewatermobs;
 import com.mactso.hostilewatermobs.config.MyConfig;
 import com.mactso.hostilewatermobs.entities.ModEntities;
 import com.mactso.hostilewatermobs.item.ModItems;
+import com.mactso.hostilewatermobs.item.crafting.HostileWaterMobsRecipe;
 import com.mactso.hostilewatermobs.sound.ModSounds;
 import com.mactso.hostilewatermobs.util.SpawnData;
 
 import net.minecraft.client.Minecraft;
 import net.minecraft.entity.EntityType;
 import net.minecraft.item.Item;
+import net.minecraft.item.crafting.IRecipeSerializer;
 import net.minecraft.util.SoundEvent;
 import net.minecraftforge.api.distmarker.Dist;
 import net.minecraftforge.api.distmarker.OnlyIn;
@@ -66,19 +68,29 @@ public class Main {
 	    	@SubscribeEvent
 	    	public static void onItemsRegistry(final RegistryEvent.Register<Item> event)
 	    	{
+				System.out.println("hostilewatermobs: Registering Items.");
 	    		ModItems.register(event.getRegistry());
 	    	}
 			
 	        @SubscribeEvent
 	        public static void onEntityRegistry(final RegistryEvent.Register<EntityType<?>> event)
 	        {
+				System.out.println("hostilewatermobs: Registering Entities.");
 	        	ModEntities.register(event.getRegistry());
 	        }
 	        
 	        @SubscribeEvent
 	        public static void onSoundRegistry(final RegistryEvent.Register<SoundEvent> event)
 	        {
+				System.out.println("hostilewatermobs: Registering Sounds.");
 	        	ModSounds.register(event.getRegistry());
+	        }
+	        
+	        @SubscribeEvent
+	        public static void onRecipeRegistry(final RegistryEvent.Register<IRecipeSerializer<?>> event)
+	        {
+				System.out.println("hostilewatermobs: Registering Recipes");
+	        	event.getRegistry().register(HostileWaterMobsRecipe.CRAFTING_HOSTILEWATERMOBS);
 	        }
 	        
 	    }	

@@ -24,30 +24,30 @@
     "subtitle": "subtitles.river_guardian.flop",
     "sounds": [{"name":"entity.guardian.flop", "pitch": 1.7, "type": "event" }]
   }  ,
-  "slippery_biter.hurt": {
-    "subtitle": "subtitles.slippery_biter.hurt",
+  "slipperybiter.hurt": {
+    "subtitle": "subtitles.slipperybiter.hurt",
     "sounds": [{"name":"entity.guardian.hurt", "pitch": 1.7, "type": "event" }]
   },
-  "slippery_biter.land_hurt": {
-    "subtitle": "subtitles.slippery_biter.hurt_land",
+  "slipperybiter.land_hurt": {
+    "subtitle": "subtitles.slipperybiter.hurt_land",
     "sounds": [{"name":"entity.guardian.hurt_land", "pitch": 1.5, "type": "event" }]
   },
-  "slippery_biter.death": {
-    "subtitle": "subtitles.slippery_biter.death",
-    "sounds": [{"name":"entity.guardian.death", "pitch": 1.8, "type": "event"  }]
+  "slipperybiter.death": {
+    "subtitle": "subtitles.slipperybiter.death",
+    "sounds": ["mob/ghast/death"]
   },
-  "slippery_biter.death_land": {
-    "subtitle": "subtitles.slippery_biter.death_land",
+  "slipperybiter.death_land": {
+    "subtitle": "subtitles.slipperybiter.death_land",
     "sounds": [{"name":"entity.guardian.death_land", "pitch": 1.7, "type": "event" }]
   },
-    "slippery_biter.ambient": {
-    "subtitle": "subtitles.slippery_biter.ambient",
+    "slipperybiter.ambient": {
+    "subtitle": "subtitles.slipperybiter.ambient",
     "sounds": [
-      "hostilewatermobs:entity/slippery_biter.ambient"
+      "hostilewatermobs:entity/slipperybiter.ambient"
     ]
   },
-  "slippery_biter.flop": {
-    "subtitle": "subtitles.slippery_biter.flop",
+  "slipperybiter.flop": {
+    "subtitle": "subtitles.slipperybiter.flop",
     "sounds": [{"name":"entity.guardian.flop", "pitch": 1.5, "type": "event" }]
   }  
 }

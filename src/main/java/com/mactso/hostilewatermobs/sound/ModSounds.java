@@ -16,10 +16,10 @@ public class ModSounds
 	public static final SoundEvent RIVER_GUARDIAN_AMBIENT = create("river_guardian.ambient");
 	public static final SoundEvent RIVER_GUARDIAN_FLOP= create("river_guardian.flop");
 
-	public static final SoundEvent SLIPPERY_BITER_HURT = create("slippery_biter.hurt");
-	public static final SoundEvent SLIPPERY_BITER_DEATH = create("slippery_biter.death");
-	public static final SoundEvent SLIPPERY_BITER_AMBIENT = create("slippery_biter.ambient");
-	public static final SoundEvent SLIPPERY_BITER_FLOP = create("slippery_biter.flop");
+	public static final SoundEvent SLIPPERY_BITER_HURT = create("slipperybiter.hurt");
+	public static final SoundEvent SLIPPERY_BITER_DEATH = create("slipperybiter.death");
+	public static final SoundEvent SLIPPERY_BITER_AMBIENT = create("slipperybiter.ambient");
+	public static final SoundEvent SLIPPERY_BITER_FLOP = create("slipperybiter.flop");
 	
 	private static SoundEvent create(String key)
 	{
