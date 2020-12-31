@@ -18,6 +18,7 @@ import net.minecraft.entity.ai.attributes.AttributeModifier.Operation;
 import net.minecraft.entity.ai.attributes.AttributeModifierMap;
 import net.minecraft.entity.ai.attributes.Attributes;
 import net.minecraft.entity.ai.goal.NearestAttackableTargetGoal;
+import net.minecraft.entity.merchant.villager.VillagerEntity;
 import net.minecraft.entity.monster.GuardianEntity;
 import net.minecraft.entity.monster.MonsterEntity;
 import net.minecraft.entity.passive.AnimalEntity;
@@ -78,8 +79,9 @@ public class RiverGuardianEntity extends GuardianEntity {
 	public ILivingEntityData onInitialSpawn(IServerWorld worldIn, DifficultyInstance difficultyIn, SpawnReason reason,
 			ILivingEntityData spawnDataIn, CompoundNBT dataTag) {
 		BlockPos pos = getPosition(); // getPosition
-		
-		System.out.println ("riverguardian on intialspawn at " + pos.toString());
+		if (MyConfig.getaDebugLevel() > 0) {
+			System.out.println ("riverguardian on intialspawn at " + pos.toString());
+		}
 		Biome biome = worldIn.getBiome(pos);
 		ResourceLocation biomeNameResourceKey = worldIn.func_241828_r().getRegistry(Registry.BIOME_KEY).getKey(biome);
 		String biomename = biomeNameResourceKey.toString();
@@ -297,6 +299,7 @@ public class RiverGuardianEntity extends GuardianEntity {
 
 	static class TargetPredicate implements Predicate<LivingEntity> {
 		private final RiverGuardianEntity parentEntity;
+		private static int timer = 0;
 
 		public TargetPredicate(RiverGuardianEntity guardian) {
 			this.parentEntity = guardian;
@@ -326,9 +329,37 @@ public class RiverGuardianEntity extends GuardianEntity {
 			}
 
 			World w = entity.getEntityWorld();
+			
+			int range = MyConfig.getRiverGuardianSoundRange();
+			PlayerEntity pT = w.getClosestPlayer(entity, 15);
+			BlockPos pTPos = new BlockPos (0,0,0);
+			if (pT!= null) {
+				pTPos = pT.getPosition();
+			}
+			PlayerEntity pR = w.getClosestPlayer(parentEntity, 15);
+			BlockPos pRPos = new BlockPos (0,0,0);
+			if (pR!= null) {
+				pRPos = pR.getPosition();
+			}
 
-			boolean nearbyPlayer = (w.getClosestPlayer(entity, 24) != null);
-			int x =3 ;
+			boolean PlayerNearTarget = (w.getClosestPlayer(entity, MyConfig.getRiverGuardianSoundRange()) != null);
+			boolean PlayerNearRiverGuardian = (w.getClosestPlayer(parentEntity, MyConfig.getRiverGuardianSoundRange()) != null);
+			boolean nearbyPlayer = PlayerNearTarget || PlayerNearRiverGuardian;
+
+			if (MyConfig.getaDebugLevel() > 0) {
+				if (((timer++)%10 == 0) && nearbyPlayer) {
+					System.out.print (" riverPos: " + parentEntity.getPosition());
+					System.out.print (" targetPos: " + entity.getPosition());
+					System.out.println (" range: " + range);
+					System.out.print (" PlayerNearTarget: " + PlayerNearTarget);
+					System.out.print (" PlayernearestT: " + pTPos);
+					System.out.print (" PlayerNearRiverGuardian: " + PlayerNearRiverGuardian);
+					System.out.print (" PlayernearestR: " + pRPos);
+					System.out.println (" nearbyPlayer: " + nearbyPlayer);
+					
+				}
+			}
+			
 			// Ignore other River Guardians while it is Raining.
 			boolean isRiverGuardianEntity = entity instanceof RiverGuardianEntity;
 			if (w.isRaining() && isRiverGuardianEntity) {
@@ -341,6 +372,17 @@ public class RiverGuardianEntity extends GuardianEntity {
 				return false;
 			}
 
+			boolean isVillager = entity instanceof VillagerEntity;
+			if (isVillager) {
+				if (entity.isChild() == false) {
+					return false;
+				} else
+				if (MyConfig.getRiverGuardianPreysOnVillagerChildren() == false) {
+					return false;
+				}
+			}
+			
+			
 			// attack nearby prey animals
 			boolean preyAnimal = entity instanceof CodEntity || entity instanceof PigEntity
 					|| entity instanceof ChickenEntity || entity instanceof RabbitEntity || entity.isChild();

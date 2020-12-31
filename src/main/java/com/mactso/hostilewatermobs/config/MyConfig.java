@@ -16,6 +16,7 @@ import net.minecraft.util.text.Color;
 import net.minecraft.util.text.StringTextComponent;
 import net.minecraftforge.common.ForgeConfigSpec;
 import net.minecraftforge.common.ForgeConfigSpec.IntValue;
+import net.minecraftforge.common.ForgeConfigSpec.BooleanValue;
 import net.minecraftforge.eventbus.api.SubscribeEvent;
 import net.minecraftforge.fml.common.Mod;
 import net.minecraftforge.fml.config.ModConfig;
@@ -39,7 +40,9 @@ public class MyConfig {
 		return aDebugLevel;
 	}
 
-
+	public static boolean getRiverGuardianPreysOnVillagerChildren() {
+		return riverGuardianPreysOnVillagerChildren;
+	}
 
 	public static void setaDebugLevel(int aDebugLevel) {
 		MyConfig.aDebugLevel = aDebugLevel;
@@ -49,6 +52,14 @@ public class MyConfig {
 		return riverGuardianSpawnChance;
 	}
 
+	public static int getRiverGuardianSoundRange() {
+		// old/bad configuration protection
+		if (riverGuardianSoundRange < 1) {
+			return 1;
+		}
+		return riverGuardianSoundRange;
+	}
+	
 	public static int getRiverGuardianSpawnCap() {
 		return riverGuardianSpawnCap;
 	}
@@ -79,8 +90,11 @@ public class MyConfig {
 	}
 	
 	private static int      aDebugLevel;
+
+	private static boolean  riverGuardianPreysOnVillagerChildren;
 	private static int 	    riverGuardianSpawnChance;
 	private static int 	    riverGuardianSpawnCap;
+	private static int 	    riverGuardianSoundRange;
 	private static int 	    slipperyBiterSpawnChance;
 	private static int 	    slipperyBiterSpawnCap;
 	private static int 	    CodSpawnBoost;
@@ -107,7 +121,9 @@ public class MyConfig {
 	
 	public static void pushValues() {
 		COMMON.debugLevel.set(aDebugLevel);
+		COMMON.riverGuardianPreysOnVillagerChildren.set(riverGuardianPreysOnVillagerChildren);
 		COMMON.riverGuardianSpawnChance.set(riverGuardianSpawnChance);
+		COMMON.riverGuardianSoundRange.set(riverGuardianSoundRange);
 		COMMON.riverGuardianSpawnCap.set(riverGuardianSpawnCap);
 		COMMON.slipperyBiterSpawnCap.set(slipperyBiterSpawnCap);
 		COMMON.slipperyBiterSpawnChance.set(slipperyBiterSpawnChance);
@@ -120,6 +136,7 @@ public class MyConfig {
 		aDebugLevel = COMMON.debugLevel.get();
 		riverGuardianSpawnChance = COMMON.riverGuardianSpawnChance.get();
 		riverGuardianSpawnCap = COMMON.riverGuardianSpawnCap.get();
+		riverGuardianSoundRange = COMMON.riverGuardianSoundRange.get();
 		slipperyBiterSpawnChance = COMMON.slipperyBiterSpawnChance.get();
 		slipperyBiterSpawnCap = COMMON.slipperyBiterSpawnCap.get();
 		if (aDebugLevel > 0) {
@@ -130,14 +147,16 @@ public class MyConfig {
 	public static class Common {
 
 		public final IntValue debugLevel;
+		public final BooleanValue riverGuardianPreysOnVillagerChildren;
 		public final IntValue riverGuardianSpawnChance;
 		public final IntValue riverGuardianSpawnCap;
+		public final IntValue riverGuardianSoundRange;
 		public final IntValue slipperyBiterSpawnChance;
 		public final IntValue slipperyBiterSpawnCap;	
-		public final IntValue     codSpawnBoost;
-		public final IntValue     salmonSpawnBoost;
-		public final IntValue 	    squidSpawnBoost;
-		public final IntValue 	    dolphinSpawnBoost;
+		public final IntValue codSpawnBoost;
+		public final IntValue salmonSpawnBoost;
+		public final IntValue squidSpawnBoost;
+		public final IntValue dolphinSpawnBoost;
 		
 		public Common(ForgeConfigSpec.Builder builder) {
 			builder.push("Hostile Water Mobs");
@@ -146,7 +165,12 @@ public class MyConfig {
 					.comment("Debug Level: 0 = Off, 1 = Log, 2 = Chat+Log")
 					.translation(Main.MODID + ".config." + "debugLevel")
 					.defineInRange("debugLevel", () -> 0, 0, 2);
-
+			
+			riverGuardianPreysOnVillagerChildren = builder
+					.comment("riverGuardianPreysOnVillagerChildren = true")
+					.translation(Main.MODID + ".config." + "riverGuardianPreysOnVillagerChildren")
+					.define("riverGuardianPreysOnVillagerChildren", true);
+			
 			riverGuardianSpawnChance = builder
 					.comment("riverGuardianSpawnChance")
 					.translation(Main.MODID + ".config." + "riverGuardianSpawnChance")
@@ -155,8 +179,14 @@ public class MyConfig {
 			riverGuardianSpawnCap = builder
 					.comment("riverGuardianSpawnCap")
 					.translation(Main.MODID + ".config." + "riverGuardianSpawnCap")
-					.defineInRange("riverGuardianSpawnCap", () -> 41, 1, 100);
+					.defineInRange("riverGuardianSpawnCap", () -> 37, 1, 100);
 
+			riverGuardianSoundRange = builder
+					.comment("riverGuardianSoundRange")
+					.translation(Main.MODID + ".config." + "riverGuardianSoundRange")
+					.defineInRange("riverGuardianSoundRange", () -> 15, 1, 24);
+
+			
 			slipperyBiterSpawnChance = builder
 					.comment("slipperyBiterSpawnChance")
 					.translation(Main.MODID + ".config." + "slipperyBiterSpawnChance")
@@ -165,8 +195,7 @@ public class MyConfig {
 			slipperyBiterSpawnCap = builder
 					.comment("slipperyBiterSpawnCap")
 					.translation(Main.MODID + ".config." + "slipperyBiterSpawnCap")
-					.defineInRange("slipperyBiterSpawnCap", () -> 27, 0, 100);
-
+					.defineInRange("slipperyBiterSpawnCap", () -> 21, 0, 100);
 			
 			codSpawnBoost = builder
 					.comment("codSpawnBoost")
