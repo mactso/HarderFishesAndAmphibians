@@ -1,6 +1,5 @@
 package com.mactso.hostilewatermobs.entities;
 
-import java.util.EnumSet;
 import java.util.Random;
 import java.util.UUID;
 import java.util.function.Predicate;
@@ -11,9 +10,6 @@ import com.mactso.hostilewatermobs.config.MyConfig;
 import com.mactso.hostilewatermobs.sound.ModSounds;
 
 import net.minecraft.block.Blocks;
-import net.minecraft.client.audio.GuardianSound;
-import net.minecraft.client.renderer.entity.GuardianRenderer;
-import net.minecraft.entity.CreatureEntity;
 import net.minecraft.entity.Entity;
 import net.minecraft.entity.EntitySize;
 import net.minecraft.entity.EntityType;
@@ -28,12 +24,9 @@ import net.minecraft.entity.ai.attributes.AttributeModifierMap;
 import net.minecraft.entity.ai.attributes.Attributes;
 import net.minecraft.entity.ai.attributes.ModifiableAttributeInstance;
 import net.minecraft.entity.ai.controller.DolphinLookController;
-import net.minecraft.entity.ai.controller.LookController;
 import net.minecraft.entity.ai.controller.MovementController;
 import net.minecraft.entity.ai.goal.FindWaterGoal;
 import net.minecraft.entity.ai.goal.FollowBoatGoal;
-import net.minecraft.entity.ai.goal.Goal;
-import net.minecraft.entity.ai.goal.Goal.Flag;
 import net.minecraft.entity.ai.goal.HurtByTargetGoal;
 import net.minecraft.entity.ai.goal.LookAtGoal;
 import net.minecraft.entity.ai.goal.LookRandomlyGoal;
@@ -41,7 +34,6 @@ import net.minecraft.entity.ai.goal.MeleeAttackGoal;
 import net.minecraft.entity.ai.goal.NearestAttackableTargetGoal;
 import net.minecraft.entity.ai.goal.RandomSwimmingGoal;
 import net.minecraft.entity.ai.goal.ResetAngerGoal;
-import net.minecraft.entity.monster.GuardianEntity;
 import net.minecraft.entity.monster.MonsterEntity;
 import net.minecraft.entity.passive.WaterMobEntity;
 import net.minecraft.entity.player.PlayerEntity;
@@ -74,8 +66,6 @@ import net.minecraft.world.biome.Biome;
 import net.minecraft.world.biome.Biome.Category;
 import net.minecraft.world.chunk.Chunk;
 import net.minecraft.world.server.ServerWorld;
-import net.minecraftforge.api.distmarker.Dist;
-import net.minecraftforge.api.distmarker.OnlyIn;
 
 public class SlipperyBiterEntity extends WaterMobEntity implements IAngerable {
 
@@ -114,6 +104,10 @@ public class SlipperyBiterEntity extends WaterMobEntity implements IAngerable {
 		return worldIn.checkNoEntityCollision(this);
 	}
 
+	public static boolean isInBubbleColumn(IWorld world, BlockPos pos) {
+		return world.getBlockState(pos).isIn(Blocks.BUBBLE_COLUMN);
+	}
+	
 	public static boolean canSpawn(EntityType<? extends SlipperyBiterEntity> type, IWorld world, SpawnReason reason,
 			BlockPos pos, Random randomIn) {
 
@@ -126,12 +120,17 @@ public class SlipperyBiterEntity extends WaterMobEntity implements IAngerable {
 //		this might block glass and half slabs... or it might block water too.  test later.
 //		if !(canSpawnOn(type, world, reason, pos, randomIn))
 
-		 boolean inWater = world.getFluidState(pos).isTagged(FluidTags.WATER)
+		boolean inWater = world.getFluidState(pos).isTagged(FluidTags.WATER)
 				|| world.getFluidState(pos.up()).isTagged(FluidTags.WATER);
+		
 		if (!inWater) {
 			return false;
 		}
 
+		if (isInBubbleColumn(world, pos)) {
+			return false;
+		}
+		
 		if (reason == SpawnReason.SPAWNER)
 			return true;
 
@@ -203,6 +202,8 @@ public class SlipperyBiterEntity extends WaterMobEntity implements IAngerable {
 
 		return false;
 	}
+
+
 
 	@Override
 	public ILivingEntityData onInitialSpawn(IServerWorld worldIn, DifficultyInstance difficultyIn, SpawnReason reason,

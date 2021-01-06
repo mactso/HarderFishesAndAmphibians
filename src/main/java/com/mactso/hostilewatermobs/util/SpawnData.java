@@ -8,10 +8,6 @@ import java.util.List;
 
 import com.mactso.hostilewatermobs.entities.ModEntities;
 
-import net.minecraft.entity.EntityType;
-import net.minecraft.util.ResourceLocation;
-import net.minecraft.world.biome.Biome;
-import net.minecraft.world.biome.BiomeManager;
 import net.minecraft.world.biome.MobSpawnInfo.Spawners;
 import net.minecraftforge.common.world.MobSpawnInfoBuilder;
 import net.minecraftforge.event.world.BiomeLoadingEvent;

@@ -1,10 +1,8 @@
 package com.mactso.hostilewatermobs.client.renderer;
 
-import javax.xml.bind.annotation.adapters.XmlJavaTypeAdapter.DEFAULT;
-
 import com.mactso.hostilewatermobs.Main;
 import com.mactso.hostilewatermobs.client.model.SlipperyBiterModel;
-import com.mactso.hostilewatermobs.entities.RiverGuardianEntity;
+import com.mactso.hostilewatermobs.client.renderer.layers.SlipperyBiterEyesLayer;
 import com.mactso.hostilewatermobs.entities.SlipperyBiterEntity;
 import com.mojang.blaze3d.matrix.MatrixStack;
 
@@ -22,11 +20,12 @@ public class SlipperyBiterRenderer extends MobRenderer<SlipperyBiterEntity, Slip
 	// public static final ResourceLocation ALBINO_RIVER_GUARDIAN_TEXTURE = new
 	// ResourceLocation(Main.MODID , "textures/entity/albino_river_guardian.png");
 	private static final ResourceLocation SlIPPERY_BITER_TEXTURES = new ResourceLocation(Main.MODID,
-			"textures/entity/slipperybitertexture.png");
+			"textures/entity/slipperybiter.png");
 
 	// suspect this is the size but may just be shadow size
 	public SlipperyBiterRenderer(final EntityRendererManager renderManagerIn) {
 		super(renderManagerIn, new SlipperyBiterModel<>(), 0.3f);
+        addLayer(new SlipperyBiterEyesLayer<>(this));
 	}
 
 	protected void preRenderCallback(SlipperyBiterEntity entityIn, MatrixStack matrixStackIn,
