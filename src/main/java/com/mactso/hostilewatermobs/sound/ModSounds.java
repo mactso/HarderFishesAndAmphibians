@@ -20,6 +20,12 @@ public class ModSounds
 	public static final SoundEvent SLIPPERY_BITER_DEATH = create("slipperybiter.death");
 	public static final SoundEvent SLIPPERY_BITER_AMBIENT = create("slipperybiter.ambient");
 	public static final SoundEvent SLIPPERY_BITER_FLOP = create("slipperybiter.flop");
+
+	public static final SoundEvent GURTY_AMBIENT = create("gurty.ambient");
+	public static final SoundEvent GURTY_ANGRY = create("gurty.angry");
+	public static final SoundEvent GURTY_HURT = create("gurty.hurt");
+	public static final SoundEvent GURTY_DEATH = create("gurty.death");
+	public static final SoundEvent GURTY_STEP = create("gurty.step");
 	
 	private static SoundEvent create(String key)
 	{
@@ -43,5 +49,10 @@ public class ModSounds
 		registry.register(SLIPPERY_BITER_HURT);
 		registry.register(SLIPPERY_BITER_DEATH);
 
+		registry.register(GURTY_AMBIENT);
+		registry.register(GURTY_ANGRY);
+		registry.register(GURTY_HURT);
+		registry.register(GURTY_STEP);
+		registry.register(GURTY_DEATH);
 	}
 }

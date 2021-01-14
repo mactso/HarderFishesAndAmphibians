@@ -3,12 +3,10 @@ package com.mactso.hostilewatermobs.client.model;
 import com.google.common.collect.ImmutableList;
 import com.mactso.hostilewatermobs.entities.SlipperyBiterEntity;
 
-import net.minecraft.client.renderer.entity.model.GuardianModel;
 import net.minecraft.client.renderer.entity.model.SegmentedModel;
 import net.minecraft.client.renderer.model.ModelRenderer;
 import net.minecraft.entity.Entity;
 import net.minecraft.util.math.MathHelper;
-import net.minecraft.util.math.vector.Vector3d;
 import net.minecraftforge.api.distmarker.Dist;
 import net.minecraftforge.api.distmarker.OnlyIn;
 

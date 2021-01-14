@@ -10,6 +10,7 @@ import com.mactso.hostilewatermobs.config.MyConfig;
 import com.mactso.hostilewatermobs.sound.ModSounds;
 
 import net.minecraft.block.Blocks;
+import net.minecraft.entity.CreatureEntity;
 import net.minecraft.entity.Entity;
 import net.minecraft.entity.EntitySize;
 import net.minecraft.entity.EntityType;
@@ -71,6 +72,7 @@ public class SlipperyBiterEntity extends WaterMobEntity implements IAngerable {
 
 	private int angerTime;
 	private UUID angerTarget;
+	private long slipperyTimer;
 	protected MeleeAttackGoal myMeleeAttackGoal;
 	private LivingEntity targetedEntity;
 	private float clientSideTailAnimation;
@@ -98,6 +100,7 @@ public class SlipperyBiterEntity extends WaterMobEntity implements IAngerable {
 		this.lookController = new DolphinLookController(this, 10);
 		this.clientSideTailAnimation = this.rand.nextFloat();
 		this.clientSideTailAnimationO = this.clientSideTailAnimation;
+		this.slipperyTimer = 0;
 	}
 
 	public boolean isNotColliding(IWorldReader worldIn) {
@@ -204,7 +207,6 @@ public class SlipperyBiterEntity extends WaterMobEntity implements IAngerable {
 	}
 
 
-
 	@Override
 	public ILivingEntityData onInitialSpawn(IServerWorld worldIn, DifficultyInstance difficultyIn, SpawnReason reason,
 			ILivingEntityData spawnDataIn, CompoundNBT dataTag) {
@@ -244,14 +246,14 @@ public class SlipperyBiterEntity extends WaterMobEntity implements IAngerable {
 
 	public static EntitySize getSize() {
 		float width = 0.7f;
-		float height = 0.4f;
+		float height = 0.17f;
 		boolean fixed_size = false;
 		return new EntitySize(width, height, fixed_size);
 	}
 
 	public static AttributeModifierMap.MutableAttribute registerAttributes() {
-		return MonsterEntity.func_234295_eP_().createMutableAttribute(Attributes.MOVEMENT_SPEED, (double) 1.2F)
-				.createMutableAttribute(Attributes.FOLLOW_RANGE, 24.0D)
+		return MonsterEntity.func_234295_eP_().createMutableAttribute(Attributes.MOVEMENT_SPEED, 0.16D)
+				.createMutableAttribute(Attributes.FOLLOW_RANGE, 20.0D)
 				.createMutableAttribute(Attributes.ATTACK_DAMAGE, 2.5D)
 				.createMutableAttribute(Attributes.MAX_HEALTH, 11.0D);
 	}
@@ -359,7 +361,7 @@ public class SlipperyBiterEntity extends WaterMobEntity implements IAngerable {
 
 		this.goalSelector.addGoal(0, new FindWaterGoal(this));
 		this.goalSelector.addGoal(1, new MeleeAttackGoal(this, 1.0D, false));
-		this.goalSelector.addGoal(2, new RandomSwimmingGoal(this, 1.0, 1));
+		this.goalSelector.addGoal(2, new RandomSwimmingGoal(this, 1.0D, 1));
 		this.goalSelector.addGoal(3, new FollowBoatGoal(this));
 		this.goalSelector.addGoal(4, new LookAtGoal(this, PlayerEntity.class, 7.0F));
 		this.goalSelector.addGoal(9, new LookRandomlyGoal(this));
@@ -595,12 +597,12 @@ public class SlipperyBiterEntity extends WaterMobEntity implements IAngerable {
 			// mild buoyancy
 			if (this.workSlipperyBiterEntity.isInWater()) {
 				this.workSlipperyBiterEntity
-						.setMotion(this.workSlipperyBiterEntity.getMotion().add(0.0D, 0.005D, 0.0D));
+						.setMotion(this.workSlipperyBiterEntity.getMotion().add(0.0D, 0.003D, 0.0D));
 			}
-
 			// Slippery Biter can teleport behind the player if they are 9 to 15 meters away.
 			trySlipperyDartingMove();
 			
+		
 			if (this.action == MovementController.Action.MOVE_TO
 					&& !this.workSlipperyBiterEntity.getNavigator().noPath()) {
 				double d0 = this.posX - this.workSlipperyBiterEntity.getPosX();
@@ -618,7 +620,7 @@ public class SlipperyBiterEntity extends WaterMobEntity implements IAngerable {
 					float f1 = (float) (this.speed
 							* this.workSlipperyBiterEntity.getAttributeValue(Attributes.MOVEMENT_SPEED));
 					if (this.workSlipperyBiterEntity.isInWater()) {
-						this.workSlipperyBiterEntity.setAIMoveSpeed(f1 * 0.018F);
+						this.workSlipperyBiterEntity.setAIMoveSpeed(f1 );
 						float f2 = -((float) (MathHelper.atan2(d1, MathHelper.sqrt(d0 * d0 + d2 * d2))
 								* (double) (180F / (float) Math.PI)));
 						f2 = MathHelper.clamp(MathHelper.wrapDegrees(f2), -85.0F, 85.0F);
@@ -649,6 +651,9 @@ public class SlipperyBiterEntity extends WaterMobEntity implements IAngerable {
 		}
 		
 		private void trySlipperyDartingMove() {
+			if (workSlipperyBiterEntity.slipperyTimer > workSlipperyBiterEntity.world.getGameTime()) {
+				return;
+			}
 			BlockPos biterPos = this.workSlipperyBiterEntity.getPosition();
 			LivingEntity entity = this.workSlipperyBiterEntity.getAttackTarget();
 			if (entity != null) {
@@ -674,7 +679,8 @@ public class SlipperyBiterEntity extends WaterMobEntity implements IAngerable {
 				        ((ServerWorld) w).spawnParticle((IParticleData)ParticleTypes.SQUID_INK, backwardsVector.x, backwardsVector.y + 1.0, backwardsVector.z, 0, randSpreadVec.x, randSpreadVec.y, randSpreadVec.z, -0.10000000149011612);
 
 				        }
-						this.workSlipperyBiterEntity.setPositionAndUpdate(tempPos.getX(), tempPos.getY(), tempPos.getZ());
+						this.workSlipperyBiterEntity.setPositionAndUpdate(tempPos.getX(), tempPos.getY()+.02f, tempPos.getZ());
+						workSlipperyBiterEntity.slipperyTimer = w.getGameTime() + 60;
 					}
 				}
 				

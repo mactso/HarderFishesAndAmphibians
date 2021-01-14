@@ -1,0 +1,144 @@
+{
+	"type": "minecraft:entity",
+	"pools": [
+		{
+			"rolls": 1,
+			"entries": [
+				{
+					"weight": 3,
+					"type": "minecraft:item",
+					"functions": [
+						{
+							"function": "minecraft:set_count",
+							"count": {
+								"min": 1.0,
+								"max": 1.0,
+								"type": "minecraft:uniform"
+							}
+						},
+						{
+							"function": "minecraft:looting_enchant",
+							"count": {
+								"min": 0.0,
+								"max": 1.0
+							}
+						}
+					],
+					"name": "hostilewatermobs:gurty_guts",
+					"conditions": [
+						{
+							"condition": "minecraft:killed_by_player"
+						}
+					]
+				},
+				{
+					"type": "minecraft:item",
+					"weight": 20,
+					"functions": [
+						{
+							"function": "minecraft:looting_enchant",
+							"count": {
+								"min": 0.0,
+								"max": 1.0
+							}
+						},
+						{
+							"function": "minecraft:furnace_smelt",
+							"conditions": [
+								{
+									"condition": "minecraft:entity_properties",
+									"predicate": {
+										"flags": {
+											"is_on_fire": true
+										}
+									},
+									"entity": "this"
+								}
+							]
+						}
+					],
+					"name": "minecraft:leather"
+				},
+				{
+					"type": "minecraft:item",
+					"weight": 20,
+					"functions": [
+						{
+							"function": "minecraft:set_count",
+							"count": {
+								"min": 1.0,
+								"max": 2.0,
+								"type": "minecraft:uniform"
+							}
+						},
+						{
+							"function": "minecraft:furnace_smelt",
+							"conditions": [
+								{
+									"condition": "minecraft:entity_properties",
+									"predicate": {
+										"flags": {
+											"is_on_fire": true
+										}
+									},
+									"entity": "this"
+								}
+							]
+						}
+					],
+					"name": "minecraft:rotten_flesh"
+				},
+				{
+					"type": "minecraft:item",
+					"weight": 20,
+					"functions": [
+						{
+							"function": "minecraft:set_count",
+							"count": {
+								"min": 0.0,
+								"max": 1.0,
+								"type": "minecraft:uniform"
+							}
+						},					
+						{
+							"function": "minecraft:looting_enchant",
+							"count": {
+								"min": 0.0,
+								"max": 2.0
+							}
+						},
+						{
+							"function": "minecraft:furnace_smelt",
+							"conditions": [
+								{
+									"condition": "minecraft:entity_properties",
+									"predicate": {
+										"flags": {
+											"is_on_fire": true
+										}
+									},
+									"entity": "this"
+								}
+							]
+						}
+					],
+					"name": "minecraft:cooked_porkchop"
+				},
+				{
+					"weight": 1,
+					"type": "minecraft:loot_table",
+					"name": "minecraft:gameplay/fishing/treasure",
+					"conditions": [
+						{
+							"condition": "minecraft:killed_by_player"
+						}
+					]
+				},
+				{
+					"weight": 27,
+					"type": "minecraft:empty"
+				}
+			]
+		}
+	]
+}

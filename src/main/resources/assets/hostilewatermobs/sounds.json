@@ -23,7 +23,7 @@
   "river_guardian.flop": {
     "subtitle": "subtitles.river_guardian.flop",
     "sounds": [{"name":"entity.guardian.flop", "pitch": 1.7, "type": "event" }]
-  }  ,
+  },
   "slipperybiter.hurt": {
     "subtitle": "subtitles.slipperybiter.hurt",
     "sounds": [{"name":"entity.guardian.hurt", "pitch": 1.7, "type": "event" }]
@@ -49,6 +49,34 @@
   "slipperybiter.flop": {
     "subtitle": "subtitles.slipperybiter.flop",
     "sounds": [{"name":"entity.guardian.flop", "pitch": 1.5, "type": "event" }]
-  }  
+  },
+    "gurty.ambient": {
+    "subtitle": "subtitles.gurty.ambient",
+    "sounds": [
+      "hostilewatermobs:entity/gurty.ambient1",
+      "hostilewatermobs:entity/gurty.ambient2",
+      "hostilewatermobs:entity/gurty.ambient3"
+    ]
+  },
+    "gurty.angry": {
+    "subtitle": "subtitles.gurty.angry",
+    "sounds": [
+      "hostilewatermobs:entity/gurty.angry2",
+      "hostilewatermobs:entity/gurty.angry3",
+      "hostilewatermobs:entity/gurty.angry4"
+    ]
+  },
+  "gurty.death": {
+    "subtitle": "subtitles.gurty.death",
+    "sounds": [{"name":"entity.villager.death", "pitch": 0.3, "type": "event" }]
+  },
+  "gurty.hurt": {
+    "subtitle": "subtitles.gurty.hurt",
+    "sounds": [{"name":"entity.villager.hurt", "pitch": 0.3, "type": "event" }]
+  },
+  "gurty.step": {
+    "subtitle": "subtitles.gurty.step",
+    "sounds": [{"name":"entity.pig.step", "pitch": 1.0, "type": "event" }]
+  }
 }
 	

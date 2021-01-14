@@ -73,6 +73,14 @@ public class MyConfig {
 		return slipperyBiterSpawnCap;
 	}
 
+	public static int getGurtySpawnChance() {
+		return gurtySpawnChance;
+	}
+
+	public static int getGurtySpawnCap() {
+		return gurtySpawnCap;
+	}
+
 	public static int getCodSpawnBoost() {
 		return CodSpawnBoost;
 	}
@@ -95,8 +103,13 @@ public class MyConfig {
 	private static int 	    riverGuardianSpawnChance;
 	private static int 	    riverGuardianSpawnCap;
 	private static int 	    riverGuardianSoundRange;
+
 	private static int 	    slipperyBiterSpawnChance;
 	private static int 	    slipperyBiterSpawnCap;
+
+	private static int 	    gurtySpawnChance;
+	private static int 	    gurtySpawnCap;
+
 	private static int 	    CodSpawnBoost;
 	private static int 	    SalmonSpawnBoost;
 	private static int 	    SquidSpawnBoost;
@@ -125,8 +138,8 @@ public class MyConfig {
 		COMMON.riverGuardianSpawnChance.set(riverGuardianSpawnChance);
 		COMMON.riverGuardianSoundRange.set(riverGuardianSoundRange);
 		COMMON.riverGuardianSpawnCap.set(riverGuardianSpawnCap);
-		COMMON.slipperyBiterSpawnCap.set(slipperyBiterSpawnCap);
-		COMMON.slipperyBiterSpawnChance.set(slipperyBiterSpawnChance);
+		COMMON.gurtySpawnCap.set(slipperyBiterSpawnCap);
+		COMMON.gurtySpawnChance.set(slipperyBiterSpawnChance);
 	}
 	
 	// remember need to push each of these values separately once we have commands.
@@ -139,6 +152,8 @@ public class MyConfig {
 		riverGuardianSoundRange = COMMON.riverGuardianSoundRange.get();
 		slipperyBiterSpawnChance = COMMON.slipperyBiterSpawnChance.get();
 		slipperyBiterSpawnCap = COMMON.slipperyBiterSpawnCap.get();
+		gurtySpawnChance = COMMON.gurtySpawnChance.get();
+		gurtySpawnCap = COMMON.gurtySpawnCap.get();
 		if (aDebugLevel > 0) {
 			System.out.println("Harder Farther Debug Level: " + aDebugLevel );
 		}
@@ -153,6 +168,8 @@ public class MyConfig {
 		public final IntValue riverGuardianSoundRange;
 		public final IntValue slipperyBiterSpawnChance;
 		public final IntValue slipperyBiterSpawnCap;	
+		public final IntValue gurtySpawnChance;
+		public final IntValue gurtySpawnCap;	
 		public final IntValue codSpawnBoost;
 		public final IntValue salmonSpawnBoost;
 		public final IntValue squidSpawnBoost;
@@ -186,7 +203,6 @@ public class MyConfig {
 					.translation(Main.MODID + ".config." + "riverGuardianSoundRange")
 					.defineInRange("riverGuardianSoundRange", () -> 15, 1, 24);
 
-			
 			slipperyBiterSpawnChance = builder
 					.comment("slipperyBiterSpawnChance")
 					.translation(Main.MODID + ".config." + "slipperyBiterSpawnChance")
@@ -196,6 +212,16 @@ public class MyConfig {
 					.comment("slipperyBiterSpawnCap")
 					.translation(Main.MODID + ".config." + "slipperyBiterSpawnCap")
 					.defineInRange("slipperyBiterSpawnCap", () -> 21, 0, 100);
+
+			gurtySpawnChance = builder
+					.comment("gurtySpawnChance")
+					.translation(Main.MODID + ".config." + "gurtySpawnChance")
+					.defineInRange("gurtySpawnChance", () -> 6, 1, 100);
+
+			gurtySpawnCap = builder
+					.comment("gurtySpawnCap")
+					.translation(Main.MODID + ".config." + "gurtySpawnCap")
+					.defineInRange("gurtySpawnCap", () -> 21, 0, 100);
 			
 			codSpawnBoost = builder
 					.comment("codSpawnBoost")

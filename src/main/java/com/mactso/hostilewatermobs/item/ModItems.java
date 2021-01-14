@@ -16,13 +16,21 @@ public class ModItems {
 	public static final Item SLIPPERY_BITER_SPAWN_EGG = new SpawnEggItem(ModEntities.SLIPPERY_BITER, 0x794ABA, 0xBF440B, new Properties().group(ItemGroup.MISC)).setRegistryName("slipperybiter_spawn_egg");
 	public static final Item SLIPPERY_BITER_GLAND = new SlipperyBiterGland ((new Item.Properties().food(new Food.Builder().hunger(3).saturation(1.0F).fastToEat().setAlwaysEdible().build())).group(ItemGroup.FOOD).maxStackSize(16)).setRegistryName("slipperybiter_gland");
 	public static final Item SLIPPERY_BITER_SCALES = new Item((new Item.Properties()).group(ItemGroup.MATERIALS)).setRegistryName("slipperybiter_scales");
+	
+	public static final Item GURTY_SPAWN_EGG = new SpawnEggItem(ModEntities.GURTY, 0x1FD41B, 0x791A2A,  new Properties().group(ItemGroup.MISC)).setRegistryName("gurty_spawn_egg");
+	public static final Item GURTY_GUTS = new Item((new Item.Properties()).group(ItemGroup.MATERIALS)).setRegistryName("gurty_guts");
+
 	public static void register(IForgeRegistry<Item> forgeRegistry)
+
 	{
 		forgeRegistry.registerAll(RIVER_GUARDIAN_SPAWN_EGG);
 		forgeRegistry.registerAll(RIVER_GUARDIAN_SCALES);
 		forgeRegistry.registerAll(SLIPPERY_BITER_SPAWN_EGG);
 		forgeRegistry.registerAll(SLIPPERY_BITER_GLAND);
 		forgeRegistry.registerAll(SLIPPERY_BITER_SCALES);
+		forgeRegistry.registerAll(GURTY_SPAWN_EGG);
+		forgeRegistry.registerAll(GURTY_GUTS);
+		
 	}
 
 }

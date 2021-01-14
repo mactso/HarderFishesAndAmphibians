@@ -5,6 +5,7 @@ import java.util.List;
 import com.mactso.hostilewatermobs.Main;
 import com.mactso.hostilewatermobs.client.renderer.RiverGuardianRenderer;
 import com.mactso.hostilewatermobs.client.renderer.SlipperyBiterRenderer;
+import com.mactso.hostilewatermobs.client.renderer.GurtyRenderer;
 import com.mactso.hostilewatermobs.config.MyConfig;
 
 import net.minecraft.client.renderer.entity.EntityRendererManager;
@@ -28,6 +29,7 @@ public class ModEntities {
 
 	public static final EntityType<RiverGuardianEntity> RIVER_GUARDIAN = register("river_guardian", EntityType.Builder.create(RiverGuardianEntity::new, EntityClassification.MONSTER).size(0.85F, 0.85F).trackingRange(5));
 	public static final EntityType<SlipperyBiterEntity> SLIPPERY_BITER = register("slipperybiter", EntityType.Builder.create(SlipperyBiterEntity::new, EntityClassification.MONSTER).size(0.9F, 0.7F).trackingRange(21));
+	public static final EntityType<GurtyEntity> GURTY = register("gurty", EntityType.Builder.create(GurtyEntity::new, EntityClassification.MONSTER).size(1.1F, 1.0F).trackingRange(21));
 
 	private static <T extends Entity> EntityType<T> register(String name, EntityType.Builder<T> builder)
 	{
@@ -48,6 +50,11 @@ public class ModEntities {
 		forgeRegistry.registerAll(SLIPPERY_BITER);
 		EntitySpawnPlacementRegistry.register(SLIPPERY_BITER, EntitySpawnPlacementRegistry.PlacementType.IN_WATER, Heightmap.Type.MOTION_BLOCKING_NO_LEAVES, SlipperyBiterEntity::canSpawn);
 		GlobalEntityTypeAttributes.put(SLIPPERY_BITER, SlipperyBiterEntity.registerAttributes().create());
+
+		forgeRegistry.registerAll(GURTY);
+		EntitySpawnPlacementRegistry.register(GURTY, EntitySpawnPlacementRegistry.PlacementType.ON_GROUND, Heightmap.Type.MOTION_BLOCKING_NO_LEAVES, GurtyEntity::canSpawn);
+		GlobalEntityTypeAttributes.put(GURTY, GurtyEntity.registerAttributes().create());
+	
 	}
 
 	@OnlyIn(Dist.CLIENT)
@@ -55,7 +62,8 @@ public class ModEntities {
 	{
 		renderManager.register(RIVER_GUARDIAN, new RiverGuardianRenderer(renderManager));
 		renderManager.register(SLIPPERY_BITER, new SlipperyBiterRenderer(renderManager));
-				
+		renderManager.register(GURTY, new GurtyRenderer(renderManager));		
+		
 	}
 
 	public static void getBiomeSpawnData(List<Spawners> spawns, Biome.Category biomeCategory)
@@ -105,7 +113,7 @@ public class ModEntities {
 	
 	
 	
-	public static void getFeatureSpawnData( List<Spawners> spawns, Structure structure)
+	public static void getFeatureSpawnData( List<Spawners> spawns, Structure<?> structure)
 	{
 		int weight;
 		int min;
