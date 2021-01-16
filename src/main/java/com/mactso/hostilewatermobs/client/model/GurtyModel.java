@@ -115,6 +115,8 @@ public class GurtyModel<T extends Entity> extends QuadrupedModel<T> {
 	@Override
 	public void setRotationAngles(final T entityIn, final float limbSwingAngle, final float limbSwingSpeedFactor,
 			final float ageInTicks, final float headYaw, final float headPitch) {
+		
+		GurtyEntity gurtyEntity = (GurtyEntity) entityIn;
 		this.headModel.rotateAngleX = headPitch * 0.017453292f;
 		this.headModel.rotateAngleY = (headYaw /1.75F) * 0.017453292f;
 		this.body.rotateAngleX = (3.14159265f / 4.0f) * 0.0f; // make body horizontal
@@ -122,19 +124,25 @@ public class GurtyModel<T extends Entity> extends QuadrupedModel<T> {
 		this.legBackLeft.rotateAngleX = MathHelper.cos(limbSwingAngle * 0.6662f + 3.1415927f) * 1.4f * limbSwingSpeedFactor;
 		this.legFrontRight.rotateAngleX = MathHelper.cos(limbSwingAngle * 0.6662f + 3.1415927f) * 1.4f * limbSwingSpeedFactor;
 		this.legFrontLeft.rotateAngleX = MathHelper.cos(limbSwingAngle * 0.6662f) * 1.4f * limbSwingSpeedFactor;
-		this.tail.rotateAngleX = -0.2707964f; // make tail stick out and down
-		this.spines.rotateAngleX = -0.0507964f;
+		this.spines.rotateAngleX = -0.107964f;
 		this.tail.rotateAngleY = -0.2F * MathHelper.cos(ageInTicks * 0.3F);
 		this.jaw.rotateAngleX = Math.abs(0.15f * MathHelper.cos(ageInTicks * 0.1F));
 		this.jaw.rotateAngleY = -0.04f * MathHelper.cos(ageInTicks * 0.17F);
-		GurtyEntity gurtyEntity = (GurtyEntity) entityIn;
 		if (gurtyEntity.isAngry()) {
-//			System.out.println("Gurty #:"+gurtyEntity.getEntityId() + "AngerTime: "+ gurtyEntity.getAngerTime());
-			this.tail.rotateAngleX = 0.7707964f; // make tail stick out and up
-			this.spines.rotateAngleX = -0.4207964f + Math.abs(0.2f * MathHelper.cos(ageInTicks * 0.25F)); // make spines point forward and up
+			if (this.tail.rotateAngleX < 0.771f) {
+				this.tail.rotateAngleX += 0.025f;
+				System.out.print(this.tail.rotateAngleX);
+			}
 			this.tail.rotateAngleY = -0.1F * MathHelper.cos(ageInTicks * 0.4F);
+			//			this.tail.rotateAngleX = 0.7707964f; // make tail stick out and up
+			this.spines.rotateAngleX = -0.6207964f + Math.abs(0.2f * MathHelper.cos(ageInTicks * 0.25F)); // make spines point forward and up
 			this.jaw.rotateAngleX = Math.abs(0.3f * MathHelper.cos(ageInTicks * 0.4F));
-			this.jaw.rotateAngleY = -0.27f * MathHelper.cos(ageInTicks * 0.6F);
+			this.jaw.rotateAngleY = -0.14f * MathHelper.cos(ageInTicks * 0.6F);
+		} else {
+			if (this.tail.rotateAngleX > -0.271f) {
+				this.tail.rotateAngleX -= 0.009f;
+				System.out.print(this.tail.rotateAngleX);
+			}
 		}
 	}
 

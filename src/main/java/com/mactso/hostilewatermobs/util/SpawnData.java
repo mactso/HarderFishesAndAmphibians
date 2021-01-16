@@ -27,7 +27,7 @@ public class SpawnData
 		for (int i = 0; i < list.size(); ++i)
 		{
 			Spawners spawner = list.get(i);
-			builder.withSpawner(spawner.type.getClassification(), spawner).withSpawnCost(list.get(i).type, 0.1, 2.0);
+			builder.withSpawner(spawner.type.getClassification(), spawner).withSpawnCost(list.get(i).type, 0.08, 2.0);
 		}
 	}
 	

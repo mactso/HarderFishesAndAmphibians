@@ -216,7 +216,7 @@ public class MyConfig {
 			gurtySpawnChance = builder
 					.comment("gurtySpawnChance")
 					.translation(Main.MODID + ".config." + "gurtySpawnChance")
-					.defineInRange("gurtySpawnChance", () -> 6, 1, 100);
+					.defineInRange("gurtySpawnChance", () -> 9, 0, 100);
 
 			gurtySpawnCap = builder
 					.comment("gurtySpawnCap")

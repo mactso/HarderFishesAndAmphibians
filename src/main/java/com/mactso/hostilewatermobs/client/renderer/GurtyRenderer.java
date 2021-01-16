@@ -41,7 +41,7 @@ public class GurtyRenderer extends MobRenderer<GurtyEntity, GurtyModel<GurtyEnti
 //		  if (gurtyAngry) {
 //			  System.out.println("Gurty"+ entityIn.getEntityId()  +" angry");
 //		  }
-		  float uniqueSize = (float)eSize/48;
+		  float uniqueSize =0.4f+ (float)eSize/16;
 
 //			  System.out.println ("Normal ("+GurtyBiterEntity.SIZE+") + " + uniqueSize);
 		  matrixStackIn.scale(GurtyEntity.SIZE+uniqueSize, GurtyEntity.SIZE+uniqueSize, GurtyEntity.SIZE+uniqueSize);
@@ -53,10 +53,6 @@ public class GurtyRenderer extends MobRenderer<GurtyEntity, GurtyModel<GurtyEnti
 
 		float f = entityIn.prevRotationYaw;
 		float lerpYaw = MathHelper.lerp(partialTicks, f, entityYaw);
-		
-		if (f != entityYaw) {
-			System.out.println("Gurty: PrevYaw: " + f + " newYaw :" + entityYaw + " lerpYaw :" + lerpYaw + " PartialTicks: " +partialTicks);
-		}
 		super.render(entityIn, lerpYaw, partialTicks, matrixStackIn, bufferIn, packedLightIn);
 	}
 
