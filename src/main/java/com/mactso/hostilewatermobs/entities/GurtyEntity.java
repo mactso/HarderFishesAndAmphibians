@@ -487,6 +487,46 @@ public class GurtyEntity extends WaterMobEntity {
 		return false;
 	}
 
+/**
+ * Makes the entity despawn if requirements are reached
+ */
+	@Override
+	public void checkDespawn() {
+   if (this.world.getDifficulty() == Difficulty.PEACEFUL && this.isDespawnPeaceful()) {
+      this.remove();
+   } else if (!this.isNoDespawnRequired() && !this.preventDespawn()) {
+      Entity entity = this.world.getClosestPlayer(this, -1.0D);
+      net.minecraftforge.eventbus.api.Event.Result result = net.minecraftforge.event.ForgeEventFactory.canEntityDespawn(this);
+      if (result == net.minecraftforge.eventbus.api.Event.Result.DENY) {
+         idleTime = 0;
+         entity = null;
+      } else if (result == net.minecraftforge.eventbus.api.Event.Result.ALLOW) {
+         this.remove();
+         entity = null;
+      }
+      if (entity != null) {
+         double d0 = entity.getDistanceSq(this);
+         int i = this.getType().getClassification().getInstantDespawnDistance();
+         int j = i * i;
+         if (d0 > (double)j && this.canDespawn(d0)) {
+        	 world.setBlockState(this.getNestPos(), Blocks.AIR.getDefaultState());
+        	 this.remove();
+            
+         }
+
+         int k = this.getType().getClassification().getRandomDespawnDistance();
+         int l = k * k;
+         if (this.idleTime > 600 && this.rand.nextInt(800) == 0 && d0 > (double)l && this.canDespawn(d0)) {
+            this.remove();
+         } else if (d0 < (double)l) {
+            this.idleTime = 0;
+         }
+      }
+
+   } else {
+      this.idleTime = 0;
+   }
+}
 	@Override
 	@Nullable
 	public ILivingEntityData onInitialSpawn(IServerWorld worldIn, DifficultyInstance difficultyIn, SpawnReason reason,
@@ -496,7 +536,23 @@ public class GurtyEntity extends WaterMobEntity {
 		setNestPos(pos);
 		
 		setTravelPos(BlockPos.ZERO);
-		world.setBlockState(pos, Blocks.CORNFLOWER.getDefaultState());
+		int nestCount = 0;
+		// Prevent nestSpam
+		for (int i = -5; i<6; i++) {
+			for (int j = -5; j<6; j++) {
+				for (int k = -1; k<2; k++) {
+					if (world.getBlockState(pos.west(i).north(j).up(k)).getBlock() == Blocks.CORNFLOWER) {
+						nestCount++;
+						if (nestCount > 3) {
+							break;
+						}
+					}
+				}
+			}
+		}
+		if (nestCount < 3) {
+			world.setBlockState(pos, Blocks.CORNFLOWER.getDefaultState());
+		}
 		if (difficultyIn.getDifficulty() == Difficulty.HARD) {
 			float newHealth = getMaxHealth() + 3.0f;
 			setHealth(newHealth);
@@ -609,81 +665,94 @@ public class GurtyEntity extends WaterMobEntity {
 			}
 
 			// gurty's don't attack players in creative or spectator mode
+
 			if (entity instanceof PlayerEntity) {
 				if (((PlayerEntity) entity).isCreative()) {
 					return false;
-				}
-
-				if (((PlayerEntity) entity).isSpectator()) {
+				} else if (((PlayerEntity) entity).isSpectator()) {
 					return false;
 				}
 			}
 
 			boolean validTarget = false;
-			// gurty's get angry at things that attacked them regardless of distance
+			// gurty's always take revenge on their attackers, regardless of any other condition
 			if (gurtyEntity.getAttackTarget() != null) {
 				if (entity == this.gurtyEntity.getAttackingEntity()) {
-					validTarget = true;
+					gurtyEntity.setAttackTarget(entity);
+					return true;
 				}
 			}
-
-			World w = entity.getEntityWorld();
-			if ((w.getFluidState(entity.getPosition()).isTagged(FluidTags.WATER))
-					|| (w.getFluidState(entity.getPosition().up()).isTagged(FluidTags.WATER))) {
-				validTarget = true;
-			}
-
+			
 			// distance to entity.
+			int dstToEntitySq = (int) entity.getDistanceSq(gurtyEntity);
 
-			int distanceSq = (int) entity.getDistanceSq(gurtyEntity);
-			double followDistance = gurtyEntity.getAttribute(Attributes.FOLLOW_RANGE).getValue();
-			int followDistanceSq = (int) (followDistance * followDistance);
-			int playSound = gurtyEntity.rand.nextInt(60);
-
-			// 1 to ~500
-			Biome biome = w.getBiome(gurtyEntity.getPosition());
-			Category bC = biome.getCategory();
-
-			// a little less aggressive in swamps
-			if ((bC == Category.SWAMP)) {
-				distanceSq += 64;
-			}
-			// less aggressive in light
-			int lightLevel = w.getLight(this.gurtyEntity.getPosition());
-			if (lightLevel > 13) {
-				distanceSq += 81;
-			}
-			// more aggressive in rain
-			if (w.isRaining()) {
-				validTarget = true;
-				distanceSq *= 0.75f;
-			}
-
-			if (distanceSq > (followDistanceSq)) {
-				if (entity instanceof PlayerEntity) {
-					if ((distanceSq < 900) && (playSound == 21)) {
-						w.playSound(null, gurtyEntity.getPosition(), ModSounds.GURTY_AMBIENT, SoundCategory.HOSTILE,
-								0.9f, 1.0f);
-					}
-				}
-				return false;
-			}
-
-			// nest distance
-
+			// gurty's always attack if entity threatens the nest and gurty is near entity.
 			Vector3i posVec = (Vector3i) entity.getPosition();
 			Vector3i nestVec = (Vector3i) gurtyEntity.getNestPos();
 			int nestDistance = (int) posVec.distanceSq(nestVec);
 			// gurty's get angry at creatures near their nest area if the gurty is nearby.
-			if ((nestDistance < 37) && (distanceSq < 121)) {
-				validTarget = true;
+			if ((nestDistance < 37) && (dstToEntitySq < 121)) {
+				gurtyEntity.setAttackTarget(entity);
+				return true;
 			}
-
-			if (!validTarget) {
+			
+			// gurty's don't wander too far from the nest.
+			if ((nestDistance > 800)) {
 				gurtyEntity.setAttackTarget(null);
 				return false;
 			}
+			
+			World w = entity.getEntityWorld();
 
+			// rarely attack random fish and other creatures in range.
+			if (!(entity instanceof PlayerEntity)) {
+				if (w.rand.nextInt(600) != 100) {
+					gurtyEntity.setAttackTarget(null);
+					return false;
+				}
+			}
+
+			// a little less aggressive in swamps
+			Biome biome = w.getBiome(gurtyEntity.getPosition());
+			Category bC = biome.getCategory();			
+			if ((bC == Category.SWAMP)) {
+				dstToEntitySq += 64;
+			}
+			
+			// less aggressive in light
+			int lightLevel = w.getLight(this.gurtyEntity.getPosition());
+			if (lightLevel > 13) {
+				dstToEntitySq += 81;
+			}
+
+			if (w.isRaining()) {
+				dstToEntitySq *= 0.6f;
+			}
+			
+			if ((w.getFluidState(entity.getPosition()).isTagged(FluidTags.WATER)) ||
+				(w.getFluidState(entity.getPosition().up()).isTagged(FluidTags.WATER))
+					) {
+				dstToEntitySq *= 0.75f;
+			}
+
+			double followDistance = gurtyEntity.getAttribute(Attributes.FOLLOW_RANGE).getValue();
+			int followDistanceSq = (int) (followDistance * followDistance);
+			
+			// if modified distance to entity > follow distance attribute, don't attack.
+			if (dstToEntitySq > (followDistanceSq)) {
+				// But if a player and in range and random playsound (2.5%) then play a warning ambient sound.
+				if (entity instanceof PlayerEntity) {
+					int playSound = gurtyEntity.rand.nextInt(60);
+					if ((dstToEntitySq < 900) && (playSound == 21)) {
+						w.playSound(null, gurtyEntity.getPosition(), ModSounds.GURTY_AMBIENT, SoundCategory.HOSTILE,
+								0.9f, 1.0f);
+					}
+				}
+				gurtyEntity.setAttackTarget(null);
+				return false;
+			}
+			
+			
 			gurtyEntity.setAttackTarget(entity);
 			w.playSound(null, gurtyEntity.getPosition(), ModSounds.GURTY_ANGRY, SoundCategory.HOSTILE, 1.0f, 1.0f);
 			return true;

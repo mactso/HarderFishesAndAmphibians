@@ -38,19 +38,16 @@ public class GurtyModel<T extends Entity> extends QuadrupedModel<T> {
 		textureWidth = 64;
 		textureHeight = 64;
 		
-		
 		legBackLeft = new ModelRenderer(this);
 		legBackLeft.setRotationPoint(-3.0F, 17.0F, 5.5F);
 		legBackLeft.setTextureOffset(23, 0).addBox(-1.0F, 0.0F, 1.0F, 2.0F, 6.0F, 3.0F, 0.0F, false);
 		legBackLeft.setTextureOffset(24, 26).addBox(-1.0F, 6.0F, -1.0F, 2.0F, 1.0F, 4.0F, 0.0F, false);
-
 
 		legBackRight = new ModelRenderer(this);
 		legBackRight.setRotationPoint(3.0F, 17.0F, 5.5F);
 		legBackRight.setTextureOffset(0, 0).addBox(-1.0F, 0.0F, 1.0F, 2.0F, 6.0F, 3.0F, 0.0F, false);
 		legBackRight.setTextureOffset(16, 25).addBox(-1.0F, 6.0F, -1.0F, 2.0F, 1.0F, 4.0F, 0.0F, false);
 
-		
 		body = new ModelRenderer(this);
 		body.setRotationPoint(0.0F, 15.0F, 9.0F);
 		body.setTextureOffset(0, 0).addBox(-3.0F, -2.0F, -11.0F, 6.0F, 5.0F, 11.0F, 0.0F, false);
