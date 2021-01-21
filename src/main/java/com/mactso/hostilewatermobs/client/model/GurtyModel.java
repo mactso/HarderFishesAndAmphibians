@@ -128,7 +128,7 @@ public class GurtyModel<T extends Entity> extends QuadrupedModel<T> {
 		if (gurtyEntity.isAngry()) {
 			if (this.tail.rotateAngleX < 0.771f) {
 				this.tail.rotateAngleX += 0.025f;
-				System.out.print(this.tail.rotateAngleX);
+//				System.out.print(this.tail.rotateAngleX);
 			}
 			this.tail.rotateAngleY = -0.1F * MathHelper.cos(ageInTicks * 0.4F);
 			//			this.tail.rotateAngleX = 0.7707964f; // make tail stick out and up
@@ -138,7 +138,7 @@ public class GurtyModel<T extends Entity> extends QuadrupedModel<T> {
 		} else {
 			if (this.tail.rotateAngleX > -0.271f) {
 				this.tail.rotateAngleX -= 0.009f;
-				System.out.print(this.tail.rotateAngleX);
+//				System.out.print(this.tail.rotateAngleX);
 			}
 		}
 	}

@@ -95,6 +95,7 @@ public class GurtyEntity extends WaterMobEntity implements IMob {
 	private boolean hasNest;
 	private int nestProtectionDistSq;
 	private long angerTime;
+	private long attackedTime;
 	protected RandomWalkingGoal wander;
 	protected float tailHeight = -0.2707964f;
 
@@ -268,13 +269,9 @@ public class GurtyEntity extends WaterMobEntity implements IMob {
 
 		if ((amount > 0.0f) && (source.getTrueSource() != null)) {
 			Entity entity = source.getTrueSource();
-			setRevengeTarget((LivingEntity) entity);
-			if (entity.world.getDifficulty() != Difficulty.PEACEFUL) {
-				setAttackTarget((LivingEntity) entity);
-				setTargetedEntity(entity.getEntityId());
-			}
-			angerTime = world.getGameTime() + ANGER_INTENSE;
+
 			// gurty thorns damage in melee when angry.
+
 			if ((!source.isProjectile()) && (this.isAngry())) {
 				float thornDamage = 1.5f;
 				if (entity.world.getDifficulty() == Difficulty.NORMAL) {
@@ -284,6 +281,15 @@ public class GurtyEntity extends WaterMobEntity implements IMob {
 				}
 				entity.attackEntityFrom(DamageSource.causeThornsDamage((Entity) this), thornDamage);
 			}
+			
+			setRevengeTarget((LivingEntity) entity);
+
+			if (entity.world.getDifficulty() != Difficulty.PEACEFUL) {
+				setAttackTarget((LivingEntity) entity);
+				setTargetedEntity(entity.getEntityId());
+			}
+			angerTime = world.getGameTime() + ANGER_INTENSE;
+
 
 		}
 		return super.attackEntityFrom(source, amount);
@@ -474,8 +480,8 @@ public class GurtyEntity extends WaterMobEntity implements IMob {
 		}
 
 
-			System.out.println(
-					"Gurty Spawn Cap: " + gurtySpawnCap + " Count : " + gurtyCount + " Chance:" + gurtySpawnChance);
+//			System.out.println(
+//					"Gurty Spawn Cap: " + gurtySpawnCap + " Count : " + gurtyCount + " Chance:" + gurtySpawnChance);
 
 
 		if (gurtyCount > gurtySpawnCap) {
@@ -793,13 +799,14 @@ private void removeNest() {
 			int followDistanceSq = (int) (followDistance * followDistance);
 			
 			// if modified distance to entity > follow distance attribute, don't attack.
-			if (dstToEntitySq > (followDistanceSq)) {
+ 			if (dstToEntitySq > (followDistanceSq)) {
 				// But if a player and in range and random playsound (2.5%) then play a warning ambient sound.
 				if (entity instanceof PlayerEntity) {
-					int playSound = gurtyEntity.rand.nextInt(60);
+					int playSound = gurtyEntity.rand.nextInt(50);
+
 					if ((dstToEntitySq < 900) && (playSound == 21)) {
-						w.playSound(null, gurtyEntity.getPosition(), ModSounds.GURTY_AMBIENT, SoundCategory.HOSTILE,
-								0.9f, 1.0f);
+						w.playSound(null, entity.getPosition(), ModSounds.GURTY_AMBIENT, SoundCategory.HOSTILE,
+								0.35f, 1.0f);
 					}
 				}
 				gurtyEntity.setAttackTarget(null);
