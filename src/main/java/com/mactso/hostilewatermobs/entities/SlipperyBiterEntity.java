@@ -10,7 +10,6 @@ import com.mactso.hostilewatermobs.config.MyConfig;
 import com.mactso.hostilewatermobs.sound.ModSounds;
 
 import net.minecraft.block.Blocks;
-import net.minecraft.entity.CreatureEntity;
 import net.minecraft.entity.Entity;
 import net.minecraft.entity.EntitySize;
 import net.minecraft.entity.EntityType;
@@ -35,6 +34,7 @@ import net.minecraft.entity.ai.goal.MeleeAttackGoal;
 import net.minecraft.entity.ai.goal.NearestAttackableTargetGoal;
 import net.minecraft.entity.ai.goal.RandomSwimmingGoal;
 import net.minecraft.entity.ai.goal.ResetAngerGoal;
+import net.minecraft.entity.monster.IMob;
 import net.minecraft.entity.monster.MonsterEntity;
 import net.minecraft.entity.passive.WaterMobEntity;
 import net.minecraft.entity.player.PlayerEntity;
@@ -68,7 +68,7 @@ import net.minecraft.world.biome.Biome.Category;
 import net.minecraft.world.chunk.Chunk;
 import net.minecraft.world.server.ServerWorld;
 
-public class SlipperyBiterEntity extends WaterMobEntity implements IAngerable {
+public class SlipperyBiterEntity extends WaterMobEntity implements IAngerable, IMob {
 
 	private int angerTime;
 	private UUID angerTarget;

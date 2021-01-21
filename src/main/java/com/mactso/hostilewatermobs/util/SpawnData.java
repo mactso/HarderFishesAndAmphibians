@@ -23,7 +23,7 @@ public class SpawnData
 		
 		MobSpawnInfoBuilder builder = event.getSpawns();
 		List<Spawners> list = new ArrayList<>();
-		ModEntities.getBiomeSpawnData( list, event.getCategory());
+		ModEntities.getBiomeSpawnData( list, event);
 		for (int i = 0; i < list.size(); ++i)
 		{
 			Spawners spawner = list.get(i);

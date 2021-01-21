@@ -20,6 +20,7 @@ import net.minecraft.entity.ai.attributes.Attributes;
 import net.minecraft.entity.ai.goal.NearestAttackableTargetGoal;
 import net.minecraft.entity.merchant.villager.VillagerEntity;
 import net.minecraft.entity.monster.GuardianEntity;
+import net.minecraft.entity.monster.IMob;
 import net.minecraft.entity.monster.MonsterEntity;
 import net.minecraft.entity.passive.AnimalEntity;
 import net.minecraft.entity.passive.BatEntity;
@@ -55,7 +56,7 @@ import net.minecraft.world.chunk.Chunk;
 import net.minecraft.world.server.ServerWorld;
 import net.minecraftforge.common.BiomeDictionary;
 
-public class RiverGuardianEntity extends GuardianEntity {
+public class RiverGuardianEntity extends GuardianEntity implements IMob {
 
 	public static final float field_213629_b = EntityType.GUARDIAN.getWidth() * 0.37f;
 	private static final DataParameter<Integer> SUB_TYPE = EntityDataManager.createKey(RiverGuardianEntity.class,

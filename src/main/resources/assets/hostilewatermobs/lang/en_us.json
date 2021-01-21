@@ -22,5 +22,10 @@
     "subtitles.gurty.hurt" : "Gurty hurt",
 	"subtitles.gurty.death": "Gurty dies",
     "item.hostilewatermobs.gurty_guts": "Gurty Guts",
-	"item.hostilewatermobs.gurty_spawn_egg": "Gurty Spawn Egg"	
+    "item.hostilewatermobs.gurty_gland": "Gurty Gland",
+    "item.hostilewatermobs.gurty_spawn_egg": "Gurty Spawn Egg",
+    "advancements.adventure.hostilewatermobs.kill_a_mob.title" : "Clear the Waterfront",
+    "advancements.adventure.hostilewatermobs.kill_a_mob.description": "Kill a gurty.",
+    "advancements.hostilewatermobs.guts.title" : "It takes Guts",
+    "advancements.hostilewatermobs.guts.description" : "Kill Gurtys until you get rare gurty guts for the villagers."
 }

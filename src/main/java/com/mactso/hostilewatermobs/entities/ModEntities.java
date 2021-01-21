@@ -3,9 +3,9 @@ package com.mactso.hostilewatermobs.entities;
 import java.util.List;
 
 import com.mactso.hostilewatermobs.Main;
+import com.mactso.hostilewatermobs.client.renderer.GurtyRenderer;
 import com.mactso.hostilewatermobs.client.renderer.RiverGuardianRenderer;
 import com.mactso.hostilewatermobs.client.renderer.SlipperyBiterRenderer;
-import com.mactso.hostilewatermobs.client.renderer.GurtyRenderer;
 import com.mactso.hostilewatermobs.config.MyConfig;
 
 import net.minecraft.client.renderer.entity.EntityRendererManager;
@@ -14,15 +14,14 @@ import net.minecraft.entity.EntityClassification;
 import net.minecraft.entity.EntitySpawnPlacementRegistry;
 import net.minecraft.entity.EntityType;
 import net.minecraft.entity.ai.attributes.GlobalEntityTypeAttributes;
-import net.minecraft.entity.passive.fish.CodEntity;
 import net.minecraft.world.biome.Biome;
-import net.minecraft.world.biome.Biomes;
-import net.minecraft.world.biome.MobSpawnInfo;
+import net.minecraft.world.biome.Biome.Category;
 import net.minecraft.world.biome.MobSpawnInfo.Spawners;
 import net.minecraft.world.gen.Heightmap;
 import net.minecraft.world.gen.feature.structure.Structure;
 import net.minecraftforge.api.distmarker.Dist;
 import net.minecraftforge.api.distmarker.OnlyIn;
+import net.minecraftforge.event.world.BiomeLoadingEvent;
 import net.minecraftforge.registries.IForgeRegistry;
 
 public class ModEntities {
@@ -69,31 +68,59 @@ public class ModEntities {
 
 	}
 
-	public static void getBiomeSpawnData(List<Spawners> spawns, Biome.Category biomeCategory) {
+	public static void getBiomeSpawnData(List<Spawners> spawns, BiomeLoadingEvent event) {
 		int weight;
 		int min;
 		int max;
 
+		Category biomeCategory = event.getCategory();
+		
 		if (biomeCategory == Biome.Category.NETHER) {
+
+			boolean zombiePiglinSpawner = false;
+			boolean ghastSpawner = false;
+
+			// more efficient but less generic.
+			for (int i = 0; i < spawns.size(); i++) {
+				Spawners s = spawns.get(i);
+				if (s.type == EntityType.ZOMBIFIED_PIGLIN) {
+					zombiePiglinSpawner = true;
+				}
+				if (s.type == EntityType.GHAST) {
+					ghastSpawner = true;
+				}
+
+			}
+
+			if (!zombiePiglinSpawner) {
+				spawns.add(new Spawners(EntityType.ZOMBIFIED_PIGLIN, weight = MyConfig.getZombifiedPiglinSpawnBoost(),
+						min = 1, max = 3));
+			}
+			if (!ghastSpawner) {
+				spawns.add(new Spawners(EntityType.GHAST, weight = MyConfig.getGhastSpawnBoost(), min = 1,
+						max = 1));
+			}
+			
 			spawns.add(new Spawners(RIVER_GUARDIAN, weight = 5, min = 1, max = 3));
+
 		} else if (biomeCategory == Biome.Category.RIVER) {
 			spawns.add(new Spawners(RIVER_GUARDIAN, weight = 80, min = 1, max = 1));
 			spawns.add(new Spawners(SLIPPERY_BITER, weight = 20, min = 1, max = 1));
-			spawns.add(new Spawners(GURTY, weight = 45, min = 2, max = 3));
-			spawns.add(new Spawners(EntityType.COD, weight = MyConfig.getCodSpawnBoost(), min = 1, max = 5));
-			spawns.add(new Spawners(EntityType.SALMON, weight = MyConfig.getSalmonSpawnBoost(), min = 1, max = 5));
-			spawns.add(new Spawners(EntityType.SQUID, weight = MyConfig.getSquidSpawnBoost(), min = 1, max = 4));
-			spawns.add(new Spawners(EntityType.DOLPHIN, weight = MyConfig.getDolphinSpawnboost(), min = 1, max = 2));
+			spawns.add(new Spawners(GURTY, weight = 45, min = 1, max = 1));
+			spawns.add(new Spawners(EntityType.COD, weight = MyConfig.getCodSpawnBoost()/3, min = 1, max = 2));
+			spawns.add(new Spawners(EntityType.SALMON, weight = MyConfig.getSalmonSpawnBoost()/5, min = 1, max = 2));
+			spawns.add(new Spawners(EntityType.SQUID, weight = MyConfig.getSquidSpawnBoost()/2, min = 1, max = 4));
 		} else if (biomeCategory == Biome.Category.SWAMP) {
+			spawns.add(new Spawners(EntityType.COD, weight = MyConfig.getCodSpawnBoost()/2, min = 1, max = 2));
 			spawns.add(new Spawners(RIVER_GUARDIAN, weight = 35, min = 1, max = 1));
 			spawns.add(new Spawners(SLIPPERY_BITER, weight = 35, min = 1, max = 1));
-			spawns.add(new Spawners(GURTY, weight = 50, min = 3, max = 4));
+			spawns.add(new Spawners(GURTY, weight = 50, min = 2, max = 3));
 		} else if (biomeCategory == Biome.Category.OCEAN) {
 			spawns.add(new Spawners(RIVER_GUARDIAN, weight = 50, min = 1, max = 1));
 			spawns.add(new Spawners(SLIPPERY_BITER, weight = 50, min = 1, max = 3));
-			spawns.add(new Spawners(GURTY, weight = 25, min = 1, max = 3));
-			spawns.add(new Spawners(EntityType.COD, weight = MyConfig.getCodSpawnBoost(), min = 1, max = 5));
-			spawns.add(new Spawners(EntityType.SALMON, weight = MyConfig.getSalmonSpawnBoost(), min = 1, max = 5));
+			spawns.add(new Spawners(GURTY, weight = 25, min = 1, max = 1));
+			spawns.add(new Spawners(EntityType.COD, weight = MyConfig.getCodSpawnBoost(), min = 2, max = 4));
+			spawns.add(new Spawners(EntityType.SALMON, weight = MyConfig.getSalmonSpawnBoost(), min = 2, max = 4));
 			spawns.add(new Spawners(EntityType.SQUID, weight = MyConfig.getSquidSpawnBoost(), min = 1, max = 4));
 			spawns.add(new Spawners(EntityType.DOLPHIN, weight = MyConfig.getDolphinSpawnboost(), min = 1, max = 2));
 		} else if (biomeCategory == Biome.Category.BEACH) {
@@ -101,7 +128,7 @@ public class ModEntities {
 		} else {
 			spawns.add(new Spawners(SLIPPERY_BITER, weight = 20, min = 1, max = 2));
 			spawns.add(new Spawners(RIVER_GUARDIAN, weight = 10, min = 1, max = 1));
-			spawns.add(new Spawners(GURTY, weight = 15, min = 1, max = 3));
+			spawns.add(new Spawners(GURTY, weight = 15, min = 1, max = 1));
 		}
 
 	}

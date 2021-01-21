@@ -10,8 +10,6 @@ import com.mojang.blaze3d.matrix.MatrixStack;
 import net.minecraft.client.renderer.IRenderTypeBuffer;
 import net.minecraft.client.renderer.entity.EntityRendererManager;
 import net.minecraft.client.renderer.entity.MobRenderer;
-import net.minecraft.client.renderer.entity.PigRenderer;
-import net.minecraft.client.renderer.entity.ZombieRenderer;
 import net.minecraft.util.ResourceLocation;
 import net.minecraft.util.math.MathHelper;
 import net.minecraftforge.api.distmarker.Dist;
@@ -41,7 +39,12 @@ public class GurtyRenderer extends MobRenderer<GurtyEntity, GurtyModel<GurtyEnti
 //		  if (gurtyAngry) {
 //			  System.out.println("Gurty"+ entityIn.getEntityId()  +" angry");
 //		  }
-		  float uniqueSize =0.4f+ (float)eSize/16;
+		  
+		  int angrySize = 0;
+		  if (gurtyAngry) {
+			  angrySize += 1;
+		  }
+		  float uniqueSize =0.4f+ (float)(eSize+angrySize)/(16);
 
 //			  System.out.println ("Normal ("+GurtyBiterEntity.SIZE+") + " + uniqueSize);
 		  matrixStackIn.scale(GurtyEntity.SIZE+uniqueSize, GurtyEntity.SIZE+uniqueSize, GurtyEntity.SIZE+uniqueSize);

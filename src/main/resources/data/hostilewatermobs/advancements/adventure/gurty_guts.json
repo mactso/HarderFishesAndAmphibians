@@ -1,0 +1,39 @@
+{
+  "parent": "hostilewatermobs:adventure/kill_gurty",
+  "display": {
+    "icon": {
+      "item": "hostilewatermobs:gurty_guts",
+      "nbt": "{Damage:0}"
+    },
+    "title": {
+      "translate": "advancements.hostilewatermobs.guts.title"
+    },
+    "description": {
+      "translate": "advancements.hostilewatermobs.guts.description"
+    },
+    "frame": "goal",
+    "show_toast": true,
+    "announce_to_chat": true,
+    "hidden": false
+  },
+  "criteria": {
+    "gurtyguts": {
+      "trigger": "minecraft:inventory_changed",
+      "conditions": {
+        "items": [
+          {
+            "item": "hostilewatermobs:gurty_guts"
+          }
+        ]
+      }
+    }
+  },
+  "rewards": {
+    "experience": 100
+  },
+  "requirements": [
+    [
+      "gurtyguts"
+    ]
+  ]
+}

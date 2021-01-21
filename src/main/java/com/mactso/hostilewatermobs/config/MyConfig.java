@@ -37,7 +37,7 @@ public class MyConfig {
 	}
 	
 	public static int getaDebugLevel() {
-		return aDebugLevel;
+		return debugLevel;
 	}
 
 	public static boolean getRiverGuardianPreysOnVillagerChildren() {
@@ -45,7 +45,7 @@ public class MyConfig {
 	}
 
 	public static void setaDebugLevel(int aDebugLevel) {
-		MyConfig.aDebugLevel = aDebugLevel;
+		MyConfig.debugLevel = aDebugLevel;
 	}
 
 	public static int getRiverGuardianSpawnChance() {
@@ -81,23 +81,45 @@ public class MyConfig {
 		return gurtySpawnCap;
 	}
 
+	public static int getGurtyBaseHitPoints() {
+		return gurtyBaseHitPoints;
+	}
+
+	public static int getGurtyBaseDefense() {
+		return gurtyBaseDefense;
+	}
+
+	public static int getGurtyNestDistance() {
+		return gurtyNestDistance;
+	}
+	
 	public static int getCodSpawnBoost() {
-		return CodSpawnBoost;
+		return codSpawnBoost;
 	}
 	
 	public static int getSalmonSpawnBoost() {
-		return SalmonSpawnBoost;
+		return salmonSpawnBoost;
 	}
 	
 	public static int getSquidSpawnBoost() {
-		return SquidSpawnBoost;
+		return squidSpawnBoost;
 	}
+
+	// Experimental.   Possible fix for underpopulated Nether.
+	public static int getZombifiedPiglinSpawnBoost() {
+		return zombifiedPiglinSpawnBoost;
+	}
+
+	public static int getGhastSpawnBoost() {
+		return ghastSpawnBoost;
+	}
+
 	
 	public static int getDolphinSpawnboost() {
-		return DolphinSpawnboost;
+		return dolphinSpawnboost;
 	}
 	
-	private static int      aDebugLevel;
+	private static int      debugLevel;
 
 	private static boolean  riverGuardianPreysOnVillagerChildren;
 	private static int 	    riverGuardianSpawnChance;
@@ -109,12 +131,19 @@ public class MyConfig {
 
 	private static int 	    gurtySpawnChance;
 	private static int 	    gurtySpawnCap;
-
-	private static int 	    CodSpawnBoost;
-	private static int 	    SalmonSpawnBoost;
-	private static int 	    SquidSpawnBoost;
-	private static int 	    DolphinSpawnboost;
+	private static int      gurtyBaseHitPoints;
+	private static int      gurtyBaseDefense;
+	private static int      gurtyNestDistance;
 	
+	private static int 	    codSpawnBoost;
+	private static int 	    salmonSpawnBoost;
+	private static int 	    squidSpawnBoost;
+	private static int 	    dolphinSpawnboost;
+	
+
+
+	private static int      zombifiedPiglinSpawnBoost;
+	private static int      ghastSpawnBoost;
 
 
 	public static final int KILLER_ANY   = 0;
@@ -133,29 +162,60 @@ public class MyConfig {
 
 	
 	public static void pushValues() {
-		COMMON.debugLevel.set(aDebugLevel);
+		
+		COMMON.debugLevel.set(debugLevel);
+
 		COMMON.riverGuardianPreysOnVillagerChildren.set(riverGuardianPreysOnVillagerChildren);
 		COMMON.riverGuardianSpawnChance.set(riverGuardianSpawnChance);
 		COMMON.riverGuardianSoundRange.set(riverGuardianSoundRange);
 		COMMON.riverGuardianSpawnCap.set(riverGuardianSpawnCap);
-		COMMON.gurtySpawnCap.set(slipperyBiterSpawnCap);
-		COMMON.gurtySpawnChance.set(slipperyBiterSpawnChance);
+
+		COMMON.slipperyBiterSpawnCap.set(slipperyBiterSpawnCap);
+		COMMON.slipperyBiterSpawnChance.set(slipperyBiterSpawnChance);
+
+		COMMON.gurtySpawnCap.set(gurtySpawnCap);
+		COMMON.gurtySpawnChance.set(gurtySpawnChance);
+		COMMON.gurtyBaseHitPoints.set(gurtyBaseHitPoints);
+		COMMON.gurtyBaseDefense.set(gurtyBaseDefense);
+		COMMON.gurtyNestDistance.set(gurtyNestDistance);
+
+		COMMON.codSpawnBoost.set(codSpawnBoost);
+		COMMON.salmonSpawnBoost.set(salmonSpawnBoost);
+		COMMON.squidSpawnBoost.set(squidSpawnBoost);
+		COMMON.dolphinSpawnBoost.set(dolphinSpawnboost);
+		COMMON.zombifiedPiglinSpawnBoost.set(zombifiedPiglinSpawnBoost);
+		COMMON.ghastSpawnBoost.set(ghastSpawnBoost);
 	}
 	
 	// remember need to push each of these values separately once we have commands.
 	public static void bakeConfig()
 	{
 
-		aDebugLevel = COMMON.debugLevel.get();
+		debugLevel = COMMON.debugLevel.get();
+
 		riverGuardianSpawnChance = COMMON.riverGuardianSpawnChance.get();
 		riverGuardianSpawnCap = COMMON.riverGuardianSpawnCap.get();
 		riverGuardianSoundRange = COMMON.riverGuardianSoundRange.get();
+
 		slipperyBiterSpawnChance = COMMON.slipperyBiterSpawnChance.get();
 		slipperyBiterSpawnCap = COMMON.slipperyBiterSpawnCap.get();
+
 		gurtySpawnChance = COMMON.gurtySpawnChance.get();
 		gurtySpawnCap = COMMON.gurtySpawnCap.get();
-		if (aDebugLevel > 0) {
-			System.out.println("Harder Farther Debug Level: " + aDebugLevel );
+		gurtyBaseHitPoints = COMMON.gurtyBaseHitPoints.get();
+		gurtyBaseDefense = COMMON.gurtyBaseDefense.get();
+		gurtyNestDistance = COMMON.gurtyNestDistance.get();
+
+		codSpawnBoost = COMMON.codSpawnBoost.get();
+		salmonSpawnBoost = COMMON.salmonSpawnBoost.get();
+		squidSpawnBoost = COMMON.squidSpawnBoost.get();
+		dolphinSpawnboost = COMMON.dolphinSpawnBoost.get();
+		
+		zombifiedPiglinSpawnBoost = COMMON.zombifiedPiglinSpawnBoost.get();
+		ghastSpawnBoost = COMMON.ghastSpawnBoost.get();		
+		
+		if (debugLevel > 0) {
+			System.out.println("Harder Farther Debug Level: " + debugLevel );
 		}
 	}
 	
@@ -163,26 +223,42 @@ public class MyConfig {
 
 		public final IntValue debugLevel;
 		public final BooleanValue riverGuardianPreysOnVillagerChildren;
+
 		public final IntValue riverGuardianSpawnChance;
 		public final IntValue riverGuardianSpawnCap;
 		public final IntValue riverGuardianSoundRange;
+
 		public final IntValue slipperyBiterSpawnChance;
 		public final IntValue slipperyBiterSpawnCap;	
+		
 		public final IntValue gurtySpawnChance;
-		public final IntValue gurtySpawnCap;	
+		public final IntValue gurtySpawnCap;
+		public final IntValue gurtyBaseHitPoints;
+		public final IntValue gurtyBaseDefense;
+		public final IntValue gurtyNestDistance;
+
 		public final IntValue codSpawnBoost;
 		public final IntValue salmonSpawnBoost;
 		public final IntValue squidSpawnBoost;
 		public final IntValue dolphinSpawnBoost;
 		
+		public final IntValue zombifiedPiglinSpawnBoost;
+		public final IntValue ghastSpawnBoost;
+		
 		public Common(ForgeConfigSpec.Builder builder) {
+
 			builder.push("Hostile Water Mobs");
+			
+			builder.push("Hostile Water Mobs - General");
 			
 			debugLevel = builder
 					.comment("Debug Level: 0 = Off, 1 = Log, 2 = Chat+Log")
 					.translation(Main.MODID + ".config." + "debugLevel")
 					.defineInRange("debugLevel", () -> 0, 0, 2);
-			
+
+			builder.pop();
+			builder.push("Hostile Water Mobs - River Guardian");
+
 			riverGuardianPreysOnVillagerChildren = builder
 					.comment("riverGuardianPreysOnVillagerChildren = true")
 					.translation(Main.MODID + ".config." + "riverGuardianPreysOnVillagerChildren")
@@ -203,6 +279,9 @@ public class MyConfig {
 					.translation(Main.MODID + ".config." + "riverGuardianSoundRange")
 					.defineInRange("riverGuardianSoundRange", () -> 15, 1, 24);
 
+			builder.pop();
+			builder.push("Hostile Water Mobs - Slippery Biter");
+
 			slipperyBiterSpawnChance = builder
 					.comment("slipperyBiterSpawnChance")
 					.translation(Main.MODID + ".config." + "slipperyBiterSpawnChance")
@@ -213,6 +292,9 @@ public class MyConfig {
 					.translation(Main.MODID + ".config." + "slipperyBiterSpawnCap")
 					.defineInRange("slipperyBiterSpawnCap", () -> 21, 0, 100);
 
+			builder.pop();
+			builder.push("Hostile Water Mobs - Gurty");
+
 			gurtySpawnChance = builder
 					.comment("gurtySpawnChance")
 					.translation(Main.MODID + ".config." + "gurtySpawnChance")
@@ -222,7 +304,25 @@ public class MyConfig {
 					.comment("gurtySpawnCap")
 					.translation(Main.MODID + ".config." + "gurtySpawnCap")
 					.defineInRange("gurtySpawnCap", () -> 21, 0, 100);
+
+			gurtyBaseHitPoints = builder
+					.comment("gurtyBaseHitPoints")
+					.translation(Main.MODID + ".config." + "gurtyBaseHitPoints")
+					.defineInRange("gurtyBaseHitPoints", () -> 10, 0, 100);
 			
+			gurtyBaseDefense = builder
+					.comment("gurtyBaseDefense")
+					.translation(Main.MODID + ".config." + "gurtyBaseDefense")
+					.defineInRange("gurtyBaseDefense", () -> 2, 2, 10);
+			
+			gurtyNestDistance = builder
+					.comment("gurtyNestDistance")
+					.translation(Main.MODID + ".config." + "gurtyNestDistance")
+					.defineInRange("gurtyNestDistance", () -> 6, 2, 15);
+			
+			builder.pop();
+			builder.push("Hostile Water Mobs - Fish Spawn Boost");
+
 			codSpawnBoost = builder
 					.comment("codSpawnBoost")
 					.translation(Main.MODID + ".config." + "codSpawnBoost")
@@ -239,7 +339,19 @@ public class MyConfig {
 					.comment("dolphinSpawnBoost")
 					.translation(Main.MODID + ".config." + "dolphinSpawnBoost")
 					.defineInRange("dolphinSpawnBoost", () -> 10, 0, 100);
-									
+
+			builder.pop();
+			builder.push("Hostile Water Mobs - Experimental Nether Spawn Fix");
+			zombifiedPiglinSpawnBoost = builder
+					.comment("zombiePiglinSpawnBoost ")
+					.translation(Main.MODID + ".config." + "zombifiedPiglinSpawnBoost ")
+					.defineInRange("zombifiedPiglinSpawnBoost ", () -> 25, 0, 100);
+			
+			ghastSpawnBoost = builder
+					.comment("ghastSpawnBoost ")
+					.translation(Main.MODID + ".config." + "ghastSpawnBoost ")
+					.defineInRange("ghastSpawnBoost ", () -> 30, 0, 100);
+			builder.pop();
 			
 			builder.pop();
 			

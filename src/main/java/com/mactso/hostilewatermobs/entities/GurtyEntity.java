@@ -1,26 +1,19 @@
 package com.mactso.hostilewatermobs.entities;
 
 import java.util.Random;
-import java.util.UUID;
 import java.util.function.Predicate;
-import java.util.function.ToDoubleFunction;
 
 import javax.annotation.Nullable;
-import javax.lang.model.element.NestingKind;
 
 import com.mactso.hostilewatermobs.config.MyConfig;
 import com.mactso.hostilewatermobs.sound.ModSounds;
 
-import net.minecraft.block.Block;
 import net.minecraft.block.BlockState;
 import net.minecraft.block.Blocks;
-import net.minecraft.block.TurtleEggBlock;
-import net.minecraft.entity.CreatureAttribute;
 import net.minecraft.entity.CreatureEntity;
 import net.minecraft.entity.Entity;
 import net.minecraft.entity.EntitySize;
 import net.minecraft.entity.EntityType;
-import net.minecraft.entity.IAngerable;
 import net.minecraft.entity.ILivingEntityData;
 import net.minecraft.entity.LivingEntity;
 import net.minecraft.entity.MoverType;
@@ -30,8 +23,6 @@ import net.minecraft.entity.ai.attributes.AttributeModifier;
 import net.minecraft.entity.ai.attributes.AttributeModifier.Operation;
 import net.minecraft.entity.ai.attributes.AttributeModifierMap;
 import net.minecraft.entity.ai.attributes.Attributes;
-import net.minecraft.entity.ai.attributes.ModifiableAttributeInstance;
-import net.minecraft.entity.ai.controller.DolphinLookController;
 import net.minecraft.entity.ai.controller.MovementController;
 import net.minecraft.entity.ai.goal.Goal;
 import net.minecraft.entity.ai.goal.HurtByTargetGoal;
@@ -41,31 +32,22 @@ import net.minecraft.entity.ai.goal.LookRandomlyGoal;
 import net.minecraft.entity.ai.goal.MeleeAttackGoal;
 import net.minecraft.entity.ai.goal.MoveToBlockGoal;
 import net.minecraft.entity.ai.goal.NearestAttackableTargetGoal;
-import net.minecraft.entity.ai.goal.RandomSwimmingGoal;
 import net.minecraft.entity.ai.goal.RandomWalkingGoal;
-import net.minecraft.entity.ai.goal.ResetAngerGoal;
-import net.minecraft.entity.ai.goal.WaterAvoidingRandomWalkingGoal;
+import net.minecraft.entity.merchant.villager.VillagerEntity;
+import net.minecraft.entity.monster.IMob;
 import net.minecraft.entity.monster.MonsterEntity;
-import net.minecraft.entity.monster.SkeletonEntity;
-import net.minecraft.entity.monster.WitherSkeletonEntity;
-import net.minecraft.entity.passive.TurtleEntity;
 import net.minecraft.entity.passive.WaterMobEntity;
 import net.minecraft.entity.player.PlayerEntity;
 import net.minecraft.entity.player.ServerPlayerEntity;
 import net.minecraft.nbt.CompoundNBT;
-import net.minecraft.nbt.NBTUtil;
 import net.minecraft.network.datasync.DataParameter;
 import net.minecraft.network.datasync.DataSerializers;
 import net.minecraft.network.datasync.EntityDataManager;
-import net.minecraft.particles.IParticleData;
-import net.minecraft.particles.ParticleTypes;
-import net.minecraft.pathfinding.GroundPathNavigator;
 import net.minecraft.pathfinding.PathFinder;
 import net.minecraft.pathfinding.PathNavigator;
 import net.minecraft.pathfinding.PathNodeType;
 import net.minecraft.pathfinding.SwimmerPathNavigator;
 import net.minecraft.pathfinding.WalkAndSwimNodeProcessor;
-import net.minecraft.pathfinding.WalkNodeProcessor;
 import net.minecraft.potion.Effect;
 import net.minecraft.potion.EffectInstance;
 import net.minecraft.potion.Effects;
@@ -90,10 +72,9 @@ import net.minecraft.world.World;
 import net.minecraft.world.biome.Biome;
 import net.minecraft.world.biome.Biome.Category;
 import net.minecraft.world.chunk.Chunk;
-import net.minecraft.world.gen.Heightmap;
 import net.minecraft.world.server.ServerWorld;
 
-public class GurtyEntity extends WaterMobEntity {
+public class GurtyEntity extends WaterMobEntity implements IMob {
 	private static final DataParameter<Integer> TARGET_ENTITY = EntityDataManager.createKey(GurtyEntity.class,
 			DataSerializers.VARINT);
 	private static final DataParameter<Boolean> ANGRY = EntityDataManager.createKey(GurtyEntity.class,
@@ -104,13 +85,15 @@ public class GurtyEntity extends WaterMobEntity {
 			DataSerializers.BLOCK_POS);
 	private static final DataParameter<BlockPos> TRAVEL_POS = EntityDataManager.createKey(GurtyEntity.class,
 			DataSerializers.BLOCK_POS);
-	private static final DataParameter<Boolean> TRAVELLING = EntityDataManager.createKey(TurtleEntity.class,
+	private static final DataParameter<Boolean> TRAVELLING = EntityDataManager.createKey(GurtyEntity.class,
 			DataSerializers.BOOLEAN);
 
 	public static final int ANGER_MILD = 300;
 	public static final int ANGER_INTENSE = 1200;
 	public static final float SIZE = EntityType.PIG.getWidth() * 1.25f;
 
+	private boolean hasNest;
+	private int nestProtectionDistSq;
 	private long angerTime;
 	protected RandomWalkingGoal wander;
 	protected float tailHeight = -0.2707964f;
@@ -126,14 +109,16 @@ public class GurtyEntity extends WaterMobEntity {
 		this.setPathPriority(PathNodeType.WATER, 0.0f);
 		this.moveController = new GurtyEntity.MoveHelperController(this);
 		this.stepHeight = 1.0f;
-
+		this.nestProtectionDistSq = MyConfig.getGurtyNestDistance();
+		nestProtectionDistSq = (nestProtectionDistSq * nestProtectionDistSq) + 3;
 	}
 
 	public static AttributeModifierMap.MutableAttribute registerAttributes() {
-		return MonsterEntity.func_234295_eP_().createMutableAttribute(Attributes.MOVEMENT_SPEED, (double) 0.25F)
+
+		return MonsterEntity.func_234295_eP_().createMutableAttribute(Attributes.MOVEMENT_SPEED, (double) 0.26F)
 				.createMutableAttribute(Attributes.FOLLOW_RANGE, 20.0D)
 				.createMutableAttribute(Attributes.ATTACK_DAMAGE, 2.5D)
-				.createMutableAttribute(Attributes.MAX_HEALTH, 11.0D);
+				.createMutableAttribute(Attributes.MAX_HEALTH, 5.0D);
 	}
 
 	public float getTailHeight() {
@@ -155,6 +140,10 @@ public class GurtyEntity extends WaterMobEntity {
 		return this.dataManager.get(TRAVEL_POS);
 	}
 
+	public int getESize() {
+		return  this.getEntityId()%16-8;
+	}
+	
 	protected boolean isNestingTime() {
 		long time = this.world.getDayTime() % 24000;
 		if ((time > 11000 && time < 11250) || (time > 250 && time < 500)) {
@@ -276,6 +265,7 @@ public class GurtyEntity extends WaterMobEntity {
 			return super.attackEntityFrom(source, amount);
 		}
 
+
 		if ((amount > 0.0f) && (source.getTrueSource() != null)) {
 			Entity entity = source.getTrueSource();
 			setRevengeTarget((LivingEntity) entity);
@@ -313,14 +303,27 @@ public class GurtyEntity extends WaterMobEntity {
 	@Override
 	protected void damageEntity(DamageSource source, float damageAmount) {
 
+		
 		if (source.isProjectile()) {
 			damageAmount *= 0.66f; // reduce projectile damage by 33% thick skin
 		}
-		if (damageAmount > 4.5) {
-			damageAmount -= 2.0f;  // thick leathery skin.
+		float baseDefense = MyConfig.getGurtyBaseDefense();
+		if (baseDefense < 4.5f) {
+			baseDefense = 4.5f;
 		}
+		if (damageAmount > 4.5) {
+			damageAmount -= MyConfig.getGurtyBaseDefense();  // thick leathery skin.
+		}
+
+		if (damageAmount > 2.0) {
+			
+			if (getESize() >= 0) {
+			damageAmount *= 0.93f;
+			}
+		}
+		int x=3;
 		if (source.getDamageType() == DamageSource.FALL.getDamageType()) {
-			damageAmount /= 2.0f;
+			damageAmount *= 0.5f;
 		}
 		if (source.getDamageType() == DamageSource.SWEET_BERRY_BUSH.getDamageType()) {
 			damageAmount = 0.0f;   // thick leathery skin.
@@ -329,11 +332,15 @@ public class GurtyEntity extends WaterMobEntity {
 			damageAmount = 0.0f;   // thick leathery skin.
 			return;
 		}
+		// resistant to magic and magic thorns
 		if (source.getDamageType() == DamageSource.MAGIC.getDamageType()) { 
 			damageAmount *= 0.66f; // partial magic immunity
 		}
 		if (source.isUnblockable()) { 
 			damageAmount *= 0.66f; // partial magic immunity
+		}
+		if (source.isExplosion()) {
+			damageAmount *= 0.1f; // strong explosion resistance
 		}
 		super.damageEntity(source, damageAmount);
 	}
@@ -420,9 +427,9 @@ public class GurtyEntity extends WaterMobEntity {
 		if (reason == SpawnReason.SPAWN_EGG)
 			return true;
 
-		if (w.getLightValue(pos) > 13) {
-			return false;
-		}
+//		if (w.getLightValue(pos) > 13) {
+//			return false;
+//		}
 
 		if (reason == SpawnReason.SPAWNER) {
 			return true;
@@ -440,15 +447,22 @@ public class GurtyEntity extends WaterMobEntity {
 			return false;
 		}
 
-//		if (findWaterBlock(gurtyIn, w, pos, 21, 4) == null) {
-//			return false;
-//		}
+		// gurties below sea level require nearby water.
+		if (pos.getY()+1 < w.getSeaLevel()) {
+			if (findWaterBlock(gurtyIn, w, pos, 21, 4) == null) {
+				return false;
+			}
+		}
 
 		int gurtySpawnChance = MyConfig.getGurtySpawnChance();
 		int gurtySpawnCap = MyConfig.getGurtySpawnCap();
 		int gurtySpawnRoll = randomIn.nextInt(30);
 		int gurtyCount = ((ServerWorld) w).getEntities(ModEntities.GURTY, (entity) -> true).size();
 
+		if (gurtyCount < 7) {
+			gurtySpawnRoll = 0;
+		}
+		
 		Biome biome = w.getBiome(pos);
 		Category bC = biome.getCategory();
 		if ((bC == Category.OCEAN) || (bC == Category.RIVER) || (bC == Category.SWAMP) || (bC == Category.BEACH)) {
@@ -487,6 +501,24 @@ public class GurtyEntity extends WaterMobEntity {
 		return false;
 	}
 
+	@Override
+	public boolean preventDespawn() {
+		int gurtyCount = ((ServerWorld) this.world).getEntities(ModEntities.GURTY, (entity) -> true).size();
+		if (gurtyCount < 3) { 
+			return true;
+		}
+		if (this.isAngry()) {
+			return true;
+		}
+		return super.preventDespawn();
+	}
+
+	
+	@Override
+	public void onDeath(DamageSource cause) {
+   	    	removeNest();
+		super.onDeath(cause);
+	}
 /**
  * Makes the entity despawn if requirements are reached
  */
@@ -509,7 +541,7 @@ public class GurtyEntity extends WaterMobEntity {
          int i = this.getType().getClassification().getInstantDespawnDistance();
          int j = i * i;
          if (d0 > (double)j && this.canDespawn(d0)) {
-        	 world.setBlockState(this.getNestPos(), Blocks.AIR.getDefaultState());
+        	 removeNest();
         	 this.remove();
             
          }
@@ -526,6 +558,12 @@ public class GurtyEntity extends WaterMobEntity {
    } else {
       this.idleTime = 0;
    }
+}
+
+private void removeNest() {
+	if (hasNest) {
+		world.setBlockState(this.getNestPos(), Blocks.AIR.getDefaultState());
+	}
 }
 	@Override
 	@Nullable
@@ -552,12 +590,17 @@ public class GurtyEntity extends WaterMobEntity {
 		}
 		if (nestCount < 3) {
 			world.setBlockState(pos, Blocks.CORNFLOWER.getDefaultState());
+			this.hasNest = true;
 		}
+
+		setHealth(getMaxHealth() + MyConfig.getGurtyBaseHitPoints());
+		
 		if (difficultyIn.getDifficulty() == Difficulty.HARD) {
-			float newHealth = getMaxHealth() + 3.0f;
-			setHealth(newHealth);
+			float hardHealth = getMaxHealth() + 3.0f;
+			setHealth(hardHealth);
 			getAttribute(Attributes.ATTACK_DAMAGE)
 					.applyNonPersistentModifier(new AttributeModifier("difficulty", 0.5, Operation.ADDITION));
+
 		}
 
 		return super.onInitialSpawn(worldIn, difficultyIn, reason, spawnDataIn, dataTag);
@@ -580,6 +623,7 @@ public class GurtyEntity extends WaterMobEntity {
 		this.goalSelector.addGoal(4, new GurtyEntity.GoWanderGoal(this, 1.4D, 40));
 		this.goalSelector.addGoal(5, new LookRandomlyGoal(this));
 		this.goalSelector.addGoal(5, new LookAtGoal(this, PlayerEntity.class, 12.0F));
+		this.goalSelector.addGoal(6, new SwimGoal(this,60));
 		
 		this.targetSelector.addGoal(0, new HurtByTargetGoal(this).setCallsForHelp());
 		this.targetSelector.addGoal(1, new NearestAttackableTargetGoal<>(this, LivingEntity.class, 10, true, false,
@@ -587,7 +631,11 @@ public class GurtyEntity extends WaterMobEntity {
 		
 		super.registerGoals();
 	}
-
+	@Override
+	public int getMaxSpawnedInChunk() {
+		int max = 1 + (MyConfig.getGurtySpawnCap()/6);
+		return max;
+	}
 	@Nullable
 	public LivingEntity getTargetedEntity() {
 		if (!this.hasTargetedEntity()) {
@@ -657,6 +705,11 @@ public class GurtyEntity extends WaterMobEntity {
 				return false;
 			}
 
+			// villagers have secret tricks to make gurty's not want to eat them
+			if (entity instanceof VillagerEntity) {
+				return false;
+			}
+
 			// gurty's don't attack things they can't see unless attacked first.
 			if (!gurtyEntity.canEntityBeSeen(entity)) {
 				if (entity != gurtyEntity.getAttackingEntity()) {
@@ -682,22 +735,23 @@ public class GurtyEntity extends WaterMobEntity {
 					return true;
 				}
 			}
-			
+
 			// distance to entity.
 			int dstToEntitySq = (int) entity.getDistanceSq(gurtyEntity);
-
+			Vector3i nestPos = (Vector3i) gurtyEntity.getNestPos();
+			
 			// gurty's always attack if entity threatens the nest and gurty is near entity.
-			Vector3i posVec = (Vector3i) entity.getPosition();
-			Vector3i nestVec = (Vector3i) gurtyEntity.getNestPos();
-			int nestDistance = (int) posVec.distanceSq(nestVec);
+			Vector3i entityPosVec = (Vector3i) entity.getPosition();
+			int nestThreatDistance = (int) entityPosVec.distanceSq(gurtyEntity.getNestPos());
+
 			// gurty's get angry at creatures near their nest area if the gurty is nearby.
-			if ((nestDistance < 37) && (dstToEntitySq < 121)) {
+			if ((nestThreatDistance < gurtyEntity.nestProtectionDistSq) && (dstToEntitySq < 121)) {
 				gurtyEntity.setAttackTarget(entity);
 				return true;
 			}
 			
-			// gurty's don't wander too far from the nest.
-			if ((nestDistance > 800)) {
+			// Don't attack things when too far from nest.
+			if ((nestPos.distanceSq(gurtyEntity.getPosition()) > 1600)) {
 				gurtyEntity.setAttackTarget(null);
 				return false;
 			}
@@ -846,6 +900,35 @@ public class GurtyEntity extends WaterMobEntity {
 		      public boolean shouldExecute() {
 		         return !gurty.isInWater() && !gurty.isGoingNest()  ? super.shouldExecute() : false;
 		      }
+	}
+	
+	static class SwimGoal extends net.minecraft.entity.ai.goal.SwimGoal {
+		GurtyEntity gurty;
+		int chance;
+		SwimGoal(GurtyEntity gurtyIn) {
+			super(gurtyIn);
+			this.chance = 40;
+			this.gurty = gurtyIn;
+		}
+
+		SwimGoal(GurtyEntity gurtyIn, int chanceIn) {
+			super(gurtyIn);
+			this.chance = chanceIn;
+			this.gurty = gurtyIn;
+		}
+
+		/**
+		 * Returns whether execution should begin. You can also read and cache any state
+		 * necessary for execution in this method as well.
+		 */
+		public boolean shouldExecute() {
+			
+			if (gurty.rand.nextInt(chance) != 0 ){
+				return false;
+			}
+			return true;
+
+		}
 	}
 	
 	static class Navigator extends SwimmerPathNavigator {
@@ -1034,8 +1117,6 @@ public class GurtyEntity extends WaterMobEntity {
 		 * Execute a one shot task or start executing a continuous task
 		 */
 		public void startExecuting() {
-			int i = 128;
-			int j = 4;
 			Random random = gurty.rand;
 			int k = random.nextInt(128) - 64;
 			int l = random.nextInt(9) - 4;
