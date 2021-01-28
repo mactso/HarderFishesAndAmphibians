@@ -21,6 +21,7 @@ import net.minecraft.world.gen.Heightmap;
 import net.minecraft.world.gen.feature.structure.Structure;
 import net.minecraftforge.api.distmarker.Dist;
 import net.minecraftforge.api.distmarker.OnlyIn;
+import net.minecraftforge.common.world.MobSpawnInfoBuilder;
 import net.minecraftforge.event.world.BiomeLoadingEvent;
 import net.minecraftforge.registries.IForgeRegistry;
 
@@ -73,32 +74,55 @@ public class ModEntities {
 		int min;
 		int max;
 
+
+
 		Category biomeCategory = event.getCategory();
+		MobSpawnInfoBuilder builder = event.getSpawns();
+		
+		String threadname = Thread.currentThread().getName();
+		if (threadname.equals("Render thread")) {
+//			return;
+		} else {
+			min = 1;
+		}
 		
 		if (biomeCategory == Biome.Category.NETHER) {
 
+			List<Spawners> wlist = builder.getSpawner(EntityClassification.MONSTER);
+			
 			boolean zombiePiglinSpawner = false;
 			boolean ghastSpawner = false;
 
 			// more efficient but less generic.
-			for (int i = 0; i < spawns.size(); i++) {
-				Spawners s = spawns.get(i);
+			// safer when deleting if go from end with i=size() i--; wlist.size()-1;
+			for (int i = 0; i < wlist.size(); i++) {
+				Spawners s = wlist.get(i);
+				// remove spawner for mob
+				// add spawner to list to remove later.
+
 				if (s.type == EntityType.ZOMBIFIED_PIGLIN) {
-					zombiePiglinSpawner = true;
+					if (s.itemWeight >= MyConfig.getZombifiedPiglinSpawnBoost()) {
+						zombiePiglinSpawner = true;
+					}
 				}
 				if (s.type == EntityType.GHAST) {
-					ghastSpawner = true;
+					if (s.itemWeight >= MyConfig.getGhastSpawnBoost()) {
+						ghastSpawner = true;
+					}
 				}
-
 			}
-
+			
 			if (!zombiePiglinSpawner) {
-				spawns.add(new Spawners(EntityType.ZOMBIFIED_PIGLIN, weight = MyConfig.getZombifiedPiglinSpawnBoost(),
+				if (MyConfig.getZombifiedPiglinSpawnBoost() > 0) {
+					spawns.add(new Spawners(EntityType.ZOMBIFIED_PIGLIN, weight = MyConfig.getZombifiedPiglinSpawnBoost(),
 						min = 1, max = 3));
+				}
 			}
 			if (!ghastSpawner) {
-				spawns.add(new Spawners(EntityType.GHAST, weight = MyConfig.getGhastSpawnBoost(), min = 1,
-						max = 1));
+				if (MyConfig.getGhastSpawnBoost() > 0) {
+					spawns.add(new Spawners(EntityType.GHAST, weight = MyConfig.getGhastSpawnBoost(), min = 1,
+							max = 1));
+				}
 			}
 			
 			spawns.add(new Spawners(RIVER_GUARDIAN, weight = 5, min = 1, max = 3));
@@ -126,38 +150,45 @@ public class ModEntities {
 		} else if (biomeCategory == Biome.Category.BEACH) {
 			spawns.add(new Spawners(GURTY, weight = 35, min = 1, max = 3));
 		} else {
-			spawns.add(new Spawners(SLIPPERY_BITER, weight = 20, min = 1, max = 2));
-			spawns.add(new Spawners(RIVER_GUARDIAN, weight = 10, min = 1, max = 1));
+			spawns.add(new Spawners(SLIPPERY_BITER, weight = 15, min = 1, max = 2));
+			spawns.add(new Spawners(RIVER_GUARDIAN, weight = 8, min = 1, max = 1));
 			spawns.add(new Spawners(GURTY, weight = 15, min = 1, max = 1));
 		}
-
 	}
 
 	public static void getFeatureSpawnData(List<Spawners> spawns, Structure<?> structure) {
 		int weight;
 		int min;
 		int max;
-
-		if (structure == Structure.OCEAN_RUIN) {
-			spawns.add(new Spawners(RIVER_GUARDIAN, weight = 20, min = 1, max = 1));
-			spawns.add(new Spawners(SLIPPERY_BITER, weight = 20, min = 1, max = 1));
-		} else if (structure == Structure.SHIPWRECK) {
-			spawns.add(new Spawners(RIVER_GUARDIAN, weight = 15, min = 1, max = 1));
-			spawns.add(new Spawners(SLIPPERY_BITER, weight = 15, min = 1, max = 1));
-		} else if (structure == Structure.BURIED_TREASURE) {
-			spawns.add(new Spawners(RIVER_GUARDIAN, weight = 15, min = 1, max = 1));
-			spawns.add(new Spawners(SLIPPERY_BITER, weight = 15, min = 1, max = 1));
-			spawns.add(new Spawners(GURTY, weight = 15, min = 1, max = 3));
-		} else if (structure == Structure.SWAMP_HUT) {
-			spawns.add(new Spawners(RIVER_GUARDIAN, weight = 5, min = 1, max = 1));
-			spawns.add(new Spawners(SLIPPERY_BITER, weight = 5, min = 1, max = 1));
-			spawns.add(new Spawners(GURTY, weight = 5, min = 1, max = 3));
-		} else if (structure == Structure.RUINED_PORTAL) {
-			spawns.add(new Spawners(RIVER_GUARDIAN, weight = 30, min = 1, max = 1));
-			spawns.add(new Spawners(SLIPPERY_BITER, weight = 30, min = 1, max = 1));
-			spawns.add(new Spawners(GURTY, weight = 15, min = 1, max = 3));
-
+		String nameSpace = structure.getRegistryName().getNamespace();
+				
+		if (nameSpace.equals("minecraft")) {
+			if (structure == Structure.OCEAN_RUIN) {
+				spawns.add(new Spawners(RIVER_GUARDIAN, weight = 20, min = 1, max = 1));
+				spawns.add(new Spawners(SLIPPERY_BITER, weight = 20, min = 1, max = 1));
+			} else if (structure == Structure.SHIPWRECK) {
+				spawns.add(new Spawners(RIVER_GUARDIAN, weight = 15, min = 1, max = 1));
+				spawns.add(new Spawners(SLIPPERY_BITER, weight = 15, min = 1, max = 1));
+			} else if (structure == Structure.BURIED_TREASURE) {
+				spawns.add(new Spawners(RIVER_GUARDIAN, weight = 15, min = 1, max = 1));
+				spawns.add(new Spawners(SLIPPERY_BITER, weight = 15, min = 1, max = 1));
+				spawns.add(new Spawners(GURTY, weight = 15, min = 1, max = 3));
+			} else if (structure == Structure.SWAMP_HUT) {
+				spawns.add(new Spawners(RIVER_GUARDIAN, weight = 5, min = 1, max = 1));
+				spawns.add(new Spawners(SLIPPERY_BITER, weight = 5, min = 1, max = 1));
+				spawns.add(new Spawners(GURTY, weight = 5, min = 1, max = 3));
+			} else if (structure == Structure.RUINED_PORTAL) {
+				spawns.add(new Spawners(RIVER_GUARDIAN, weight = 30, min = 1, max = 1));
+				spawns.add(new Spawners(SLIPPERY_BITER, weight = 30, min = 1, max = 1));
+				spawns.add(new Spawners(GURTY, weight = 15, min = 1, max = 3));
+			}
+		} else {
+			if (MyConfig.getModStructureBoost() > 0) {
+				weight = MyConfig.getModStructureBoost();
+				spawns.add(new Spawners(EntityType.SKELETON, weight , min = 1, max = 3));
+				spawns.add(new Spawners(EntityType.ZOMBIE, 1 + weight/2, min = 1, max = 3));
+				spawns.add(new Spawners(EntityType.WITCH, 1+ weight/6, min = 1, max = 3));
+			}
 		}
-
 	}
 }

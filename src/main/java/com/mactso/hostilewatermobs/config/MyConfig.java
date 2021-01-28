@@ -92,6 +92,10 @@ public class MyConfig {
 	public static int getGurtyNestDistance() {
 		return gurtyNestDistance;
 	}
+
+	public static int getModStructureBoost() {
+		return modStructureBoost;
+	}
 	
 	public static int getCodSpawnBoost() {
 		return codSpawnBoost;
@@ -134,6 +138,8 @@ public class MyConfig {
 	private static int      gurtyBaseHitPoints;
 	private static int      gurtyBaseDefense;
 	private static int      gurtyNestDistance;
+
+	private static int      modStructureBoost;
 	
 	private static int 	    codSpawnBoost;
 	private static int 	    salmonSpawnBoost;
@@ -159,7 +165,8 @@ public class MyConfig {
 		}
 	}	
 
-
+	// bad code.  not running currently.
+	
 	
 	public static void pushValues() {
 		
@@ -205,6 +212,7 @@ public class MyConfig {
 		gurtyBaseHitPoints = COMMON.gurtyBaseHitPoints.get();
 		gurtyBaseDefense = COMMON.gurtyBaseDefense.get();
 		gurtyNestDistance = COMMON.gurtyNestDistance.get();
+		modStructureBoost = COMMON.modStructureBoost.get();
 
 		codSpawnBoost = COMMON.codSpawnBoost.get();
 		salmonSpawnBoost = COMMON.salmonSpawnBoost.get();
@@ -236,7 +244,8 @@ public class MyConfig {
 		public final IntValue gurtyBaseHitPoints;
 		public final IntValue gurtyBaseDefense;
 		public final IntValue gurtyNestDistance;
-
+		public final IntValue modStructureBoost;
+		
 		public final IntValue codSpawnBoost;
 		public final IntValue salmonSpawnBoost;
 		public final IntValue squidSpawnBoost;
@@ -267,7 +276,7 @@ public class MyConfig {
 			riverGuardianSpawnChance = builder
 					.comment("riverGuardianSpawnChance")
 					.translation(Main.MODID + ".config." + "riverGuardianSpawnChance")
-					.defineInRange("riverGuardianSpawnChance", () -> 6, 0, 100);
+					.defineInRange("riverGuardianSpawnChance", () -> 6, 1, 100);
 
 			riverGuardianSpawnCap = builder
 					.comment("riverGuardianSpawnCap")
@@ -290,7 +299,7 @@ public class MyConfig {
 			slipperyBiterSpawnCap = builder
 					.comment("slipperyBiterSpawnCap")
 					.translation(Main.MODID + ".config." + "slipperyBiterSpawnCap")
-					.defineInRange("slipperyBiterSpawnCap", () -> 21, 0, 100);
+					.defineInRange("slipperyBiterSpawnCap", () -> 21, 1, 100);
 
 			builder.pop();
 			builder.push("Hostile Water Mobs - Gurty");
@@ -303,7 +312,7 @@ public class MyConfig {
 			gurtySpawnCap = builder
 					.comment("gurtySpawnCap")
 					.translation(Main.MODID + ".config." + "gurtySpawnCap")
-					.defineInRange("gurtySpawnCap", () -> 21, 0, 100);
+					.defineInRange("gurtySpawnCap", () -> 21, 1, 100);
 
 			gurtyBaseHitPoints = builder
 					.comment("gurtyBaseHitPoints")
@@ -321,24 +330,32 @@ public class MyConfig {
 					.defineInRange("gurtyNestDistance", () -> 6, 2, 15);
 			
 			builder.pop();
+			builder.push("Mod Structure Boost - Add Zo,Sk,W*0.16 to modded structures");
+
+			modStructureBoost = builder
+					.comment("modStructureBoost")
+					.translation(Main.MODID + ".config." + "modStructureBoost")
+					.defineInRange("modStructureBoost", () -> 10, 0, 100);
+
+			builder.pop();
 			builder.push("Hostile Water Mobs - Fish Spawn Boost");
 
 			codSpawnBoost = builder
 					.comment("codSpawnBoost")
 					.translation(Main.MODID + ".config." + "codSpawnBoost")
-					.defineInRange("codSpawnBoost", () -> 15, 0, 100);
+					.defineInRange("codSpawnBoost", () -> 15, 1, 100);
 			salmonSpawnBoost = builder
 					.comment("salmonSpawnBoost")
 					.translation(Main.MODID + ".config." + "salmonSpawnBoost")
-					.defineInRange("salmonSpawnBoost", () -> 15, 0, 100);
+					.defineInRange("salmonSpawnBoost", () -> 15, 1, 100);
 			squidSpawnBoost = builder
 					.comment("squidSpawnBoost")
 					.translation(Main.MODID + ".config." + "squidSpawnBoost")
-					.defineInRange("squidSpawnBoost", () -> 10, 0, 100);
+					.defineInRange("squidSpawnBoost", () -> 10, 1, 100);
 			dolphinSpawnBoost = builder
 					.comment("dolphinSpawnBoost")
 					.translation(Main.MODID + ".config." + "dolphinSpawnBoost")
-					.defineInRange("dolphinSpawnBoost", () -> 10, 0, 100);
+					.defineInRange("dolphinSpawnBoost", () -> 10, 1, 100);
 
 			builder.pop();
 			builder.push("Hostile Water Mobs - Experimental Nether Spawn Fix");
