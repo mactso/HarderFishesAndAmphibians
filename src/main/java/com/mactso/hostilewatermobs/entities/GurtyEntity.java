@@ -509,12 +509,15 @@ public class GurtyEntity extends WaterMobEntity implements IMob {
 
 	@Override
 	public boolean preventDespawn() {
-		int gurtyCount = ((ServerWorld) this.world).getEntities(ModEntities.GURTY, (entity) -> true).size();
-		if (gurtyCount < 3) { 
-			return true;
-		}
-		if (this.isAngry()) {
-			return true;
+		
+		if (this.world instanceof ServerWorld) {
+			int gurtyCount = ((ServerWorld) this.world).getEntities(ModEntities.GURTY, (entity) -> true).size();
+			if (gurtyCount < 3) { 
+				return true;
+			}
+			if (this.isAngry()) {
+				return true;
+			}
 		}
 		return super.preventDespawn();
 	}

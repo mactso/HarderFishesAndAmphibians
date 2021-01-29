@@ -413,9 +413,9 @@ public class RiverGuardianEntity extends GuardianEntity implements IMob {
 
 			}
 
-		
-			if (preyAnimal) {
-				if (distanceSq < huntingRange) {
+			
+			if (preyAnimal ) {
+				if ((distanceSq < huntingRange) && (parentEntity.rand.nextInt(4000) == 42) ){
 					parentEntity.setSilent(!(nearbyPlayer));
 					return true;
 				}
