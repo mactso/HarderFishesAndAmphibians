@@ -274,9 +274,9 @@ public class MyConfig {
 					.define("riverGuardianPreysOnVillagerChildren", true);
 			
 			riverGuardianSpawnChance = builder
-					.comment("riverGuardianSpawnChance")
+					.comment("riverGuardianSpawnChance Weight")
 					.translation(Main.MODID + ".config." + "riverGuardianSpawnChance")
-					.defineInRange("riverGuardianSpawnChance", () -> 6, 1, 100);
+					.defineInRange("riverGuardianSpawnChance", () -> 30, 0, 500);
 
 			riverGuardianSpawnCap = builder
 					.comment("riverGuardianSpawnCap")
@@ -292,9 +292,9 @@ public class MyConfig {
 			builder.push("Hostile Water Mobs - Slippery Biter");
 
 			slipperyBiterSpawnChance = builder
-					.comment("slipperyBiterSpawnChance")
+					.comment("slipperyBiterSpawnChance Weight")
 					.translation(Main.MODID + ".config." + "slipperyBiterSpawnChance")
-					.defineInRange("slipperyBiterSpawnChance", () -> 6, 1, 100);
+					.defineInRange("slipperyBiterSpawnChance", () -> 30, 0, 500);
 
 			slipperyBiterSpawnCap = builder
 					.comment("slipperyBiterSpawnCap")
@@ -305,9 +305,9 @@ public class MyConfig {
 			builder.push("Hostile Water Mobs - Gurty");
 
 			gurtySpawnChance = builder
-					.comment("gurtySpawnChance")
+					.comment("gurtySpawnChance Weight")
 					.translation(Main.MODID + ".config." + "gurtySpawnChance")
-					.defineInRange("gurtySpawnChance", () -> 9, 0, 100);
+					.defineInRange("gurtySpawnChance", () -> 30, 0, 500);
 
 			gurtySpawnCap = builder
 					.comment("gurtySpawnCap")

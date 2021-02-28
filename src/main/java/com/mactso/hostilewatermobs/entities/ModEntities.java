@@ -73,7 +73,9 @@ public class ModEntities {
 		int weight;
 		int min;
 		int max;
-
+		int rgSC = MyConfig.getRiverGuardianSpawnChance();
+		int gSC = MyConfig.getGurtySpawnChance();
+		int sbSC = MyConfig.getSlipperyBiterSpawnChance();
 
 
 		Category biomeCategory = event.getCategory();
@@ -128,31 +130,44 @@ public class ModEntities {
 			spawns.add(new Spawners(RIVER_GUARDIAN, weight = 5, min = 1, max = 3));
 
 		} else if (biomeCategory == Biome.Category.RIVER) {
-			spawns.add(new Spawners(RIVER_GUARDIAN, weight = 80, min = 1, max = 1));
-			spawns.add(new Spawners(SLIPPERY_BITER, weight = 20, min = 1, max = 1));
-			spawns.add(new Spawners(GURTY, weight = 45, min = 1, max = 1));
+			if (rgSC > 0) 
+				spawns.add(new Spawners(RIVER_GUARDIAN, weight = rgSC+(rgSC/2)+1, min = 1, max = 1));
+			if (sbSC > 0)
+				spawns.add(new Spawners(SLIPPERY_BITER, weight = rgSC+(rgSC/3)+1, min = 1, max = 1));
+			if (gSC > 0) 
+				spawns.add(new Spawners(GURTY, weight = (gSC*9/10)+1, min = 1, max = 1));
 			spawns.add(new Spawners(EntityType.COD, weight = MyConfig.getCodSpawnBoost()/3, min = 1, max = 2));
 			spawns.add(new Spawners(EntityType.SALMON, weight = MyConfig.getSalmonSpawnBoost()/5, min = 1, max = 2));
 			spawns.add(new Spawners(EntityType.SQUID, weight = MyConfig.getSquidSpawnBoost()/2, min = 1, max = 4));
 		} else if (biomeCategory == Biome.Category.SWAMP) {
 			spawns.add(new Spawners(EntityType.COD, weight = MyConfig.getCodSpawnBoost()/2, min = 1, max = 2));
-			spawns.add(new Spawners(RIVER_GUARDIAN, weight = 35, min = 1, max = 1));
-			spawns.add(new Spawners(SLIPPERY_BITER, weight = 35, min = 1, max = 1));
-			spawns.add(new Spawners(GURTY, weight = 50, min = 2, max = 3));
+			if (rgSC > 0) 
+				spawns.add(new Spawners(RIVER_GUARDIAN, weight = (rgSC*2/3)+1, min = 1, max = 1));
+			if (sbSC > 0) 
+				spawns.add(new Spawners(SLIPPERY_BITER, weight = (sbSC*2/3)+1, min = 1, max = 1));
+			if (gSC > 0) 
+				spawns.add(new Spawners(GURTY, weight = gSC, min = 1, max = 3));
 		} else if (biomeCategory == Biome.Category.OCEAN) {
-			spawns.add(new Spawners(RIVER_GUARDIAN, weight = 50, min = 1, max = 1));
-			spawns.add(new Spawners(SLIPPERY_BITER, weight = 50, min = 1, max = 3));
-			spawns.add(new Spawners(GURTY, weight = 25, min = 1, max = 1));
+			if (rgSC > 0) 
+				spawns.add(new Spawners(RIVER_GUARDIAN, weight = rgSC, min = 1, max = 1));
+			if (sbSC > 0) 
+				spawns.add(new Spawners(SLIPPERY_BITER, weight = sbSC, min = 1, max = 3));
+			if (gSC > 0) 
+				spawns.add(new Spawners(GURTY, weight = (gSC/2)+1, min = 1, max = 1));
 			spawns.add(new Spawners(EntityType.COD, weight = MyConfig.getCodSpawnBoost(), min = 2, max = 4));
 			spawns.add(new Spawners(EntityType.SALMON, weight = MyConfig.getSalmonSpawnBoost(), min = 2, max = 4));
 			spawns.add(new Spawners(EntityType.SQUID, weight = MyConfig.getSquidSpawnBoost(), min = 1, max = 4));
 			spawns.add(new Spawners(EntityType.DOLPHIN, weight = MyConfig.getDolphinSpawnboost(), min = 1, max = 2));
 		} else if (biomeCategory == Biome.Category.BEACH) {
-			spawns.add(new Spawners(GURTY, weight = 35, min = 1, max = 3));
+			if (gSC > 0) 			
+				spawns.add(new Spawners(GURTY, weight = (gSC/2)+1, min = 1, max = 3));
 		} else {
-			spawns.add(new Spawners(SLIPPERY_BITER, weight = 15, min = 1, max = 2));
-			spawns.add(new Spawners(RIVER_GUARDIAN, weight = 8, min = 1, max = 1));
-			spawns.add(new Spawners(GURTY, weight = 15, min = 1, max = 1));
+			if (rgSC > 0) 
+				spawns.add(new Spawners(RIVER_GUARDIAN, weight = (rgSC/8)+1, min = 1, max = 1));
+			if (sbSC > 0) 
+				spawns.add(new Spawners(SLIPPERY_BITER, weight = (sbSC/8)+1, min = 1, max = 2));
+			if (gSC > 0) 
+				spawns.add(new Spawners(GURTY, weight = (gSC/8)+1, min = 1, max = 1));
 		}
 	}
 
@@ -160,27 +175,44 @@ public class ModEntities {
 		int weight;
 		int min;
 		int max;
+		int rgSC = MyConfig.getRiverGuardianSpawnChance();
+		int gSC = MyConfig.getGurtySpawnChance();
+		int sbSC = MyConfig.getSlipperyBiterSpawnChance();
 		String nameSpace = structure.getRegistryName().getNamespace();
+		
 				
 		if (nameSpace.equals("minecraft")) {
 			if (structure == Structure.OCEAN_RUIN) {
-				spawns.add(new Spawners(RIVER_GUARDIAN, weight = 20, min = 1, max = 1));
-				spawns.add(new Spawners(SLIPPERY_BITER, weight = 20, min = 1, max = 1));
+				if (rgSC > 0) 
+					spawns.add(new Spawners(RIVER_GUARDIAN, weight = rgSC, min = 1, max = 1));
+				if (sbSC > 0) 
+					spawns.add(new Spawners(SLIPPERY_BITER, weight = (sbSC/3)+1, min = 1, max = 1));
 			} else if (structure == Structure.SHIPWRECK) {
-				spawns.add(new Spawners(RIVER_GUARDIAN, weight = 15, min = 1, max = 1));
-				spawns.add(new Spawners(SLIPPERY_BITER, weight = 15, min = 1, max = 1));
+				if (rgSC > 0) 
+					spawns.add(new Spawners(RIVER_GUARDIAN, weight = rgSC, min = 1, max = 1));
+				if (sbSC > 0) 
+					spawns.add(new Spawners(SLIPPERY_BITER, weight = (sbSC/3)+1, min = 1, max = 1));
 			} else if (structure == Structure.BURIED_TREASURE) {
-				spawns.add(new Spawners(RIVER_GUARDIAN, weight = 15, min = 1, max = 1));
-				spawns.add(new Spawners(SLIPPERY_BITER, weight = 15, min = 1, max = 1));
-				spawns.add(new Spawners(GURTY, weight = 15, min = 1, max = 3));
+				if (rgSC > 0) 
+					spawns.add(new Spawners(RIVER_GUARDIAN, weight = rgSC, min = 1, max = 1));
+				if (sbSC > 0) 
+					spawns.add(new Spawners(SLIPPERY_BITER, weight = (sbSC/3)+1, min = 1, max = 1));
+				if (gSC > 0) 
+					spawns.add(new Spawners(GURTY, (gSC/4)+1, min = 1, max = 3));
 			} else if (structure == Structure.SWAMP_HUT) {
-				spawns.add(new Spawners(RIVER_GUARDIAN, weight = 5, min = 1, max = 1));
-				spawns.add(new Spawners(SLIPPERY_BITER, weight = 5, min = 1, max = 1));
-				spawns.add(new Spawners(GURTY, weight = 5, min = 1, max = 3));
+				if (rgSC > 0) 
+					spawns.add(new Spawners(RIVER_GUARDIAN, weight = (rgSC/10)+1, min = 1, max = 1));
+				if (sbSC > 0) 
+					spawns.add(new Spawners(SLIPPERY_BITER, (sbSC/10)+1, min = 1, max = 1));
+				if (gSC > 0) 
+					spawns.add(new Spawners(GURTY, weight = (gSC/10)+1, min = 1, max = 3));
 			} else if (structure == Structure.RUINED_PORTAL) {
-				spawns.add(new Spawners(RIVER_GUARDIAN, weight = 30, min = 1, max = 1));
-				spawns.add(new Spawners(SLIPPERY_BITER, weight = 30, min = 1, max = 1));
-				spawns.add(new Spawners(GURTY, weight = 15, min = 1, max = 3));
+				if (rgSC > 0) 
+					spawns.add(new Spawners(RIVER_GUARDIAN, weight = (rgSC/2)+1, min = 1, max = 1));
+				if (sbSC > 0) 
+					spawns.add(new Spawners(SLIPPERY_BITER, weight = (sbSC/3)+1, min = 1, max = 1));
+				if (gSC > 0) 
+					spawns.add(new Spawners(GURTY, weight = (gSC/4)+1, min = 1, max = 3));
 			}
 		} else {
 			if (MyConfig.getModStructureBoost() > 0) {
