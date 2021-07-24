@@ -26,16 +26,16 @@ public class RiverGuardianRenderer extends GuardianRenderer {
 			   new ResourceLocation(Main.MODID , "textures/entity/albino_river_guardian.png")
 	};
    //   private static final ResourceLocation RIVER_GUARDIAN_BEAM_TEXTURE = new ResourceLocation(Main.MODID , "textures/entity/river_guardian_beam.png");
-//   private static final RenderType field_229107_h_ = RenderType.getEntityCutoutNoCull(RIVER_GUARDIAN_BEAM_TEXTURE);
+//   private static final RenderType BEAM_RENDER_TYPE = RenderType.getEntityCutoutNoCull(RIVER_GUARDIAN_BEAM_TEXTURE);
    
    // suspect this is the size but may just be shadow size
    public RiverGuardianRenderer(EntityRendererManager renderManagerIn) {
-      super(renderManagerIn, RiverGuardianEntity.field_213629_b);
+      super(renderManagerIn, RiverGuardianEntity.ELDER_SIZE_SCALE);
    }
 
-   protected void preRenderCallback(GuardianEntity entitylivingbaseIn, MatrixStack matrixStackIn, float partialTickTime) {
+   protected void scale(GuardianEntity entitylivingbaseIn, MatrixStack matrixStackIn, float partialTickTime) {
 	   
-      matrixStackIn.scale(RiverGuardianEntity.field_213629_b, RiverGuardianEntity.field_213629_b, RiverGuardianEntity.field_213629_b);
+      matrixStackIn.scale(RiverGuardianEntity.ELDER_SIZE_SCALE, RiverGuardianEntity.ELDER_SIZE_SCALE, RiverGuardianEntity.ELDER_SIZE_SCALE);
    }
 @Override
 	public void render(GuardianEntity entityIn, float entityYaw, float partialTicks, MatrixStack matrixStackIn,
@@ -46,7 +46,7 @@ public class RiverGuardianRenderer extends GuardianRenderer {
    /**
     * Returns the location of an entity's texture.
     */
-   public ResourceLocation getEntityTexture(GuardianEntity entity) {
+   public ResourceLocation getTextureLocation(GuardianEntity entity) {
 	  int subtype = ((RiverGuardianEntity) entity).getSubType();
 	  subtype = (4 + subtype) %4;
 	  return TEXTURES [subtype];

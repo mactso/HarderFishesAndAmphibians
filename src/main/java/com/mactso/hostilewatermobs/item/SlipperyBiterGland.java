@@ -18,47 +18,47 @@ public class SlipperyBiterGland extends Item {
 
 	}
 
-	public ItemStack onItemUseFinish(final ItemStack stack, final World worldIn, final LivingEntity livingEntityIn) {
+	public ItemStack finishUsingItem(final ItemStack stack, final World worldIn, final LivingEntity livingEntityIn) {
 
-		ItemStack returnStack = super.onItemUseFinish(stack, worldIn, livingEntityIn);
+		ItemStack returnStack = super.finishUsingItem(stack, worldIn, livingEntityIn);
 		returnStack.setCount(returnStack.getCount()-1);
-		if (worldIn.isRemote) {
+		if (worldIn.isClientSide) {
 			return returnStack;
 		}
 
-		final double leX = livingEntityIn.getPosX();
-		final double leY = livingEntityIn.getPosY();
-		final double leZ = livingEntityIn.getPosZ();
+		final double leX = livingEntityIn.getX();
+		final double leY = livingEntityIn.getY();
+		final double leZ = livingEntityIn.getZ();
 
 		for (int i = 0; i < 8; ++i) {
-			double potX = leX + (livingEntityIn.getRNG().nextDouble() - 0.5) * 18.0;
+			double potX = leX + (livingEntityIn.getRandom().nextDouble() - 0.5) * 18.0;
 			double potY = MathHelper.clamp(
-					leY + (livingEntityIn.getRNG().nextInt(4) - 2), 0.0,
-					(double) (worldIn.func_234938_ad_() - 1));
-			double potZ = leZ + (livingEntityIn.getRNG().nextDouble() - 0.5) * 18.0;
+					leY + (livingEntityIn.getRandom().nextInt(4) - 2), 0.0,
+					(double) (worldIn.getHeight() - 1));
+			double potZ = leZ + (livingEntityIn.getRandom().nextDouble() - 0.5) * 18.0;
 			if (livingEntityIn.isPassenger()) {
 				livingEntityIn.stopRiding();
 			}
 			if (potY < 5) potY = leY;
 			BlockPos targetPos = new BlockPos (potX, potY, potZ);
-		    if (worldIn.isBlockLoaded(targetPos)) {
-				boolean topSafe = worldIn.getFluidState(targetPos.up()).isTagged(FluidTags.WATER)
-						|| worldIn.getBlockState(targetPos.up()).getBlock() == Blocks.AIR;
+		    if (worldIn.hasChunkAt(targetPos)) {
+				boolean topSafe = worldIn.getFluidState(targetPos.above()).is(FluidTags.WATER)
+						|| worldIn.getBlockState(targetPos.above()).getBlock() == Blocks.AIR;
 
 				boolean bottomSafe = worldIn.getBlockState(targetPos).getBlock() == Blocks.AIR
-						|| worldIn.getFluidState(targetPos).isTagged(FluidTags.WATER);
+						|| worldIn.getFluidState(targetPos).is(FluidTags.WATER);
 
 				if (topSafe && bottomSafe ) {
-					livingEntityIn.setPositionAndUpdate(potX, potY, potZ);
-					worldIn.playSound((PlayerEntity) null, leX, leY, leZ, SoundEvents.ENTITY_FOX_TELEPORT, SoundCategory.PLAYERS,
+					livingEntityIn.teleportTo(potX, potY, potZ);
+					worldIn.playSound((PlayerEntity) null, leX, leY, leZ, SoundEvents.FOX_TELEPORT, SoundCategory.PLAYERS,
 								0.6f, 0.5f);
-					livingEntityIn.playSound(SoundEvents.ENTITY_FOX_TELEPORT, 0.8f, 0.5f);
+					livingEntityIn.playSound(SoundEvents.FOX_TELEPORT, 0.8f, 0.5f);
 					break;
 				}		    	
 		    }
 		}
 		if (livingEntityIn instanceof PlayerEntity) {
-			((PlayerEntity) livingEntityIn).getCooldownTracker().setCooldown((Item) this, 20);
+			((PlayerEntity) livingEntityIn).getCooldowns().addCooldown((Item) this, 20);
 
 		}
 

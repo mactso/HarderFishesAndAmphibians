@@ -15,30 +15,30 @@ public class GurtyGland extends Item {
 
 	}
 
-	public ItemStack onItemUseFinish(final ItemStack stack, final World worldIn, final LivingEntity livingEntityIn) {
+	public ItemStack finishUsingItem(final ItemStack stack, final World worldIn, final LivingEntity livingEntityIn) {
 
-		ItemStack returnStack = super.onItemUseFinish(stack, worldIn, livingEntityIn);
+		ItemStack returnStack = super.finishUsingItem(stack, worldIn, livingEntityIn);
 		if (livingEntityIn instanceof PlayerEntity) {
-		((PlayerEntity) livingEntityIn).getCooldownTracker().setCooldown((Item) this, 20);
+		((PlayerEntity) livingEntityIn).getCooldowns().addCooldown((Item) this, 20);
 
 		}		
-		EffectInstance ei = livingEntityIn.getActivePotionEffect(Effects.WATER_BREATHING);
+		EffectInstance ei = livingEntityIn.getEffect(Effects.WATER_BREATHING);
 		
 		if (ei != null) {
 			if (ei.getDuration() > 10) {
-				livingEntityIn.playSound(SoundEvents.BLOCK_DISPENSER_FAIL, 0.8f, 0.5f);
+				livingEntityIn.playSound(SoundEvents.DISPENSER_FAIL, 0.8f, 0.5f);
 				return returnStack;
 			}
-			livingEntityIn.removeActivePotionEffect(Effects.WATER_BREATHING );
+			livingEntityIn.removeEffectNoUpdate(Effects.WATER_BREATHING );
 		}
 		
 		returnStack.setCount(returnStack.getCount() - 1);
-		if (worldIn.isRemote) {
+		if (worldIn.isClientSide) {
 			return returnStack;
 		}
 
-		livingEntityIn.addPotionEffect(new EffectInstance(Effects.WATER_BREATHING, 600, 0, false, true));
-		livingEntityIn.playSound(SoundEvents.BLOCK_BUBBLE_COLUMN_WHIRLPOOL_AMBIENT, 0.8f, 0.5f);
+		livingEntityIn.addEffect(new EffectInstance(Effects.WATER_BREATHING, 600, 0, false, true));
+		livingEntityIn.playSound(SoundEvents.BUBBLE_COLUMN_WHIRLPOOL_AMBIENT, 0.8f, 0.5f);
 		return returnStack;
 
 //			worldIn.playSound((PlayerEntity) null, leX, leY, leZ, SoundEvents.BLOCK_BUBBLE_COLUMN_WHIRLPOOL_AMBIENT,

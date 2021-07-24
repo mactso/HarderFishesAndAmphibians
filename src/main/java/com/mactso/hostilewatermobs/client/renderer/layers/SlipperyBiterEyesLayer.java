@@ -10,14 +10,14 @@ import net.minecraft.util.ResourceLocation;
 
 public class SlipperyBiterEyesLayer <T extends WaterMobEntity, M extends SlipperyBiterModel<T>> extends AbstractEyesLayer<T, M>
 {
-	private static final RenderType RENDER_TYPE = RenderType.getEyes(new ResourceLocation(Main.MODID, "textures/entity/slipperybiter_eyes.png"));
+	private static final RenderType RENDER_TYPE = RenderType.eyes(new ResourceLocation(Main.MODID, "textures/entity/slipperybiter_eyes.png"));
 	
     public SlipperyBiterEyesLayer(IEntityRenderer<T, M> renderer) {
         super(renderer);
     }
 
     @Override
-    public RenderType getRenderType() {
+    public RenderType renderType() {
         return RENDER_TYPE;
     }
 }

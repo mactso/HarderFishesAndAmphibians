@@ -58,9 +58,9 @@ import net.minecraftforge.common.BiomeDictionary;
 
 public class RiverGuardianEntity extends GuardianEntity implements IMob {
 
-	public static final float field_213629_b = EntityType.GUARDIAN.getWidth() * 0.37f;
-	private static final DataParameter<Integer> SUB_TYPE = EntityDataManager.createKey(RiverGuardianEntity.class,
-			DataSerializers.VARINT);
+	public static final float ELDER_SIZE_SCALE = EntityType.GUARDIAN.getWidth() * 0.37f;
+	private static final DataParameter<Integer> SUB_TYPE = EntityDataManager.defineId(RiverGuardianEntity.class,
+			DataSerializers.INT);
 	private static int DEFAULT_RIVER_GUARDIAN = 0;
 	private static int COLD_RIVER_GUARDIAN = 1;
 	private static int WARM_RIVER_GUARDIAN = 2;
@@ -68,25 +68,25 @@ public class RiverGuardianEntity extends GuardianEntity implements IMob {
 
 	public RiverGuardianEntity(EntityType<? extends RiverGuardianEntity> type, World worldIn) {
 		super(type, worldIn);
-		this.experienceValue = 7;
-		if (this.wander != null) {
-			this.wander.setExecutionChance(400);
+		this.xpReward = 7;
+		if (this.randomStrollGoal != null) {
+			this.randomStrollGoal.setInterval(400);
 		}
 	}
 
 	
 	@Override
 
-	public ILivingEntityData onInitialSpawn(IServerWorld worldIn, DifficultyInstance difficultyIn, SpawnReason reason,
+	public ILivingEntityData finalizeSpawn(IServerWorld worldIn, DifficultyInstance difficultyIn, SpawnReason reason,
 			ILivingEntityData spawnDataIn, CompoundNBT dataTag) {
-		BlockPos pos = getPosition(); // getPosition
+		BlockPos pos = blockPosition(); // getPosition
 		if (MyConfig.getaDebugLevel() > 0) {
 			System.out.println ("riverguardian on intialspawn at " + pos.toString());
 		}
 		Biome biome = worldIn.getBiome(pos);
-		ResourceLocation biomeNameResourceKey = worldIn.func_241828_r().getRegistry(Registry.BIOME_KEY).getKey(biome);
+		ResourceLocation biomeNameResourceKey = worldIn.registryAccess().registryOrThrow(Registry.BIOME_REGISTRY).getKey(biome);
 		String biomename = biomeNameResourceKey.toString();
-		RegistryKey<Biome> biomeKey = RegistryKey.getOrCreateKey(Registry.BIOME_KEY, biomeNameResourceKey);
+		RegistryKey<Biome> biomeKey = RegistryKey.create(Registry.BIOME_REGISTRY, biomeNameResourceKey);
 		
 		int workingSubType = DEFAULT_RIVER_GUARDIAN;
 		if (MyConfig.getaDebugLevel() > 0) {
@@ -131,13 +131,13 @@ public class RiverGuardianEntity extends GuardianEntity implements IMob {
 			}
 		}
 
-		dataManager.set(SUB_TYPE, workingSubType);
+		entityData.set(SUB_TYPE, workingSubType);
 
 		if (difficultyIn.getDifficulty() == Difficulty.HARD) {
 			this.getAttribute(Attributes.ATTACK_DAMAGE)
-					.applyNonPersistentModifier(new AttributeModifier("difficulty", 0.5, Operation.ADDITION));
+					.addTransientModifier(new AttributeModifier("difficulty", 0.5, Operation.ADDITION));
 		}
-		return super.onInitialSpawn(worldIn, difficultyIn, reason, spawnDataIn, dataTag);
+		return super.finalizeSpawn(worldIn, difficultyIn, reason, spawnDataIn, dataTag);
 	}
 
 	@Override
@@ -148,21 +148,21 @@ public class RiverGuardianEntity extends GuardianEntity implements IMob {
 	}
 
 	@Override
-	public LivingEntity getTargetedEntity() {
-		return super.getTargetedEntity();
+	public LivingEntity getActiveAttackTarget() {
+		return super.getActiveAttackTarget();
 	}
 
 	@Override
-	public void handleStatusUpdate(byte id) {
+	public void handleEntityEvent(byte id) {
 		
-		super.handleStatusUpdate(id);
+		super.handleEntityEvent(id);
 	}
 	
 	public static AttributeModifierMap.MutableAttribute registerAttributes() {
-		return GuardianEntity.func_234292_eK_().createMutableAttribute(Attributes.MOVEMENT_SPEED, (double) 0.65F)
-				.createMutableAttribute(Attributes.FOLLOW_RANGE, 24.0D)
-				.createMutableAttribute(Attributes.ATTACK_DAMAGE, 2.0D)
-				.createMutableAttribute(Attributes.MAX_HEALTH, 11.0D);
+		return GuardianEntity.createAttributes().add(Attributes.MOVEMENT_SPEED, (double) 0.65F)
+				.add(Attributes.FOLLOW_RANGE, 24.0D)
+				.add(Attributes.ATTACK_DAMAGE, 2.0D)
+				.add(Attributes.MAX_HEALTH, 11.0D);
 	}
 
 	public static boolean canSpawn(EntityType<? extends RiverGuardianEntity> type, IWorld world, SpawnReason reason,
@@ -174,8 +174,8 @@ public class RiverGuardianEntity extends GuardianEntity implements IMob {
 		if (reason == SpawnReason.SPAWN_EGG)
 			return true;
 
-		boolean inWater = world.getFluidState(pos).isTagged(FluidTags.WATER)
-				|| world.getFluidState(pos.up()).isTagged(FluidTags.WATER);
+		boolean inWater = world.getFluidState(pos).is(FluidTags.WATER)
+				|| world.getFluidState(pos.above()).is(FluidTags.WATER);
 		if (!inWater) {
 			return false;
 		}
@@ -183,7 +183,7 @@ public class RiverGuardianEntity extends GuardianEntity implements IMob {
 		if (reason == SpawnReason.SPAWNER)
 			return true;
 
-		boolean isDark = world.getLight(pos) < 9;
+		boolean isDark = world.getMaxLocalRawBrightness(pos) < 9;
 		boolean isDeep = pos.getY() < 30;
 		if (isDeep && !isDark) {
 			return false;
@@ -202,12 +202,12 @@ public class RiverGuardianEntity extends GuardianEntity implements IMob {
 		}
 
 		Biome biome = world.getBiome(pos);
-		Category bC = biome.getCategory();
+		Category bC = biome.getBiomeCategory();
 		if (bC == Category.OCEAN) {
 			if (pos.getY() > 33) {
 				return false;
 			}
-			if (world.getLight(pos) > 8) {
+			if (world.getMaxLocalRawBrightness(pos) > 8) {
 				return false;
 			}
 		}
@@ -244,13 +244,13 @@ public class RiverGuardianEntity extends GuardianEntity implements IMob {
 					"River Guardian Spawn Cap:" + riverGuardianCap + " Spawn Chance:" + riverGuardianSpawnChance);
 		}
 
-		if ((riverGuardianSpawnRoll < riverGuardianSpawnChance) || !(world.canBlockSeeSky(pos))) {
+		if ((riverGuardianSpawnRoll < riverGuardianSpawnChance) || !(world.canSeeSkyFromBelowWater(pos))) {
 			Chunk c = (Chunk) world.getChunk(pos);
-			ClassInheritanceMultiMap<Entity>[] aL = c.getEntityLists();
+			ClassInheritanceMultiMap<Entity>[] aL = c.getEntitySections();
 			int height = pos.getY() / 16;
 			if (height < 0)
 				height = 0; // cubic chunks
-			if (aL[height].getByClass(RiverGuardianEntity.class).size() > 1) {
+			if (aL[height].find(RiverGuardianEntity.class).size() > 1) {
 				return false;
 			}
 			if (MyConfig.getaDebugLevel() > 0) {
@@ -267,25 +267,25 @@ public class RiverGuardianEntity extends GuardianEntity implements IMob {
 	}
 
 	@Override
-	public boolean attackEntityFrom(DamageSource source, float amount) {
-		String type = source.damageType;
+	public boolean hurt(DamageSource source, float amount) {
+		String type = source.msgId;
 		if (type.equals("thorns")) {
 			amount = 0;
 		}
 //		EntityDamageSource e = (EntityDamageSource) source;
 //		if (e.getIsThornsDamage()) {
 //		}
-		return super.attackEntityFrom(source, amount);
+		return super.hurt(source, amount);
 	}
 
 	protected SoundEvent getAmbientSound() {
 
-		return this.isInWaterOrBubbleColumn() ? ModSounds.RIVER_GUARDIAN_AMBIENT : ModSounds.RIVER_GUARDIAN_HURT_LAND;
+		return this.isInWaterOrBubble() ? ModSounds.RIVER_GUARDIAN_AMBIENT : ModSounds.RIVER_GUARDIAN_HURT_LAND;
 	}
 
 	@Override
 	protected SoundEvent getDeathSound() {
-		return this.isInWaterOrBubbleColumn() ? ModSounds.RIVER_GUARDIAN_DEATH : ModSounds.RIVER_GUARDIAN_DEATH_LAND;
+		return this.isInWaterOrBubble() ? ModSounds.RIVER_GUARDIAN_DEATH : ModSounds.RIVER_GUARDIAN_DEATH_LAND;
 	}
 
 	@Override
@@ -295,7 +295,7 @@ public class RiverGuardianEntity extends GuardianEntity implements IMob {
 
 	// TODO Raise Pitch because smaller
 	protected SoundEvent getHurtSound(DamageSource damageSourceIn) {
-		return this.isInWaterOrBubbleColumn() ? ModSounds.RIVER_GUARDIAN_HURT : ModSounds.RIVER_GUARDIAN_HURT_LAND;
+		return this.isInWaterOrBubble() ? ModSounds.RIVER_GUARDIAN_HURT : ModSounds.RIVER_GUARDIAN_HURT_LAND;
 	}
 
 	static class TargetPredicate implements Predicate<LivingEntity> {
@@ -310,56 +310,46 @@ public class RiverGuardianEntity extends GuardianEntity implements IMob {
 
 			// silence river guardian attack unless attacking a player or an entity close to a player.
 
-
+			boolean playerIsTarget = false;
 			if (entity instanceof ServerPlayerEntity) {
 				ServerPlayerEntity s = (ServerPlayerEntity) entity;
 				if (s.isCreative()) {
 					return false;
 				}
+				playerIsTarget = true;
 			}
 
-			int distanceSq = (int) entity.getDistanceSq(this.parentEntity);
-			// under 3 meters away.
-			if (distanceSq < 7.0) {
+			int distanceSq = (int) entity.distanceToSqr(this.parentEntity);
+			// note: guardians do not attack when close.  They back away.
+			if (!isInAttackRange(distanceSq)) {
 				return false;
 			}
 
-			// over 23 meters away
-			if ((distanceSq > 529.0)) {
-				return false;
+			if (playerIsTarget) {
+				parentEntity.setSilent(false);
+				return true;
 			}
-
-			World w = entity.getEntityWorld();
 			
+			World w = entity.getCommandSenderWorld();
 			int range = MyConfig.getRiverGuardianSoundRange();
-			PlayerEntity pT = w.getClosestPlayer(entity, 15);
-			BlockPos pTPos = new BlockPos (0,0,0);
-			if (pT!= null) {
-				pTPos = pT.getPosition();
-			}
-			PlayerEntity pR = w.getClosestPlayer(parentEntity, 15);
-			BlockPos pRPos = new BlockPos (0,0,0);
-			if (pR!= null) {
-				pRPos = pR.getPosition();
-			}
-
-			boolean PlayerNearTarget = (w.getClosestPlayer(entity, MyConfig.getRiverGuardianSoundRange()) != null);
-			boolean PlayerNearRiverGuardian = (w.getClosestPlayer(parentEntity, MyConfig.getRiverGuardianSoundRange()) != null);
-			boolean nearbyPlayer = PlayerNearTarget || PlayerNearRiverGuardian;
-
-			if (MyConfig.getaDebugLevel() > 0) {
-				if (((timer++)%10 == 0) && nearbyPlayer) {
-					System.out.print (" riverPos: " + parentEntity.getPosition());
-					System.out.print (" targetPos: " + entity.getPosition());
-					System.out.println (" range: " + range);
-					System.out.print (" PlayerNearTarget: " + PlayerNearTarget);
-					System.out.print (" PlayernearestT: " + pTPos);
-					System.out.print (" PlayerNearRiverGuardian: " + PlayerNearRiverGuardian);
-					System.out.print (" PlayernearestR: " + pRPos);
-					System.out.println (" nearbyPlayer: " + nearbyPlayer);
-					
+			parentEntity.setSilent(true);
+			if (range > 0) {
+				PlayerEntity p = null;
+				p = w.getNearestPlayer(entity, range); // note: range not squared.
+				if (p != null) {
+					int actualRange = (int) p.distanceToSqr(entity);
+//					System.out.println("player "+p.getDisplayName().getString()+" near "+ entity.getName().getString() + " target:" + range + " (" + actualRange);
+					parentEntity.setSilent(false);
 				}
+				p = w.getNearestPlayer(parentEntity, range); // note: range not squared.
+				if (p != null) {
+					int actualRange = (int) p.distanceToSqr(parentEntity);
+//					System.out.println("player "+p.getDisplayName().getString()+" near attacker:" + range + " (" + actualRange);
+					parentEntity.setSilent(false);
+				}
+				
 			}
+
 			
 			// Ignore other River Guardians while it is Raining.
 			boolean isRiverGuardianEntity = entity instanceof RiverGuardianEntity;
@@ -367,15 +357,19 @@ public class RiverGuardianEntity extends GuardianEntity implements IMob {
 				return false;
 			}
 
+
 			// ignore monsters
 			boolean isMonster = entity instanceof MonsterEntity;
-			if (isMonster && !isRiverGuardianEntity && !entity.isChild()) {
+			if (entity instanceof SlipperyBiterEntity) {
+				isMonster = true;
+			}
+			
+			if (isMonster && !isRiverGuardianEntity && !entity.isBaby()) {
 				return false;
 			}
 
-			boolean isVillager = entity instanceof VillagerEntity;
-			if (isVillager) {
-				if (entity.isChild() == false) {
+			if (entity instanceof VillagerEntity) {
+				if (entity.isBaby() == false) {
 					return false;
 				} else
 				if (MyConfig.getRiverGuardianPreysOnVillagerChildren() == false) {
@@ -386,116 +380,105 @@ public class RiverGuardianEntity extends GuardianEntity implements IMob {
 			
 			// attack nearby prey animals
 			boolean preyAnimal = entity instanceof CodEntity || entity instanceof PigEntity
-					|| entity instanceof ChickenEntity || entity instanceof RabbitEntity || entity.isChild();
+					|| entity instanceof ChickenEntity || entity instanceof RabbitEntity || entity.isBaby()
+					|| entity instanceof RiverGuardianEntity;
 
+
+
+			int huntingRange = calcBaseHuntingRange(entity);
+			
 			int subtype = parentEntity.getSubType();
-
-			int huntingRange = 37;
 			if (subtype == ALBINO_RIVER_GUARDIAN) {
 				if (entity instanceof BatEntity) {
 					preyAnimal = true;
 				}
-				huntingRange = 122;
+				huntingRange = +122;
 			} else if (subtype == COLD_RIVER_GUARDIAN) {
 				if (entity instanceof CodEntity) {
 					preyAnimal = false;
 				}
 				if (entity instanceof SalmonEntity) {
 					preyAnimal = true;
-					huntingRange = 26;
+					huntingRange += 26;
 				}
 			} else if (subtype == WARM_RIVER_GUARDIAN) {
 				if (entity instanceof ParrotEntity) {
 					preyAnimal = true;
 				}
-				huntingRange = 70;
+				huntingRange += 70;
 			} else {
 
 			}
-
 			
-			if (preyAnimal ) {
-				if ((distanceSq < huntingRange) && (parentEntity.rand.nextInt(4000) == 42) ){
-					parentEntity.setSilent(!(nearbyPlayer));
-					return true;
-				}
-				return false;
-			}
-
-			if (entity instanceof AnimalEntity) {
-				return false;
-			}
-
-			if (entity instanceof WaterMobEntity) {
-				return false;
-			}
-
-			int aggressionRange = w.rand.nextInt(450) + 49;
-
-			BlockPos pos = entity.getPosition();
-			Biome biome = w.getBiome(pos);
-			Category bC = biome.getCategory();
-//			TempCategory tC = biome.getTempCategory();
-
-			// more aggressive in some biomes
-			if (bC == Category.OCEAN) {
-				aggressionRange = aggressionRange + 49;
-			}
-			if (bC == Category.SWAMP) {
-				aggressionRange = aggressionRange + 49;
-			}
-
-			// less aggressive in light, more aggressive in the dark
-			int lightLevel = w.getLight(pos);
-			aggressionRange = aggressionRange + ((10 - lightLevel) * 10);
-			if (aggressionRange > distanceSq) {
-				parentEntity.setSilent(!(nearbyPlayer));
-				return true;
-			}
-
-			if (isRiverGuardianEntity) {
-				RiverGuardianEntity e = (RiverGuardianEntity) entity;
-				if (e.getSubType() == subtype) {
-					aggressionRange -= 36;
-				}
-				if (aggressionRange > distanceSq) {
-					parentEntity.setSilent(!(nearbyPlayer));
-					return true;
-		 		}
-				return false;
-			}
-
-			if (aggressionRange > distanceSq) {
-				if (entity instanceof PlayerEntity) {
-					parentEntity.setSilent(false);
+			if (distanceSq < huntingRange) {
+				if (parentEntity.random.nextInt(4000) <= 4000) {
 					return true;
 				}
 			}
+
 			return false;
 
 		}
+
+		private int calcBaseHuntingRange(LivingEntity entity) {
+			
+			int huntingRange = 170;
+			
+			// more aggressive in darkness
+			int lightLevel = parentEntity.level.getMaxLocalRawBrightness(parentEntity.blockPosition());
+			huntingRange = huntingRange + ((10 - lightLevel) * 10);
+			// more aggressive in some biomes
+
+			Category bC = entity.level.getBiome(entity.blockPosition()).getBiomeCategory();
+			if (bC == Category.OCEAN) {
+				huntingRange += 49;
+			}
+			if (bC == Category.SWAMP) {
+				huntingRange += 49;
+			}
+			
+			// less aggressive if same subtype of river guardian
+			if (entity instanceof RiverGuardianEntity) {
+				RiverGuardianEntity e = (RiverGuardianEntity) entity;
+				if (e.getSubType() == parentEntity.getSubType()) {
+					huntingRange -= 36;
+				}
+			}
+			return huntingRange;
+		}
+
+		private boolean isInAttackRange(int distanceSq) {
+			if (distanceSq < 7.0) {
+				return false;
+			}
+			// over 23 meters away
+			if ((distanceSq > 529.0)) {
+				return false;
+			}
+			return true;
+		}
 	}
 
-	protected void registerData() {
-		super.registerData();
-		this.dataManager.register(SUB_TYPE, 0);
+	protected void defineSynchedData() {
+		super.defineSynchedData();
+		this.entityData.define(SUB_TYPE, 0);
 
 	}
 
 	public int getSubType() {
-		return dataManager.get(SUB_TYPE);
+		return entityData.get(SUB_TYPE);
 	}
 
 	@Override
-	public void writeAdditional(CompoundNBT compound) {
-		super.writeAdditional(compound);
+	public void addAdditionalSaveData(CompoundNBT compound) {
+		super.addAdditionalSaveData(compound);
 		compound.putByte("SubType", (byte) getSubType());
 	}
 
 	@Override
-	public void readAdditional(CompoundNBT compound) {
-		super.readAdditional(compound);
-		dataManager.set(SUB_TYPE, (int) compound.getByte("SubType"));
+	public void readAdditionalSaveData(CompoundNBT compound) {
+		super.readAdditionalSaveData(compound);
+		entityData.set(SUB_TYPE, (int) compound.getByte("SubType"));
 	}
 
 }

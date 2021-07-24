@@ -14,7 +14,7 @@ import net.minecraft.util.ResourceLocation;
 
 public class GurtyAngryLayer<T extends WaterMobEntity, M extends GurtyModel<T>> extends AbstractEyesLayer<T, M> {
 	private static final RenderType RENDER_TYPE = RenderType
-			.getEyes(new ResourceLocation(Main.MODID, "textures/entity/gurty_angry_texture.png"));
+			.eyes(new ResourceLocation(Main.MODID, "textures/entity/gurty_angry_texture.png"));
 
 	public GurtyAngryLayer(IEntityRenderer<T, M> renderer) {
 		super(renderer);
@@ -33,7 +33,7 @@ public class GurtyAngryLayer<T extends WaterMobEntity, M extends GurtyModel<T>> 
 	}
 
 	@Override
-	public RenderType getRenderType() {
+	public RenderType renderType() {
 		return RENDER_TYPE;
 	}
 }

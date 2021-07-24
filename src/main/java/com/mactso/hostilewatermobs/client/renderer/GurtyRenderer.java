@@ -29,11 +29,11 @@ public class GurtyRenderer extends MobRenderer<GurtyEntity, GurtyModel<GurtyEnti
         addLayer(new GurtyAngryLayer<>(this));
 	}
 
-	protected void preRenderCallback(GurtyEntity entityIn, MatrixStack matrixStackIn,
+	protected void scale(GurtyEntity entityIn, MatrixStack matrixStackIn,
 		  float partialTickTime) 
 	{
 
-		  int eSize =  entityIn.getEntityId()%16-8;
+		  int eSize =  entityIn.getId()%16-8;
 		  gurtyIn = entityIn;
 		  boolean gurtyAngry = gurtyIn.isAngry();
 //		  if (gurtyAngry) {
@@ -54,13 +54,13 @@ public class GurtyRenderer extends MobRenderer<GurtyEntity, GurtyModel<GurtyEnti
 	public void render(GurtyEntity entityIn, float entityYaw, float partialTicks, MatrixStack matrixStackIn,
 			IRenderTypeBuffer bufferIn, int packedLightIn) {
 
-		float f = entityIn.prevRotationYaw;
+		float f = entityIn.yRotO;
 		float lerpYaw = MathHelper.lerp(partialTicks, f, entityYaw);
 		super.render(entityIn, lerpYaw, partialTicks, matrixStackIn, bufferIn, packedLightIn);
 	}
 
 	@Override
-	public ResourceLocation getEntityTexture(GurtyEntity entity) {
+	public ResourceLocation getTextureLocation(GurtyEntity entity) {
 		return GURTY_TEXTURES;
 	}
 }

@@ -75,17 +75,17 @@ import net.minecraft.world.chunk.Chunk;
 import net.minecraft.world.server.ServerWorld;
 
 public class GurtyEntity extends WaterMobEntity implements IMob {
-	private static final DataParameter<Integer> TARGET_ENTITY = EntityDataManager.createKey(GurtyEntity.class,
-			DataSerializers.VARINT);
-	private static final DataParameter<Boolean> ANGRY = EntityDataManager.createKey(GurtyEntity.class,
+	private static final DataParameter<Integer> TARGET_ENTITY = EntityDataManager.defineId(GurtyEntity.class,
+			DataSerializers.INT);
+	private static final DataParameter<Boolean> ANGRY = EntityDataManager.defineId(GurtyEntity.class,
 			DataSerializers.BOOLEAN);
-	private static final DataParameter<Boolean> GOING_NEST = EntityDataManager.createKey(GurtyEntity.class,
+	private static final DataParameter<Boolean> GOING_NEST = EntityDataManager.defineId(GurtyEntity.class,
 			DataSerializers.BOOLEAN);
-	private static final DataParameter<BlockPos> NEST_POS = EntityDataManager.createKey(GurtyEntity.class,
+	private static final DataParameter<BlockPos> NEST_POS = EntityDataManager.defineId(GurtyEntity.class,
 			DataSerializers.BLOCK_POS);
-	private static final DataParameter<BlockPos> TRAVEL_POS = EntityDataManager.createKey(GurtyEntity.class,
+	private static final DataParameter<BlockPos> TRAVEL_POS = EntityDataManager.defineId(GurtyEntity.class,
 			DataSerializers.BLOCK_POS);
-	private static final DataParameter<Boolean> TRAVELLING = EntityDataManager.createKey(GurtyEntity.class,
+	private static final DataParameter<Boolean> TRAVELLING = EntityDataManager.defineId(GurtyEntity.class,
 			DataSerializers.BOOLEAN);
 
 	public static final int ANGER_MILD = 300;
@@ -101,25 +101,25 @@ public class GurtyEntity extends WaterMobEntity implements IMob {
 
 	private LivingEntity targetedEntity;
 
-	private static final RangedInteger rangedInteger = TickRangeConverter.convertRange(20, 39);
+	private static final RangedInteger rangedInteger = TickRangeConverter.rangeOfSeconds(20, 39);
 
 	public GurtyEntity(EntityType<? extends GurtyEntity> type, World worldIn) {
 
 		super(type, worldIn);
-		this.experienceValue = 7;
-		this.setPathPriority(PathNodeType.WATER, 0.0f);
-		this.moveController = new GurtyEntity.MoveHelperController(this);
-		this.stepHeight = 1.0f;
+		this.xpReward = 7;
+		this.setPathfindingMalus(PathNodeType.WATER, 0.0f);
+		this.moveControl = new GurtyEntity.MoveHelperController(this);
+		this.maxUpStep = 1.0f;
 		this.nestProtectionDistSq = MyConfig.getGurtyNestDistance();
 		nestProtectionDistSq = (nestProtectionDistSq * nestProtectionDistSq) + 3;
 	}
 
 	public static AttributeModifierMap.MutableAttribute registerAttributes() {
 
-		return MonsterEntity.func_234295_eP_().createMutableAttribute(Attributes.MOVEMENT_SPEED, (double) 0.26F)
-				.createMutableAttribute(Attributes.FOLLOW_RANGE, 20.0D)
-				.createMutableAttribute(Attributes.ATTACK_DAMAGE, 2.5D)
-				.createMutableAttribute(Attributes.MAX_HEALTH, 5.0D);
+		return MonsterEntity.createMonsterAttributes().add(Attributes.MOVEMENT_SPEED, (double) 0.26F)
+				.add(Attributes.FOLLOW_RANGE, 20.0D)
+				.add(Attributes.ATTACK_DAMAGE, 2.5D)
+				.add(Attributes.MAX_HEALTH, 5.0D);
 	}
 
 	public float getTailHeight() {
@@ -130,23 +130,23 @@ public class GurtyEntity extends WaterMobEntity implements IMob {
 		this.tailHeight = amt;
 	}
 	private BlockPos getNestPos() {
-		return this.dataManager.get(NEST_POS);
+		return this.entityData.get(NEST_POS);
 	}
 
 	private boolean isGoingNest() {
-		return this.dataManager.get(GOING_NEST);
+		return this.entityData.get(GOING_NEST);
 	}
 
 	private BlockPos getTravelPos() {
-		return this.dataManager.get(TRAVEL_POS);
+		return this.entityData.get(TRAVEL_POS);
 	}
 
 	public int getESize() {
-		return  this.getEntityId()%16-8;
+		return  this.getId()%16-8;
 	}
 	
 	protected boolean isNestingTime() {
-		long time = this.world.getDayTime() % 24000;
+		long time = this.level.getDayTime() % 24000;
 		if ((time > 11000 && time < 11250) || (time > 250 && time < 500)) {
 			return true;
 		}
@@ -154,51 +154,51 @@ public class GurtyEntity extends WaterMobEntity implements IMob {
 	}
 
 	private boolean isTravelling() {
-		return this.dataManager.get(TRAVELLING);
+		return this.entityData.get(TRAVELLING);
 	}
 
 	public boolean hasTargetedEntity() {
-		return (int) this.dataManager.get((DataParameter<Integer>) GurtyEntity.TARGET_ENTITY) != 0;
+		return (int) this.entityData.get((DataParameter<Integer>) GurtyEntity.TARGET_ENTITY) != 0;
 	}
 
 	public boolean isAngry() {
-		return this.dataManager.get((DataParameter<Boolean>) GurtyEntity.ANGRY);
+		return this.entityData.get((DataParameter<Boolean>) GurtyEntity.ANGRY);
 	}
 
 	private void setGoingNest(boolean goNest) {
-		this.dataManager.set(GOING_NEST, goNest);
+		this.entityData.set(GOING_NEST, goNest);
 	}
 
 	public void setNestPos(BlockPos posNest) {
-		this.dataManager.set(NEST_POS, posNest);
+		this.entityData.set(NEST_POS, posNest);
 	}
 
 
 	private void setTravelling(boolean bool) {
-		this.dataManager.set(TRAVELLING, bool);
+		this.entityData.set(TRAVELLING, bool);
 	}
 
 	private void setTravelPos(BlockPos posTravel) {
-		this.dataManager.set(TRAVEL_POS, posTravel);
+		this.entityData.set(TRAVEL_POS, posTravel);
 	}
 
 	public void setAngry(boolean bool) {
-		this.dataManager.set((DataParameter<Boolean>) GurtyEntity.ANGRY, bool);
+		this.entityData.set((DataParameter<Boolean>) GurtyEntity.ANGRY, bool);
 	}
 
 	private void setTargetedEntity(final int targetEntityId) {
-		this.dataManager.set((DataParameter<Integer>) GurtyEntity.TARGET_ENTITY, targetEntityId);
+		this.entityData.set((DataParameter<Integer>) GurtyEntity.TARGET_ENTITY, targetEntityId);
 	}
 
 	@Override
-	protected void setRotation(float yaw, float pitch) {
-		float f = this.prevRotationYaw;
+	protected void setRot(float yaw, float pitch) {
+		float f = this.yRotO;
 		float lerpYaw = MathHelper.lerp(0.05f, f, yaw);
-		super.setRotation(yaw, pitch);
+		super.setRot(yaw, pitch);
 	}
 
 	public static boolean isBubbleColumn(IWorld world, BlockPos pos) {
-		return world.getBlockState(pos).isIn(Blocks.BUBBLE_COLUMN);
+		return world.getBlockState(pos).is(Blocks.BUBBLE_COLUMN);
 	}
 
 	@Override
@@ -208,12 +208,12 @@ public class GurtyEntity extends WaterMobEntity implements IMob {
 
 	// handle /kill command
 	@Override
-	public void onKillCommand() {
-		this.attackEntityFrom(DamageSource.OUT_OF_WORLD, Float.MAX_VALUE);
+	public void kill() {
+		this.hurt(DamageSource.OUT_OF_WORLD, Float.MAX_VALUE);
 	}
 
 	@Override
-	protected void updateAir(int p_209207_1_) {
+	protected void handleAirSupply(int p_209207_1_) {
 		// gurty's are amphibians
 	}
 
@@ -221,7 +221,7 @@ public class GurtyEntity extends WaterMobEntity implements IMob {
 		return true;
 	}
 
-	public float getRenderScale() {
+	public float getScale() {
 		return 1.0f;
 	}
 
@@ -256,58 +256,58 @@ public class GurtyEntity extends WaterMobEntity implements IMob {
 	}
 
 	@Override
-	public boolean attackEntityFrom(DamageSource source, float amount) {
+	public boolean hurt(DamageSource source, float amount) {
 
-		if ((this.world.isRemote) || (this.getShouldBeDead()) || this.isInvulnerableTo(source)) {
+		if ((this.level.isClientSide) || (this.isDeadOrDying()) || this.isInvulnerableTo(source)) {
 			return false;
 		}
 
 		if (source == DamageSource.OUT_OF_WORLD) {
-			return super.attackEntityFrom(source, amount);
+			return super.hurt(source, amount);
 		}
 
 
-		if ((amount > 0.0f) && (source.getTrueSource() != null)) {
-			Entity entity = source.getTrueSource();
+		if ((amount > 0.0f) && (source.getEntity() != null)) {
+			Entity entity = source.getEntity();
 
 			// gurty thorns damage in melee when angry.
 
 			if ((!source.isProjectile()) && (this.isAngry())) {
 				float thornDamage = 1.5f;
-				if (entity.world.getDifficulty() == Difficulty.NORMAL) {
+				if (entity.level.getDifficulty() == Difficulty.NORMAL) {
 					thornDamage = 2.0f;
-				} else if (entity.world.getDifficulty() == Difficulty.HARD) {
+				} else if (entity.level.getDifficulty() == Difficulty.HARD) {
 					thornDamage = 3.0f;
 				}
-				entity.attackEntityFrom(DamageSource.causeThornsDamage((Entity) this), thornDamage);
+				entity.hurt(DamageSource.thorns((Entity) this), thornDamage);
 			}
 			
-			setRevengeTarget((LivingEntity) entity);
+			setLastHurtByMob((LivingEntity) entity);
 
-			if (entity.world.getDifficulty() != Difficulty.PEACEFUL) {
-				setAttackTarget((LivingEntity) entity);
-				setTargetedEntity(entity.getEntityId());
+			if (entity.level.getDifficulty() != Difficulty.PEACEFUL) {
+				setTarget((LivingEntity) entity);
+				setTargetedEntity(entity.getId());
 			}
-			angerTime = world.getGameTime() + ANGER_INTENSE;
+			angerTime = level.getGameTime() + ANGER_INTENSE;
 
 
 		}
-		return super.attackEntityFrom(source, amount);
+		return super.hurt(source, amount);
 	}
 
 	@Override
-	public boolean attackEntityAsMob(Entity entityIn) {
-		entityIn.playSound(SoundEvents.ENTITY_GENERIC_EAT, 0.7f, 0.7f);
-		entityIn.playSound(SoundEvents.ENTITY_GENERIC_EAT, 0.7f, 0.6f);
-		entityIn.playSound(SoundEvents.ENTITY_GENERIC_EAT, 0.7f, 0.8f);
+	public boolean doHurtTarget(Entity entityIn) {
+		entityIn.playSound(SoundEvents.GENERIC_EAT, 0.7f, 0.7f);
+		entityIn.playSound(SoundEvents.GENERIC_EAT, 0.7f, 0.6f);
+		entityIn.playSound(SoundEvents.GENERIC_EAT, 0.7f, 0.8f);
         if (entityIn instanceof LivingEntity) {
-            ((LivingEntity)entityIn).addPotionEffect(new EffectInstance(Effects.POISON, 60, 1));
+            ((LivingEntity)entityIn).addEffect(new EffectInstance(Effects.POISON, 60, 1));
         }
-		return super.attackEntityAsMob(entityIn);
+		return super.doHurtTarget(entityIn);
 	}
 
 	@Override
-	protected void damageEntity(DamageSource source, float damageAmount) {
+	protected void actuallyHurt(DamageSource source, float damageAmount) {
 
 		
 		if (source.isProjectile()) {
@@ -328,38 +328,38 @@ public class GurtyEntity extends WaterMobEntity implements IMob {
 			}
 		}
 		int x=3;
-		if (source.getDamageType() == DamageSource.FALL.getDamageType()) {
+		if (source.getMsgId() == DamageSource.FALL.getMsgId()) {
 			damageAmount *= 0.5f;
 		}
-		if (source.getDamageType() == DamageSource.SWEET_BERRY_BUSH.getDamageType()) {
+		if (source.getMsgId() == DamageSource.SWEET_BERRY_BUSH.getMsgId()) {
 			damageAmount = 0.0f;   // thick leathery skin.
 		}
-		if (source.getDamageType() == DamageSource.CACTUS.getDamageType()) {
+		if (source.getMsgId() == DamageSource.CACTUS.getMsgId()) {
 			damageAmount = 0.0f;   // thick leathery skin.
 			return;
 		}
 		// resistant to magic and magic thorns
-		if (source.getDamageType() == DamageSource.MAGIC.getDamageType()) { 
+		if (source.getMsgId() == DamageSource.MAGIC.getMsgId()) { 
 			damageAmount *= 0.66f; // partial magic immunity
 		}
-		if (source.isUnblockable()) { 
+		if (source.isBypassArmor()) { 
 			damageAmount *= 0.66f; // partial magic immunity
 		}
 		if (source.isExplosion()) {
 			damageAmount *= 0.1f; // strong explosion resistance
 		}
-		super.damageEntity(source, damageAmount);
+		super.actuallyHurt(source, damageAmount);
 	}
 
 	@Override
-	public boolean isPotionApplicable(EffectInstance potioneffectIn) {
+	public boolean canBeAffected(EffectInstance potioneffectIn) {
 		net.minecraftforge.event.entity.living.PotionEvent.PotionApplicableEvent event = new net.minecraftforge.event.entity.living.PotionEvent.PotionApplicableEvent(
 				this, potioneffectIn);
 		net.minecraftforge.common.MinecraftForge.EVENT_BUS.post(event);
 		if (event.getResult() != net.minecraftforge.eventbus.api.Event.Result.DEFAULT)
 			return event.getResult() == net.minecraftforge.eventbus.api.Event.Result.ALLOW;
 
-		Effect effect = potioneffectIn.getPotion();
+		Effect effect = potioneffectIn.getEffect();
 		if (effect == Effects.POISON) {
 			return false;
 		}
@@ -368,20 +368,20 @@ public class GurtyEntity extends WaterMobEntity implements IMob {
 	}
 
 	@Override
-	public void setAttackTarget(LivingEntity entityIn) {
+	public void setTarget(LivingEntity entityIn) {
 		if (entityIn == null) {
 			this.setTargetedEntity(0);
 			setAngry(false);
 			this.getAttribute(Attributes.FOLLOW_RANGE).setBaseValue(21.0F);
 		} else {
-			this.angerTime = this.world.getGameTime() + ANGER_MILD;
-			this.setTargetedEntity(entityIn.getEntityId());
+			this.angerTime = this.level.getGameTime() + ANGER_MILD;
+			this.setTargetedEntity(entityIn.getId());
 			if (entityIn instanceof ServerPlayerEntity) {
 				this.getAttribute(Attributes.FOLLOW_RANGE).setBaseValue(42.0F);
 			}
 			setAngry(true);
 		}
-		super.setAttackTarget(entityIn);
+		super.setTarget(entityIn);
 	}
 
 	@Nullable
@@ -393,8 +393,8 @@ public class GurtyEntity extends WaterMobEntity implements IMob {
 			int zD = rand.nextInt(maxXZ + maxXZ) - maxXZ;
 			int yD = rand.nextInt(maxY + maxY) - maxY;
 			if (blockPos.getY() + yD > 0 && blockPos.getY() + yD < 254) {
-				if (world.hasWater(blockPos)) {
-					return Vector3d.copyCenteredHorizontally(blockPos.east(xD).up(yD).west(zD));
+				if (world.isWaterAt(blockPos)) {
+					return Vector3d.atBottomCenterOf(blockPos.east(xD).above(yD).west(zD));
 				}
 			}
 		}
@@ -411,7 +411,7 @@ public class GurtyEntity extends WaterMobEntity implements IMob {
 			int yD = rand.nextInt(maxY + maxY) - maxY;
 			if (blockPos.getY() + yD > 0 && blockPos.getY() + yD < 254) {
 				if (world.getBlockState(blockPos).getMaterial().isSolid()) {
-					return Vector3d.copyCenteredHorizontally(blockPos.east(xD).up(yD).west(zD));
+					return Vector3d.atBottomCenterOf(blockPos.east(xD).above(yD).west(zD));
 				}
 			}
 		}
@@ -421,7 +421,7 @@ public class GurtyEntity extends WaterMobEntity implements IMob {
 	public static boolean canSpawn(EntityType<? extends GurtyEntity> gurtyIn, IWorld worldIn, SpawnReason reason,
 			BlockPos pos, Random randomIn) {
 
-		if (worldIn.isRemote()) {
+		if (worldIn.isClientSide()) {
 			return false;
 		}
 
@@ -445,7 +445,7 @@ public class GurtyEntity extends WaterMobEntity implements IMob {
 			return false;
 		}
 
-		if (!w.getBlockState(pos.down()).getMaterial().isSolid()) {
+		if (!w.getBlockState(pos.below()).getMaterial().isSolid()) {
 			return false;
 		}
 
@@ -470,7 +470,7 @@ public class GurtyEntity extends WaterMobEntity implements IMob {
 		}
 		
 		Biome biome = w.getBiome(pos);
-		Category bC = biome.getCategory();
+		Category bC = biome.getBiomeCategory();
 		if ((bC == Category.OCEAN) || (bC == Category.RIVER) || (bC == Category.SWAMP) || (bC == Category.BEACH)) {
 			gurtySpawnChance += 7;
 		}
@@ -490,12 +490,12 @@ public class GurtyEntity extends WaterMobEntity implements IMob {
 
 		if (gurtySpawnRoll < gurtySpawnChance) {
 			Chunk c = (Chunk) w.getChunk(pos);
-			ClassInheritanceMultiMap<Entity>[] aL = c.getEntityLists();
+			ClassInheritanceMultiMap<Entity>[] aL = c.getEntitySections();
 			int height = pos.getY() / 16;
 			if (height < 0) {
 				height = 0; // cubic chunk
 			}
-			if (aL[height].getByClass(GurtyEntity.class).size() > 5) {
+			if (aL[height].find(GurtyEntity.class).size() > 5) {
 				return false;
 			}
 
@@ -508,10 +508,10 @@ public class GurtyEntity extends WaterMobEntity implements IMob {
 	}
 
 	@Override
-	public boolean preventDespawn() {
+	public boolean requiresCustomPersistence() {
 		
-		if (this.world instanceof ServerWorld) {
-			int gurtyCount = ((ServerWorld) this.world).getEntities(ModEntities.GURTY, (entity) -> true).size();
+		if (this.level instanceof ServerWorld) {
+			int gurtyCount = ((ServerWorld) this.level).getEntities(ModEntities.GURTY, (entity) -> true).size();
 			if (gurtyCount < 3) { 
 				return true;
 			}
@@ -519,67 +519,67 @@ public class GurtyEntity extends WaterMobEntity implements IMob {
 				return true;
 			}
 		}
-		return super.preventDespawn();
+		return super.requiresCustomPersistence();
 	}
 
 	
 	@Override
-	public void onDeath(DamageSource cause) {
+	public void die(DamageSource cause) {
    	    	removeNest();
-		super.onDeath(cause);
+		super.die(cause);
 	}
 /**
  * Makes the entity despawn if requirements are reached
  */
 	@Override
 	public void checkDespawn() {
-   if (this.world.getDifficulty() == Difficulty.PEACEFUL && this.isDespawnPeaceful()) {
+   if (this.level.getDifficulty() == Difficulty.PEACEFUL && this.shouldDespawnInPeaceful()) {
       this.remove();
-   } else if (!this.isNoDespawnRequired() && !this.preventDespawn()) {
-      Entity entity = this.world.getClosestPlayer(this, -1.0D);
+   } else if (!this.isPersistenceRequired() && !this.requiresCustomPersistence()) {
+      Entity entity = this.level.getNearestPlayer(this, -1.0D);
       net.minecraftforge.eventbus.api.Event.Result result = net.minecraftforge.event.ForgeEventFactory.canEntityDespawn(this);
       if (result == net.minecraftforge.eventbus.api.Event.Result.DENY) {
-         idleTime = 0;
+         noActionTime = 0;
          entity = null;
       } else if (result == net.minecraftforge.eventbus.api.Event.Result.ALLOW) {
          this.remove();
          entity = null;
       }
       if (entity != null) {
-         double d0 = entity.getDistanceSq(this);
-         int i = this.getType().getClassification().getInstantDespawnDistance();
+         double d0 = entity.distanceToSqr(this);
+         int i = this.getType().getCategory().getDespawnDistance();
          int j = i * i;
-         if (d0 > (double)j && this.canDespawn(d0)) {
+         if (d0 > (double)j && this.removeWhenFarAway(d0)) {
         	 removeNest();
         	 this.remove();
             
          }
 
-         int k = this.getType().getClassification().getRandomDespawnDistance();
+         int k = this.getType().getCategory().getNoDespawnDistance();
          int l = k * k;
-         if (this.idleTime > 600 && this.rand.nextInt(800) == 0 && d0 > (double)l && this.canDespawn(d0)) {
+         if (this.noActionTime > 600 && this.random.nextInt(800) == 0 && d0 > (double)l && this.removeWhenFarAway(d0)) {
             this.remove();
          } else if (d0 < (double)l) {
-            this.idleTime = 0;
+            this.noActionTime = 0;
          }
       }
 
    } else {
-      this.idleTime = 0;
+      this.noActionTime = 0;
    }
 }
 
 private void removeNest() {
 	if (hasNest) {
-		world.setBlockState(this.getNestPos(), Blocks.AIR.getDefaultState());
+		level.setBlockAndUpdate(this.getNestPos(), Blocks.AIR.defaultBlockState());
 	}
 }
 	@Override
 	@Nullable
-	public ILivingEntityData onInitialSpawn(IServerWorld worldIn, DifficultyInstance difficultyIn, SpawnReason reason,
+	public ILivingEntityData finalizeSpawn(IServerWorld worldIn, DifficultyInstance difficultyIn, SpawnReason reason,
 			@Nullable ILivingEntityData spawnDataIn, @Nullable CompoundNBT dataTag) {
 
-		BlockPos pos = getPosition();
+		BlockPos pos = blockPosition();
 		setNestPos(pos);
 		
 		setTravelPos(BlockPos.ZERO);
@@ -588,7 +588,7 @@ private void removeNest() {
 		for (int i = -5; i<6; i++) {
 			for (int j = -5; j<6; j++) {
 				for (int k = -1; k<2; k++) {
-					if (world.getBlockState(pos.west(i).north(j).up(k)).getBlock() == Blocks.CORNFLOWER) {
+					if (level.getBlockState(pos.west(i).north(j).above(k)).getBlock() == Blocks.CORNFLOWER) {
 						nestCount++;
 						if (nestCount > 3) {
 							break;
@@ -598,7 +598,7 @@ private void removeNest() {
 			}
 		}
 		if (nestCount < 3) {
-			world.setBlockState(pos, Blocks.CORNFLOWER.getDefaultState());
+			level.setBlockAndUpdate(pos, Blocks.CORNFLOWER.defaultBlockState());
 			this.hasNest = true;
 		}
 
@@ -608,11 +608,11 @@ private void removeNest() {
 			float hardHealth = getMaxHealth() + 3.0f;
 			setHealth(hardHealth);
 			getAttribute(Attributes.ATTACK_DAMAGE)
-					.applyNonPersistentModifier(new AttributeModifier("difficulty", 0.5, Operation.ADDITION));
+					.addTransientModifier(new AttributeModifier("difficulty", 0.5, Operation.ADDITION));
 
 		}
 
-		return super.onInitialSpawn(worldIn, difficultyIn, reason, spawnDataIn, dataTag);
+		return super.finalizeSpawn(worldIn, difficultyIn, reason, spawnDataIn, dataTag);
 	}
 
 	protected void registerGoals() {
@@ -634,14 +634,14 @@ private void removeNest() {
 		this.goalSelector.addGoal(5, new LookAtGoal(this, PlayerEntity.class, 12.0F));
 		this.goalSelector.addGoal(6, new SwimGoal(this,60));
 		
-		this.targetSelector.addGoal(0, new HurtByTargetGoal(this).setCallsForHelp());
+		this.targetSelector.addGoal(0, new HurtByTargetGoal(this).setAlertOthers());
 		this.targetSelector.addGoal(1, new NearestAttackableTargetGoal<>(this, LivingEntity.class, 10, true, false,
 				(Predicate<LivingEntity>) new TargetPredicate(this)));
 		
 		super.registerGoals();
 	}
 	@Override
-	public int getMaxSpawnedInChunk() {
+	public int getMaxSpawnClusterSize() {
 		int max = 1 + (MyConfig.getGurtySpawnCap()/6);
 		return max;
 	}
@@ -650,34 +650,34 @@ private void removeNest() {
 		if (!this.hasTargetedEntity()) {
 			return null;
 		}
-		if (!this.world.isRemote) {
-			return this.getAttackTarget();
+		if (!this.level.isClientSide) {
+			return this.getTarget();
 		}
 		if (this.targetedEntity != null) {
 			return this.targetedEntity;
 		}
-		final Entity targetEntity = this.world
-				.getEntityByID((int) this.dataManager.get((DataParameter<Integer>) GurtyEntity.TARGET_ENTITY));
+		final Entity targetEntity = this.level
+				.getEntity((int) this.entityData.get((DataParameter<Integer>) GurtyEntity.TARGET_ENTITY));
 		if (targetEntity instanceof LivingEntity) {
 			return this.targetedEntity = (LivingEntity) targetEntity;
 		}
 		return null;
 	}
 
-	protected void registerData() {
-		super.registerData();
-		this.dataManager.register((DataParameter<Integer>) GurtyEntity.TARGET_ENTITY, 0);
-		this.dataManager.register((DataParameter<Boolean>) GurtyEntity.ANGRY, false);
-		this.dataManager.register(NEST_POS, BlockPos.ZERO);
+	protected void defineSynchedData() {
+		super.defineSynchedData();
+		this.entityData.define((DataParameter<Integer>) GurtyEntity.TARGET_ENTITY, 0);
+		this.entityData.define((DataParameter<Boolean>) GurtyEntity.ANGRY, false);
+		this.entityData.define(NEST_POS, BlockPos.ZERO);
 
-		this.dataManager.register(TRAVEL_POS, BlockPos.ZERO);
-		this.dataManager.register(GOING_NEST, false);
-		this.dataManager.register(TRAVELLING, false);
+		this.entityData.define(TRAVEL_POS, BlockPos.ZERO);
+		this.entityData.define(GOING_NEST, false);
+		this.entityData.define(TRAVELLING, false);
 	}
 
 	@Override
-	public void writeAdditional(CompoundNBT compound) {
-		super.writeAdditional(compound);
+	public void addAdditionalSaveData(CompoundNBT compound) {
+		super.addAdditionalSaveData(compound);
 		compound.putInt("NestPosX", this.getNestPos().getX());
 		compound.putInt("NestPosY", this.getNestPos().getY());
 		compound.putInt("NestPosZ", this.getNestPos().getZ());
@@ -687,12 +687,12 @@ private void removeNest() {
 	}
 
 	@Override
-	public void readAdditional(CompoundNBT compound) {
+	public void readAdditionalSaveData(CompoundNBT compound) {
 		int i = compound.getInt("NestPosX");
 		int j = compound.getInt("NestPosY");
 		int k = compound.getInt("NestPosZ");
 		this.setNestPos(new BlockPos(i, j, k));
-		super.readAdditional(compound);
+		super.readAdditionalSaveData(compound);
 		int l = compound.getInt("TravelPosX");
 		int i1 = compound.getInt("TravelPosY");
 		int j1 = compound.getInt("TravelPosZ");
@@ -720,8 +720,8 @@ private void removeNest() {
 			}
 
 			// gurty's don't attack things they can't see unless attacked first.
-			if (!gurtyEntity.canEntityBeSeen(entity)) {
-				if (entity != gurtyEntity.getAttackingEntity()) {
+			if (!gurtyEntity.canSee(entity)) {
+				if (entity != gurtyEntity.getKillCredit()) {
 					return false;
 				}
 			}
@@ -738,52 +738,52 @@ private void removeNest() {
 
 			boolean validTarget = false;
 			// gurty's always take revenge on their attackers, regardless of any other condition
-			if (gurtyEntity.getAttackTarget() != null) {
-				if (entity == this.gurtyEntity.getAttackingEntity()) {
-					gurtyEntity.setAttackTarget(entity);
+			if (gurtyEntity.getTarget() != null) {
+				if (entity == this.gurtyEntity.getKillCredit()) {
+					gurtyEntity.setTarget(entity);
 					return true;
 				}
 			}
 
 			// distance to entity.
-			int dstToEntitySq = (int) entity.getDistanceSq(gurtyEntity);
+			int dstToEntitySq = (int) entity.distanceToSqr(gurtyEntity);
 			Vector3i nestPos = (Vector3i) gurtyEntity.getNestPos();
 			
 			// gurty's always attack if entity threatens the nest and gurty is near entity.
-			Vector3i entityPosVec = (Vector3i) entity.getPosition();
-			int nestThreatDistance = (int) entityPosVec.distanceSq(gurtyEntity.getNestPos());
+			Vector3i entityPosVec = (Vector3i) entity.blockPosition();
+			int nestThreatDistance = (int) entityPosVec.distSqr(gurtyEntity.getNestPos());
 
 			// gurty's get angry at creatures near their nest area if the gurty is nearby.
 			if ((nestThreatDistance < gurtyEntity.nestProtectionDistSq) && (dstToEntitySq < 121)) {
-				gurtyEntity.setAttackTarget(entity);
+				gurtyEntity.setTarget(entity);
 				return true;
 			}
 			
 			// Don't attack things when too far from nest.
-			if ((nestPos.distanceSq(gurtyEntity.getPosition()) > 1600)) {
-				gurtyEntity.setAttackTarget(null);
+			if ((nestPos.distSqr(gurtyEntity.blockPosition()) > 1600)) {
+				gurtyEntity.setTarget(null);
 				return false;
 			}
 			
-			World w = entity.getEntityWorld();
+			World w = entity.getCommandSenderWorld();
 
 			// rarely attack random fish and other creatures in range.
 			if (!(entity instanceof PlayerEntity)) {
-				if (w.rand.nextInt(600) != 100) {
-					gurtyEntity.setAttackTarget(null);
+				if (w.random.nextInt(600) != 100) {
+					gurtyEntity.setTarget(null);
 					return false;
 				}
 			}
 
 			// a little less aggressive in swamps
-			Biome biome = w.getBiome(gurtyEntity.getPosition());
-			Category bC = biome.getCategory();			
+			Biome biome = w.getBiome(gurtyEntity.blockPosition());
+			Category bC = biome.getBiomeCategory();			
 			if ((bC == Category.SWAMP)) {
 				dstToEntitySq += 64;
 			}
 			
 			// less aggressive in light
-			int lightLevel = w.getLight(this.gurtyEntity.getPosition());
+			int lightLevel = w.getMaxLocalRawBrightness(this.gurtyEntity.blockPosition());
 			if (lightLevel > 13) {
 				dstToEntitySq += 81;
 			}
@@ -792,8 +792,8 @@ private void removeNest() {
 				dstToEntitySq *= 0.6f;
 			}
 			
-			if ((w.getFluidState(entity.getPosition()).isTagged(FluidTags.WATER)) ||
-				(w.getFluidState(entity.getPosition().up()).isTagged(FluidTags.WATER))
+			if ((w.getFluidState(entity.blockPosition()).is(FluidTags.WATER)) ||
+				(w.getFluidState(entity.blockPosition().above()).is(FluidTags.WATER))
 					) {
 				dstToEntitySq *= 0.75f;
 			}
@@ -805,39 +805,39 @@ private void removeNest() {
  			if (dstToEntitySq > (followDistanceSq)) {
 				// But if a player and in range and random playsound (2.5%) then play a warning ambient sound.
 				if (entity instanceof PlayerEntity) {
-					int playSound = gurtyEntity.rand.nextInt(50);
+					int playSound = gurtyEntity.random.nextInt(50);
 
 					if ((dstToEntitySq < 900) && (playSound == 21)) {
-						w.playSound(null, entity.getPosition(), ModSounds.GURTY_AMBIENT, SoundCategory.HOSTILE,
+						w.playSound(null, entity.blockPosition(), ModSounds.GURTY_AMBIENT, SoundCategory.HOSTILE,
 								0.35f, 1.0f);
 					}
 				}
-				gurtyEntity.setAttackTarget(null);
+				gurtyEntity.setTarget(null);
 				return false;
 			}
 			
 			
-			gurtyEntity.setAttackTarget(entity);
-			w.playSound(null, gurtyEntity.getPosition(), ModSounds.GURTY_ANGRY, SoundCategory.HOSTILE, 1.0f, 1.0f);
+			gurtyEntity.setTarget(entity);
+			w.playSound(null, gurtyEntity.blockPosition(), ModSounds.GURTY_ANGRY, SoundCategory.HOSTILE, 1.0f, 1.0f);
 			return true;
 		}
 	}
 
 	// Movement and Navigator Section
 	// Returns new PathNavigateGround instance
-	protected PathNavigator createNavigator(World worldIn) {
+	protected PathNavigator createNavigation(World worldIn) {
 		return new GurtyEntity.Navigator(this, worldIn);
 	}
 
 	@Override
 	public void travel(Vector3d travelVector) {
-		if (this.isServerWorld() && this.isInWater()) {
+		if (this.isEffectiveAi() && this.isInWater()) {
 			this.moveRelative(0.15F, travelVector);
-			this.move(MoverType.SELF, this.getMotion());
-			this.setMotion(this.getMotion().scale(0.9D));
-			if (this.getAttackTarget() == null
-					&& (!this.isGoingNest() || !this.getNestPos().withinDistance(this.getPositionVec(), 20.0D))) {
-				this.setMotion(this.getMotion().add(0.0D, -0.005D, 0.0D));
+			this.move(MoverType.SELF, this.getDeltaMovement());
+			this.setDeltaMovement(this.getDeltaMovement().scale(0.9D));
+			if (this.getTarget() == null
+					&& (!this.isGoingNest() || !this.getNestPos().closerThan(this.position(), 20.0D))) {
+				this.setDeltaMovement(this.getDeltaMovement().add(0.0D, -0.005D, 0.0D));
 			}
 		} else {
 			super.travel(travelVector);
@@ -857,12 +857,12 @@ private void removeNest() {
 
 		private void updateSpeed() {
 			if (gurty.isInWater()) {
-				gurty.setMotion(this.gurty.getMotion().add(0.0D, 0.005D, 0.0D));
-				if (!gurty.getNestPos().withinDistance(gurty.getPositionVec(), 16.0D)) {
-					gurty.setAIMoveSpeed(Math.max(gurty.getAIMoveSpeed() / 2.0F, 0.11F));
+				gurty.setDeltaMovement(this.gurty.getDeltaMovement().add(0.0D, 0.005D, 0.0D));
+				if (!gurty.getNestPos().closerThan(gurty.position(), 16.0D)) {
+					gurty.setSpeed(Math.max(gurty.getSpeed() / 2.0F, 0.11F));
 				}
 			} else if (gurty.onGround) {
-				gurty.setAIMoveSpeed(Math.max(gurty.getAIMoveSpeed() / 1.9F, 0.17F));
+				gurty.setSpeed(Math.max(gurty.getSpeed() / 1.9F, 0.17F));
 			}
 
 		}
@@ -876,20 +876,20 @@ private void removeNest() {
 				gurty.setTailHeight(-0.27f);
 			}
 
-			if (this.action == MovementController.Action.MOVE_TO && !gurty.getNavigator().noPath()) {
-				double dx = this.posX - gurty.getPosX();
-				double dy = this.posY - gurty.getPosY();
-				double dz = this.posZ - gurty.getPosZ();
+			if (this.operation == MovementController.Action.MOVE_TO && !gurty.getNavigation().isDone()) {
+				double dx = this.wantedX - gurty.getX();
+				double dy = this.wantedY - gurty.getY();
+				double dz = this.wantedZ - gurty.getZ();
 				double distance = (double) MathHelper.sqrt(dx * dx + dy * dy + dz * dz);
 				dy = dy / distance;
 				float f = (float) (MathHelper.atan2(dz, dx) * (double) (180F / (float) Math.PI)) - 90.0F;
-				gurty.rotationYaw = this.limitAngle(gurty.rotationYaw, f, 90.0F);
-				gurty.renderYawOffset = gurty.rotationYaw;
-				float f1 = (float) (speed * this.gurty.getAttributeValue(Attributes.MOVEMENT_SPEED));
-				gurty.setAIMoveSpeed(MathHelper.lerp(0.225F, gurty.getAIMoveSpeed(), f1));
-				gurty.setMotion(gurty.getMotion().add(0.0D, (double) gurty.getAIMoveSpeed() * dy * 0.1D, 0.0D));
+				gurty.yRot = this.rotlerp(gurty.yRot, f, 90.0F);
+				gurty.yBodyRot = gurty.yRot;
+				float f1 = (float) (speedModifier * this.gurty.getAttributeValue(Attributes.MOVEMENT_SPEED));
+				gurty.setSpeed(MathHelper.lerp(0.225F, gurty.getSpeed(), f1));
+				gurty.setDeltaMovement(gurty.getDeltaMovement().add(0.0D, (double) gurty.getSpeed() * dy * 0.1D, 0.0D));
 			} else {
-				gurty.setAIMoveSpeed(0.0F);
+				gurty.setSpeed(0.0F);
 			}
 		}
 
@@ -907,8 +907,8 @@ private void removeNest() {
 		       * Returns whether execution should begin. You can also read and cache any state necessary for execution in this
 		       * method as well.
 		       */
-		      public boolean shouldExecute() {
-		         return !gurty.isInWater() && !gurty.isGoingNest()  ? super.shouldExecute() : false;
+		      public boolean canUse() {
+		         return !gurty.isInWater() && !gurty.isGoingNest()  ? super.canUse() : false;
 		      }
 	}
 	
@@ -931,9 +931,9 @@ private void removeNest() {
 		 * Returns whether execution should begin. You can also read and cache any state
 		 * necessary for execution in this method as well.
 		 */
-		public boolean shouldExecute() {
+		public boolean canUse() {
 			
-			if (gurty.rand.nextInt(chance) != 0 ){
+			if (gurty.random.nextInt(chance) != 0 ){
 				return false;
 			}
 			return true;
@@ -949,24 +949,24 @@ private void removeNest() {
 		/**
 		 * If on ground or swimming and can swim
 		 */
-		protected boolean canNavigate() {
+		protected boolean canUpdatePath() {
 			return true;
 		}
 
-		protected PathFinder getPathFinder(int p_179679_1_) {
-			this.nodeProcessor = new WalkAndSwimNodeProcessor();
-			return new PathFinder(this.nodeProcessor, p_179679_1_);
+		protected PathFinder createPathFinder(int p_179679_1_) {
+			this.nodeEvaluator = new WalkAndSwimNodeProcessor();
+			return new PathFinder(this.nodeEvaluator, p_179679_1_);
 		}
 
-		public boolean canEntityStandOnPos(BlockPos pos) {
-			if (this.entity instanceof GurtyEntity) {
-				GurtyEntity gurty = (GurtyEntity) this.entity;
+		public boolean isStableDestination(BlockPos pos) {
+			if (this.mob instanceof GurtyEntity) {
+				GurtyEntity gurty = (GurtyEntity) this.mob;
 				if (gurty.isTravelling()) {
-					return this.world.getBlockState(pos).isIn(Blocks.WATER);
+					return this.level.getBlockState(pos).is(Blocks.WATER);
 				}
 			}
 
-			return !this.world.getBlockState(pos.down()).isAir();
+			return !this.level.getBlockState(pos.below()).isAir();
 		}
 	}
 	
@@ -989,11 +989,11 @@ private void removeNest() {
 		 * Returns whether execution should begin. You can also read and cache any state
 		 * necessary for execution in this method as well.
 		 */
-		public boolean shouldExecute() {
+		public boolean canUse() {
 			if (gurty.isNestingTime()) {
 				return true;
 			}
-			if (!gurty.getNestPos().withinDistance(gurty.getPositionVec(), 64.0D)) {
+			if (!gurty.getNestPos().closerThan(gurty.position(), 64.0D)) {
 				return true;
 			}
 			return false;
@@ -1002,7 +1002,7 @@ private void removeNest() {
 		/**
 		 * Execute a one shot task or start executing a continuous task
 		 */
-		public void startExecuting() {
+		public void start() {
 			gurty.setGoingNest(true);
 			this.noPath = false;
 			this.timer = 0;
@@ -1012,21 +1012,21 @@ private void removeNest() {
 		 * Reset the task's internal state. Called when this task is interrupted by
 		 * another one
 		 */
-		public void resetTask() {
+		public void stop() {
 			gurty.setGoingNest(false);
 		}
 
 		/**
 		 * Returns whether an in-progress EntityAIBase should continue executing
 		 */
-		public boolean shouldContinueExecuting() {
+		public boolean canContinueToUse() {
 			if (this.noPath) {
 				return false;
 			}
 			if (timer > 400) {
 				return false;
 			}
-			return !gurty.getNestPos().withinDistance(gurty.getPositionVec(), 5.0D);
+			return !gurty.getNestPos().closerThan(gurty.position(), 5.0D);
 		}
 
 		/**
@@ -1034,22 +1034,22 @@ private void removeNest() {
 		 */
 		public void tick() {
 			BlockPos blockpos = gurty.getNestPos();
-			boolean isNearNest = blockpos.withinDistance(gurty.getPositionVec(), 16.0D);
+			boolean isNearNest = blockpos.closerThan(gurty.position(), 16.0D);
 			if (isNearNest) {
 				++this.timer;
 			}
 
-			if (gurty.getNavigator().noPath()) {
-				Vector3d vector3d = Vector3d.copyCenteredHorizontally(blockpos);
-				Vector3d vector3d1 = RandomPositionGenerator.findRandomTargetTowardsScaled(gurty, 16, 3, vector3d,
+			if (gurty.getNavigation().isDone()) {
+				Vector3d vector3d = Vector3d.atBottomCenterOf(blockpos);
+				Vector3d vector3d1 = RandomPositionGenerator.getPosTowards(gurty, 16, 3, vector3d,
 						(double) ((float) Math.PI / 10F));
 				if (vector3d1 == null) {
-					vector3d1 = RandomPositionGenerator.findRandomTargetBlockTowards(gurty, 8, 7, vector3d);
+					vector3d1 = RandomPositionGenerator.getPosTowards(gurty, 8, 7, vector3d);
 				}
 
 				if (vector3d1 != null && !isNearNest
-						&& !gurty.world.getBlockState(new BlockPos(vector3d1)).isIn(Blocks.WATER)) {
-					vector3d1 = RandomPositionGenerator.findRandomTargetBlockTowards(gurty, 16, 5, vector3d);
+						&& !gurty.level.getBlockState(new BlockPos(vector3d1)).is(Blocks.WATER)) {
+					vector3d1 = RandomPositionGenerator.getPosTowards(gurty, 16, 5, vector3d);
 				}
 
 				if (vector3d1 == null) {
@@ -1057,7 +1057,7 @@ private void removeNest() {
 					return;
 				}
 
-				gurty.getNavigator().tryMoveToXYZ(vector3d1.x, vector3d1.y, vector3d1.z, this.speed);
+				gurty.getNavigation().moveTo(vector3d1.x, vector3d1.y, vector3d1.z, this.speed);
 			}
 
 		}
@@ -1074,19 +1074,19 @@ private void removeNest() {
 		 * Returns whether execution should begin. You can also read and cache any state
 		 * necessary for execution in this method as well.
 		 */
-		public boolean shouldExecute() {
+		public boolean canUse() {
 
-			if (creature.getRevengeTarget() == null) {
+			if (mob.getLastHurtByMob() == null) {
 				return false;
 			}
-			if (creature.world.getDifficulty() == Difficulty.PEACEFUL) {
+			if (mob.level.getDifficulty() == Difficulty.PEACEFUL) {
 				return false;
 			}
-			BlockPos blockpos = this.getRandPos(this.creature.world, this.creature, 7, 4);
+			BlockPos blockpos = this.lookForWater(this.mob.level, this.mob, 7, 4);
 			if (blockpos != null) {
-				this.randPosX = (double) blockpos.getX();
-				this.randPosY = (double) blockpos.getY();
-				this.randPosZ = (double) blockpos.getZ();
+				this.posX = (double) blockpos.getX();
+				this.posY = (double) blockpos.getY();
+				this.posZ = (double) blockpos.getZ();
 				return true;
 			} else {
 				return this.findRandomPosition();
@@ -1110,11 +1110,11 @@ private void removeNest() {
 		 * Returns whether execution should begin. You can also read and cache any state
 		 * necessary for execution in this method as well.
 		 */
-		public boolean shouldExecute() {
-			if (gurty.getRNG().nextInt(this.chance) != 0) {
+		public boolean canUse() {
+			if (gurty.getRandom().nextInt(this.chance) != 0) {
 	               return false;
 	        }
-			if (!gurty.world.isDaytime()) {
+			if (!gurty.level.isDay()) {
 				if (gurty.isGoingNest()) {
 					return false;
 				}
@@ -1126,17 +1126,17 @@ private void removeNest() {
 		/**
 		 * Execute a one shot task or start executing a continuous task
 		 */
-		public void startExecuting() {
-			Random random = gurty.rand;
+		public void start() {
+			Random random = gurty.random;
 			int k = random.nextInt(128) - 64;
 			int l = random.nextInt(9) - 4;
 			int i1 = random.nextInt(128) - 64;
-			if ((double) l + gurty.getPosY() > (double) (gurty.world.getSeaLevel() - 1)) {
+			if ((double) l + gurty.getY() > (double) (gurty.level.getSeaLevel() - 1)) {
 				l = 0;
 			}
 
-			BlockPos blockpos = new BlockPos((double) k + gurty.getPosX(), (double) l + gurty.getPosY(),
-					(double) i1 + gurty.getPosZ());
+			BlockPos blockpos = new BlockPos((double) k + gurty.getX(), (double) l + gurty.getY(),
+					(double) i1 + gurty.getZ());
 			gurty.setTravelPos(blockpos);
 			gurty.setTravelling(true);
 			this.finished = false;
@@ -1146,19 +1146,19 @@ private void removeNest() {
 		 * Keep ticking a continuous task that has already been started
 		 */
 		public void tick() {
-			if (gurty.getNavigator().noPath()) {
-				Vector3d vector3d = Vector3d.copyCenteredHorizontally(gurty.getTravelPos());
-				Vector3d vector3d1 = RandomPositionGenerator.findRandomTargetTowardsScaled(gurty, 16, 3, vector3d,
+			if (gurty.getNavigation().isDone()) {
+				Vector3d vector3d = Vector3d.atBottomCenterOf(gurty.getTravelPos());
+				Vector3d vector3d1 = RandomPositionGenerator.getPosTowards(gurty, 16, 3, vector3d,
 						(double) ((float) Math.PI / 10F));
 				if (vector3d1 == null) {
-					vector3d1 = RandomPositionGenerator.findRandomTargetBlockTowards(gurty, 8, 7, vector3d);
+					vector3d1 = RandomPositionGenerator.getPosTowards(gurty, 8, 7, vector3d);
 				}
 
 				if (vector3d1 != null) {
 					int i = MathHelper.floor(vector3d1.x);
 					int j = MathHelper.floor(vector3d1.z);
 					int k = 34;
-					if (!gurty.world.isAreaLoaded(i - 34, 0, j - 34, i + 34, 0, j + 34)) {
+					if (!gurty.level.hasChunksAt(i - 34, 0, j - 34, i + 34, 0, j + 34)) {
 						vector3d1 = null;
 					}
 				}
@@ -1168,7 +1168,7 @@ private void removeNest() {
 					return;
 				}
 
-				gurty.getNavigator().tryMoveToXYZ(vector3d1.x, vector3d1.y, vector3d1.z, this.speed);
+				gurty.getNavigation().moveTo(vector3d1.x, vector3d1.y, vector3d1.z, this.speed);
 			}
 
 		}
@@ -1176,17 +1176,17 @@ private void removeNest() {
 		/**
 		 * Returns whether an in-progress EntityAIBase should continue executing
 		 */
-		public boolean shouldContinueExecuting() {
-			return !gurty.getNavigator().noPath() && !this.finished && !gurty.isGoingNest();
+		public boolean canContinueToUse() {
+			return !gurty.getNavigation().isDone() && !this.finished && !gurty.isGoingNest();
 		}
 
 		/**
 		 * Reset the task's internal state. Called when this task is interrupted by
 		 * another one
 		 */
-		public void resetTask() {
+		public void stop() {
 			gurty.setTravelling(false);
-			super.resetTask();
+			super.stop();
 		}
 	}
 	
@@ -1198,43 +1198,43 @@ private void removeNest() {
 			super(gurtyIn, speedIn, 24);
 			gurty = gurtyIn;
 			chance = chanceIn;
-			this.field_203112_e = -1;
+			this.verticalSearchStart = -1;
 		}
 
 		/**
 		 * Returns whether an in-progress EntityAIBase should continue executing
 		 */
-		public boolean shouldContinueExecuting() {
-			return !gurty.isInWater() && this.timeoutCounter <= 1200
-					&& this.shouldMoveTo(gurty.world, this.destinationBlock);
+		public boolean canContinueToUse() {
+			return !gurty.isInWater() && this.tryTicks <= 1200
+					&& this.isValidTarget(gurty.level, this.blockPos);
 		}
 
 		/**
 		 * Returns whether execution should begin. You can also read and cache any state
 		 * necessary for execution in this method as well.
 		 */
-		public boolean shouldExecute() {
+		public boolean canUse() {
 			if (gurty.isGoingNest()) {
 				return false;
 			}
-			if (!gurty.world.isDaytime()) {
+			if (!gurty.level.isDay()) {
 				return false;
 			}
-			if (gurty.rand.nextInt(chance) == 0) {
+			if (gurty.random.nextInt(chance) == 0) {
 				return true;
 			}
 			return false;
 		}
 
-		public boolean shouldMove() {
-			return this.timeoutCounter % 80 == 0;
+		public boolean shouldRecalculatePath() {
+			return this.tryTicks % 80 == 0;
 		}
 
 		/**
 		 * Return true to set given position as destination
 		 */
-		protected boolean shouldMoveTo(IWorldReader worldIn, BlockPos pos) {
-			return worldIn.getBlockState(pos).isIn(Blocks.WATER);
+		protected boolean isValidTarget(IWorldReader worldIn, BlockPos pos) {
+			return worldIn.getBlockState(pos).is(Blocks.WATER);
 		}
 	}
 

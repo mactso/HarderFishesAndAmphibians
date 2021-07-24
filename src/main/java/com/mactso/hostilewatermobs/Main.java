@@ -57,7 +57,7 @@ public class Main {
 		public void setupClient(final FMLClientSetupEvent event)
 		{
 			Minecraft mc = event.getMinecraftSupplier().get();
-			ModEntities.register(mc.getRenderManager());
+			ModEntities.register(mc.getEntityRenderDispatcher());
 		}
 		
 		

@@ -39,7 +39,7 @@ public class SpawnData
 		for (int i = 0; i < list.size(); ++i)
 		{
 			Spawners spawner = list.get(i);
-			builder.withSpawner(spawner.type.getClassification(), spawner).withSpawnCost(list.get(i).type, 0.08, 2.0);
+			builder.addSpawn(spawner.type.getCategory(), spawner).addMobCharge(list.get(i).type, 0.08, 2.0);
 		}
 	}
 	
@@ -63,7 +63,7 @@ public class SpawnData
 		for (int i = 0; i < list.size(); ++i)
 		{
 			Spawners spawner = list.get(i);
-			event.addEntitySpawn(spawner.type.getClassification(), spawner);
+			event.addEntitySpawn(spawner.type.getCategory(), spawner);
 		}
 	}
 }

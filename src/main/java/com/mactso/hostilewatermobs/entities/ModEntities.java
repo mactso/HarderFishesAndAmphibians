@@ -28,11 +28,11 @@ import net.minecraftforge.registries.IForgeRegistry;
 public class ModEntities {
 
 	public static final EntityType<RiverGuardianEntity> RIVER_GUARDIAN = register("river_guardian", EntityType.Builder
-			.create(RiverGuardianEntity::new, EntityClassification.MONSTER).size(0.85F, 0.85F).trackingRange(5));
+			.of(RiverGuardianEntity::new, EntityClassification.MONSTER).sized(0.85F, 0.85F).clientTrackingRange(5));
 	public static final EntityType<SlipperyBiterEntity> SLIPPERY_BITER = register("slipperybiter", EntityType.Builder
-			.create(SlipperyBiterEntity::new, EntityClassification.MONSTER).size(0.9F, 0.7F).trackingRange(21));
+			.of(SlipperyBiterEntity::new, EntityClassification.MONSTER).sized(0.9F, 0.7F).clientTrackingRange(21));
 	public static final EntityType<GurtyEntity> GURTY = register("gurty", EntityType.Builder
-			.create(GurtyEntity::new, EntityClassification.MONSTER).size(1.1F, 1.0F).trackingRange(21));
+			.of(GurtyEntity::new, EntityClassification.MONSTER).sized(1.1F, 1.0F).clientTrackingRange(21));
 
 	private static <T extends Entity> EntityType<T> register(String name, EntityType.Builder<T> builder) {
 		System.out.println(Main.MODID);
@@ -47,17 +47,17 @@ public class ModEntities {
 		forgeRegistry.registerAll(RIVER_GUARDIAN);
 		EntitySpawnPlacementRegistry.register(RIVER_GUARDIAN, EntitySpawnPlacementRegistry.PlacementType.IN_WATER,
 				Heightmap.Type.MOTION_BLOCKING_NO_LEAVES, RiverGuardianEntity::canSpawn);
-		GlobalEntityTypeAttributes.put(RIVER_GUARDIAN, RiverGuardianEntity.registerAttributes().create());
+		GlobalEntityTypeAttributes.put(RIVER_GUARDIAN, RiverGuardianEntity.registerAttributes().build());
 
 		forgeRegistry.registerAll(SLIPPERY_BITER);
 		EntitySpawnPlacementRegistry.register(SLIPPERY_BITER, EntitySpawnPlacementRegistry.PlacementType.IN_WATER,
 				Heightmap.Type.MOTION_BLOCKING_NO_LEAVES, SlipperyBiterEntity::canSpawn);
-		GlobalEntityTypeAttributes.put(SLIPPERY_BITER, SlipperyBiterEntity.registerAttributes().create());
+		GlobalEntityTypeAttributes.put(SLIPPERY_BITER, SlipperyBiterEntity.registerAttributes().build());
 
 		forgeRegistry.registerAll(GURTY);
 		EntitySpawnPlacementRegistry.register(GURTY, EntitySpawnPlacementRegistry.PlacementType.ON_GROUND,
 				Heightmap.Type.MOTION_BLOCKING_NO_LEAVES, GurtyEntity::canSpawn);
-		GlobalEntityTypeAttributes.put(GURTY, GurtyEntity.registerAttributes().create());
+		GlobalEntityTypeAttributes.put(GURTY, GurtyEntity.registerAttributes().build());
 
 	}
 
@@ -103,12 +103,12 @@ public class ModEntities {
 				// add spawner to list to remove later.
 
 				if (s.type == EntityType.ZOMBIFIED_PIGLIN) {
-					if (s.itemWeight >= MyConfig.getZombifiedPiglinSpawnBoost()) {
+					if (s.weight >= MyConfig.getZombifiedPiglinSpawnBoost()) {
 						zombiePiglinSpawner = true;
 					}
 				}
 				if (s.type == EntityType.GHAST) {
-					if (s.itemWeight >= MyConfig.getGhastSpawnBoost()) {
+					if (s.weight >= MyConfig.getGhastSpawnBoost()) {
 						ghastSpawner = true;
 					}
 				}

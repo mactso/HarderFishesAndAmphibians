@@ -28,10 +28,10 @@ public class SlipperyBiterRenderer extends MobRenderer<SlipperyBiterEntity, Slip
         addLayer(new SlipperyBiterEyesLayer<>(this));
 	}
 
-	protected void preRenderCallback(SlipperyBiterEntity entityIn, MatrixStack matrixStackIn,
+	protected void scale(SlipperyBiterEntity entityIn, MatrixStack matrixStackIn,
 			float partialTickTime) {
 		  int subtype = ((SlipperyBiterEntity) entityIn).getSubType();
-		  int eSize = (((SlipperyBiterEntity) entityIn).getEntityId()%16)-8;
+		  int eSize = (((SlipperyBiterEntity) entityIn).getId()%16)-8;
 		  float uniqueSize = (float)eSize/48;
 		  subtype = (2 + subtype) %2;
 		  if (subtype == SlipperyBiterEntity.LARGE_SLIPPERY_BITER) {
@@ -50,7 +50,7 @@ public class SlipperyBiterRenderer extends MobRenderer<SlipperyBiterEntity, Slip
 	}
 
 	@Override
-	public ResourceLocation getEntityTexture(SlipperyBiterEntity entity) {
+	public ResourceLocation getTextureLocation(SlipperyBiterEntity entity) {
 		return SlIPPERY_BITER_TEXTURES;
 	}
 }
