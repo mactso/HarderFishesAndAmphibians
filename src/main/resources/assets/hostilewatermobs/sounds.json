@@ -77,6 +77,32 @@
   "gurty.step": {
     "subtitle": "subtitles.gurty.step",
     "sounds": [{"name":"entity.pig.step", "pitch": 1.0, "type": "event" }]
+  },
+    "watersnake.ambient": {
+    "subtitle": "subtitles.watersnake.ambient",
+    "sounds": [
+      "hostilewatermobs:entity/watersnake.ambient"
+    ]
+  },
+    "watersnake.angry": {
+    "subtitle": "subtitles.watersnake.angry",
+    "sounds": [
+      "hostilewatermobs:entity/watersnake.angry"
+    ]
+  },  
+  "watersnake.death": {
+    "subtitle": "subtitles.watersnake.death",
+    "sounds": [{"name":"mob/ghast/death", "pitch": 0.3, "type": "event" }]
+  },
+  "watersnake.hurt": {
+    "subtitle": "subtitles.watersnake.hurt",
+    "sounds": [
+      "hostilewatermobs:entity/watersnake.hurt"
+    ]
+  },
+  "watersnake.step": {
+    "subtitle": "subtitles.watersnake.step",
+    "sounds": [{"name":"entity.pig.step", "pitch": 0.2, "type": "event" }]
   }
 }
 	

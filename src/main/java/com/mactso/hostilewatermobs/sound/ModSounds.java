@@ -27,7 +27,13 @@ public class ModSounds
 	public static final SoundEvent GURTY_DEATH = create("gurty.death");
 	public static final SoundEvent GURTY_STEP = create("gurty.step");
 	
-	private static SoundEvent create(String key)
+	public static final SoundEvent WATER_SNAKE_AMBIENT = create("watersnake.ambient");
+	public static final SoundEvent WATER_SNAKE_ANGRY = create("watersnake.angry");
+	public static final SoundEvent WATER_SNAKE_HURT = create("watersnake.hurt");
+	public static final SoundEvent WATER_SNAKE_DEATH = create("watersnake.death");
+	public static final SoundEvent WATER_SNAKE_STEP = create("watersnake.step");
+	
+private static SoundEvent create(String key)
 	{
 		ResourceLocation res = new ResourceLocation(Main.MODID, key);
 		SoundEvent ret = new SoundEvent(res);
@@ -54,5 +60,11 @@ public class ModSounds
 		registry.register(GURTY_HURT);
 		registry.register(GURTY_STEP);
 		registry.register(GURTY_DEATH);
+
+		registry.register(WATER_SNAKE_AMBIENT);
+		registry.register(WATER_SNAKE_ANGRY);
+		registry.register(WATER_SNAKE_HURT);
+		registry.register(WATER_SNAKE_STEP);
+		registry.register(WATER_SNAKE_DEATH);	
 	}
 }

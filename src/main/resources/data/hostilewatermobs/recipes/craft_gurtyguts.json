@@ -1,0 +1,11 @@
+{
+  "type": "minecraft:crafting_shapeless",
+  "ingredients": [
+    {
+      "item": "hostilewatermobs:gurty_guts"
+    }
+  ],
+  "result": {
+    "item": "minecraft:string"
+  }
+}

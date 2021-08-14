@@ -7,6 +7,7 @@ import javax.annotation.Nullable;
 
 import com.mactso.hostilewatermobs.config.MyConfig;
 import com.mactso.hostilewatermobs.sound.ModSounds;
+import com.mactso.hostilewatermobs.util.TwoGuysLib;
 
 import net.minecraft.block.BlockState;
 import net.minecraft.block.Blocks;
@@ -59,6 +60,7 @@ import net.minecraft.util.SoundCategory;
 import net.minecraft.util.SoundEvent;
 import net.minecraft.util.SoundEvents;
 import net.minecraft.util.TickRangeConverter;
+import net.minecraft.util.math.AxisAlignedBB;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.util.math.MathHelper;
 import net.minecraft.util.math.vector.Vector3d;
@@ -385,23 +387,6 @@ public class GurtyEntity extends WaterMobEntity implements IMob {
 	}
 
 	@Nullable
-	private static Vector3d findWaterBlock(EntityType<? extends GurtyEntity> gurtyIn, IWorld world, BlockPos blockPos,
-			int maxXZ, int maxY) {
-		Random rand = world.getRandom();
-		for (int i = 0; i < 19; ++i) {
-			int xD = rand.nextInt(maxXZ + maxXZ) - maxXZ;
-			int zD = rand.nextInt(maxXZ + maxXZ) - maxXZ;
-			int yD = rand.nextInt(maxY + maxY) - maxY;
-			if (blockPos.getY() + yD > 0 && blockPos.getY() + yD < 254) {
-				if (world.isWaterAt(blockPos)) {
-					return Vector3d.atBottomCenterOf(blockPos.east(xD).above(yD).west(zD));
-				}
-			}
-		}
-		return null;
-	}
-
-	@Nullable
 	private static Vector3d findSolidBlock(EntityType<? extends GurtyEntity> gurtyIn, IWorld world, BlockPos blockPos,
 			int maxXZ, int maxY) {
 		Random rand = world.getRandom();
@@ -426,7 +411,11 @@ public class GurtyEntity extends WaterMobEntity implements IMob {
 		}
 
 		ServerWorld w = (ServerWorld) worldIn;
+		
 
+		if (!w.dimensionType().hasSkyLight()) {
+			return false;  // no gurties in dimensions lacking skylight 
+		}
 //		if (w.getDifficulty() == Difficulty.PEACEFUL)
 //			return false;  // if peaceful will not attack player characters
 
@@ -453,12 +442,11 @@ public class GurtyEntity extends WaterMobEntity implements IMob {
 			return false;
 		}
 
-		// gurties below sea level require nearby water.
-		if (pos.getY()+1 < w.getSeaLevel()) {
-			if (findWaterBlock(gurtyIn, w, pos, 21, 4) == null) {
-				return false;
-			}
+		// gurties require lots of nearby water.
+		if (!TwoGuysLib.findWaterBlock(gurtyIn, worldIn, pos, 21, 4, 9)) {
+			return false;
 		}
+
 
 		int gurtySpawnChance = MyConfig.getGurtySpawnChance();
 		int gurtySpawnCap = MyConfig.getGurtySpawnCap();

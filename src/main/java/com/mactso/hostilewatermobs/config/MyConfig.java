@@ -12,6 +12,7 @@ import net.minecraft.entity.player.PlayerEntity;
 import net.minecraft.item.Item;
 import net.minecraft.item.Items;
 import net.minecraft.util.ResourceLocation;
+import net.minecraft.util.math.BlockPos;
 import net.minecraft.util.text.Color;
 import net.minecraft.util.text.StringTextComponent;
 import net.minecraftforge.common.ForgeConfigSpec;
@@ -80,7 +81,15 @@ public class MyConfig {
 	public static int getGurtySpawnCap() {
 		return gurtySpawnCap;
 	}
+	
+	public static int getWatersnakeSpawnChance() {
+		return watersnakeSpawnChance;
+	}
 
+
+	public static int getWatersnakeSpawnCap() {
+		return watersnakeSpawnCap;
+	}
 	public static int getGurtyBaseHitPoints() {
 		return gurtyBaseHitPoints;
 	}
@@ -139,6 +148,9 @@ public class MyConfig {
 	private static int      gurtyBaseDefense;
 	private static int      gurtyNestDistance;
 
+	private static int 	    watersnakeSpawnChance;
+	private static int 	    watersnakeSpawnCap;
+	
 	private static int      modStructureBoost;
 	
 	private static int 	    codSpawnBoost;
@@ -186,6 +198,9 @@ public class MyConfig {
 		COMMON.gurtyBaseDefense.set(gurtyBaseDefense);
 		COMMON.gurtyNestDistance.set(gurtyNestDistance);
 
+		COMMON.watersnakeSpawnCap.set(watersnakeSpawnCap);
+		COMMON.watersnakeSpawnChance.set(watersnakeSpawnChance);
+		
 		COMMON.codSpawnBoost.set(codSpawnBoost);
 		COMMON.salmonSpawnBoost.set(salmonSpawnBoost);
 		COMMON.squidSpawnBoost.set(squidSpawnBoost);
@@ -214,6 +229,9 @@ public class MyConfig {
 		gurtyNestDistance = COMMON.gurtyNestDistance.get();
 		modStructureBoost = COMMON.modStructureBoost.get();
 
+		watersnakeSpawnChance = COMMON.watersnakeSpawnChance.get();
+		watersnakeSpawnCap = COMMON.watersnakeSpawnCap.get();
+		
 		codSpawnBoost = COMMON.codSpawnBoost.get();
 		salmonSpawnBoost = COMMON.salmonSpawnBoost.get();
 		squidSpawnBoost = COMMON.squidSpawnBoost.get();
@@ -246,6 +264,9 @@ public class MyConfig {
 		public final IntValue gurtyNestDistance;
 		public final IntValue modStructureBoost;
 		
+		public final IntValue watersnakeSpawnChance;
+		public final IntValue watersnakeSpawnCap;			
+
 		public final IntValue codSpawnBoost;
 		public final IntValue salmonSpawnBoost;
 		public final IntValue squidSpawnBoost;
@@ -330,6 +351,23 @@ public class MyConfig {
 					.defineInRange("gurtyNestDistance", () -> 6, 2, 15);
 			
 			builder.pop();
+			
+			builder.push("Hostile Water Mobs - Slippery Biter");
+
+			watersnakeSpawnChance = builder
+					.comment("watersnakeSpawnChance Weight")
+					.translation(Main.MODID + ".config." + "watersnakeSpawnChance")
+					.defineInRange("slipperyBiterSpawnChance", () -> 10, 0, 500);
+
+			watersnakeSpawnCap = builder
+					.comment("watersnakeSpawnCap")
+					.translation(Main.MODID + ".config." + "watersnakeSpawnCap")
+					.defineInRange("watersnakeSpawnCap", () -> 21, 1, 100);
+
+			builder.pop();
+			
+			
+			
 			builder.push("Mod Structure Boost - Add Zo,Sk,W*0.16 to modded structures");
 
 			modStructureBoost = builder
@@ -392,6 +430,18 @@ public class MyConfig {
 			LOGGER.warn("Bad item: " + name);
 		}
 		return ret;
+	}
+	
+	public static void debugMsg (int level, String dMsg) {
+		if (debugLevel > level-1) {
+			System.out.println("L"+level + ":" + dMsg);
+		}
+	}
+
+	public static void debugMsg (int level, BlockPos pos, String dMsg) {
+		if (debugLevel > level-1) {
+			System.out.println("L"+level+" ("+pos.getX()+","+pos.getY()+","+pos.getZ()+"): " + dMsg);
+		}
 	}
 	
 	// support for any color chattext
