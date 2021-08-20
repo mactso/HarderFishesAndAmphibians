@@ -268,6 +268,13 @@ public class RiverGuardianEntity extends GuardianEntity implements IMob {
 
 	@Override
 	public boolean hurt(DamageSource source, float amount) {
+		if (source == null) {
+			source = DamageSource.GENERIC;
+		}
+		if (amount < 0 ) {
+			amount = 0;
+		}
+
 		String type = source.msgId;
 		if (type.equals("thorns")) {
 			amount = 0;

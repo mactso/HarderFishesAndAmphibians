@@ -260,6 +260,15 @@ public class GurtyEntity extends WaterMobEntity implements IMob {
 	@Override
 	public boolean hurt(DamageSource source, float amount) {
 
+		// prevent bad behavior by other mods.
+		if (source == null) {
+			source = DamageSource.GENERIC;	
+		}
+		// prevent bad behavior by other mods.
+		if (amount < 0 ) {
+			amount = 0;
+		}
+		
 		if ((this.level.isClientSide) || (this.isDeadOrDying()) || this.isInvulnerableTo(source)) {
 			return false;
 		}

@@ -847,6 +847,13 @@ public class WaterSnakeEntity extends WaterMobEntity implements IMob, IRangedAtt
 	@Override
 	protected void actuallyHurt(DamageSource source, float damageAmount) {
 
+		if (source == null) {
+			source = DamageSource.GENERIC;
+		}
+		if (damageAmount < 0 ) {
+			damageAmount = 0;
+		}
+		
 		if (source.isProjectile()) {
 			damageAmount *= 0.5f; // reduce projectile damage by 33% scaly skin
 		}
