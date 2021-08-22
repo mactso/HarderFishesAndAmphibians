@@ -1151,7 +1151,6 @@ public class WaterSnakeEntity extends WaterMobEntity implements IMob, IRangedAtt
 
 		if ((amount > 0.0f) && (source.getEntity() != null)) {
 			Entity entity = source.getEntity();
-			setLastHurtByMob((LivingEntity) entity);
 
 			if (entity.level.getDifficulty() != Difficulty.PEACEFUL) {
 				setTarget((LivingEntity) entity);

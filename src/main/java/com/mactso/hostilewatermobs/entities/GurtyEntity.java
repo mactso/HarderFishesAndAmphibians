@@ -262,7 +262,7 @@ public class GurtyEntity extends WaterMobEntity implements IMob {
 
 		// prevent bad behavior by other mods.
 		if (source == null) {
-			source = DamageSource.GENERIC;	
+			return false;
 		}
 		// prevent bad behavior by other mods.
 		if (amount < 0 ) {
@@ -281,6 +281,7 @@ public class GurtyEntity extends WaterMobEntity implements IMob {
 		if ((amount > 0.0f) && (source.getEntity() != null)) {
 			Entity entity = source.getEntity();
 
+
 			// gurty thorns damage in melee when angry.
 
 			if ((!source.isProjectile()) && (this.isAngry())) {
@@ -292,12 +293,12 @@ public class GurtyEntity extends WaterMobEntity implements IMob {
 				}
 				entity.hurt(DamageSource.thorns((Entity) this), thornDamage);
 			}
-			
-			setLastHurtByMob((LivingEntity) entity);
 
-			if (entity.level.getDifficulty() != Difficulty.PEACEFUL) {
-				setTarget((LivingEntity) entity);
-				setTargetedEntity(entity.getId());
+			if (entity instanceof LivingEntity) {
+				if (entity.level.getDifficulty() != Difficulty.PEACEFUL) {
+					setTarget((LivingEntity) entity);
+					setTargetedEntity(entity.getId());
+				}
 			}
 			angerTime = level.getGameTime() + ANGER_INTENSE;
 
