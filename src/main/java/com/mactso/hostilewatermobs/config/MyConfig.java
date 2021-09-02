@@ -302,7 +302,7 @@ public class MyConfig {
 			riverGuardianSpawnCap = builder
 					.comment("riverGuardianSpawnCap")
 					.translation(Main.MODID + ".config." + "riverGuardianSpawnCap")
-					.defineInRange("riverGuardianSpawnCap", () -> 37, 1, 100);
+					.defineInRange("riverGuardianSpawnCap", () -> 31, 1, 100);
 
 			riverGuardianSoundRange = builder
 					.comment("riverGuardian attack SoundRange in meters.  default is 7 meters. 0 turns off attack sound unless the river guardian is attacking the player.")
@@ -320,7 +320,7 @@ public class MyConfig {
 			slipperyBiterSpawnCap = builder
 					.comment("slipperyBiterSpawnCap")
 					.translation(Main.MODID + ".config." + "slipperyBiterSpawnCap")
-					.defineInRange("slipperyBiterSpawnCap", () -> 21, 1, 100);
+					.defineInRange("slipperyBiterSpawnCap", () -> 17, 1, 100);
 
 			builder.pop();
 			builder.push("Hostile Water Mobs - Gurty");
@@ -328,12 +328,12 @@ public class MyConfig {
 			gurtySpawnChance = builder
 					.comment("gurtySpawnChance Weight")
 					.translation(Main.MODID + ".config." + "gurtySpawnChance")
-					.defineInRange("gurtySpawnChance", () -> 30, 0, 500);
+					.defineInRange("gurtySpawnChance", () -> 40, 0, 500);
 
 			gurtySpawnCap = builder
 					.comment("gurtySpawnCap")
 					.translation(Main.MODID + ".config." + "gurtySpawnCap")
-					.defineInRange("gurtySpawnCap", () -> 21, 1, 100);
+					.defineInRange("gurtySpawnCap", () -> 9, 1, 100);
 
 			gurtyBaseHitPoints = builder
 					.comment("gurtyBaseHitPoints")

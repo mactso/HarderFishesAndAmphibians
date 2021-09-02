@@ -7,7 +7,6 @@ import javax.annotation.Nullable;
 
 import com.mactso.hostilewatermobs.config.MyConfig;
 import com.mactso.hostilewatermobs.sound.ModSounds;
-
 import net.minecraft.entity.Entity;
 import net.minecraft.entity.EntityType;
 import net.minecraft.entity.ILivingEntityData;
@@ -22,13 +21,12 @@ import net.minecraft.entity.merchant.villager.VillagerEntity;
 import net.minecraft.entity.monster.GuardianEntity;
 import net.minecraft.entity.monster.IMob;
 import net.minecraft.entity.monster.MonsterEntity;
-import net.minecraft.entity.passive.AnimalEntity;
 import net.minecraft.entity.passive.BatEntity;
 import net.minecraft.entity.passive.ChickenEntity;
 import net.minecraft.entity.passive.ParrotEntity;
 import net.minecraft.entity.passive.PigEntity;
 import net.minecraft.entity.passive.RabbitEntity;
-import net.minecraft.entity.passive.WaterMobEntity;
+import net.minecraft.entity.passive.TurtleEntity;
 import net.minecraft.entity.passive.fish.CodEntity;
 import net.minecraft.entity.passive.fish.SalmonEntity;
 import net.minecraft.entity.player.PlayerEntity;
@@ -382,6 +380,10 @@ public class RiverGuardianEntity extends GuardianEntity implements IMob {
 				if (MyConfig.getRiverGuardianPreysOnVillagerChildren() == false) {
 					return false;
 				}
+			}
+			
+			if (entity instanceof TurtleEntity) {
+				return false;
 			}
 			
 			

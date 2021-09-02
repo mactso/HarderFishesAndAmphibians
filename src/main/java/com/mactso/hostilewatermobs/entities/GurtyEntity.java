@@ -5,10 +5,12 @@ import java.util.function.Predicate;
 
 import javax.annotation.Nullable;
 
+import com.mactso.hostilewatermobs.block.ModBlocks;
 import com.mactso.hostilewatermobs.config.MyConfig;
 import com.mactso.hostilewatermobs.sound.ModSounds;
 import com.mactso.hostilewatermobs.util.TwoGuysLib;
 
+import net.minecraft.block.Block;
 import net.minecraft.block.BlockState;
 import net.minecraft.block.Blocks;
 import net.minecraft.entity.CreatureEntity;
@@ -17,6 +19,7 @@ import net.minecraft.entity.EntitySize;
 import net.minecraft.entity.EntityType;
 import net.minecraft.entity.ILivingEntityData;
 import net.minecraft.entity.LivingEntity;
+import net.minecraft.entity.MobEntity;
 import net.minecraft.entity.MoverType;
 import net.minecraft.entity.SpawnReason;
 import net.minecraft.entity.ai.RandomPositionGenerator;
@@ -37,6 +40,7 @@ import net.minecraft.entity.ai.goal.RandomWalkingGoal;
 import net.minecraft.entity.merchant.villager.VillagerEntity;
 import net.minecraft.entity.monster.IMob;
 import net.minecraft.entity.monster.MonsterEntity;
+import net.minecraft.entity.passive.TurtleEntity;
 import net.minecraft.entity.passive.WaterMobEntity;
 import net.minecraft.entity.player.PlayerEntity;
 import net.minecraft.entity.player.ServerPlayerEntity;
@@ -93,7 +97,8 @@ public class GurtyEntity extends WaterMobEntity implements IMob {
 	public static final int ANGER_MILD = 300;
 	public static final int ANGER_INTENSE = 1200;
 	public static final float SIZE = EntityType.PIG.getWidth() * 1.25f;
-
+	private static long lastSpawnTime = 0;
+	
 	private boolean hasNest;
 	private int nestProtectionDistSq;
 	private long angerTime;
@@ -321,7 +326,9 @@ public class GurtyEntity extends WaterMobEntity implements IMob {
 	@Override
 	protected void actuallyHurt(DamageSource source, float damageAmount) {
 
-		
+		if (source.getEntity() != null && source.getEntity() instanceof MobEntity) {
+			damageAmount *= 0.50f; // Gurties take less damage from monsters
+		}
 		if (source.isProjectile()) {
 			damageAmount *= 0.66f; // reduce projectile damage by 33% thick skin
 		}
@@ -413,15 +420,39 @@ public class GurtyEntity extends WaterMobEntity implements IMob {
 		return null;
 	}
 
+
 	public static boolean canSpawn(EntityType<? extends GurtyEntity> gurtyIn, IWorld worldIn, SpawnReason reason,
 			BlockPos pos, Random randomIn) {
 
+		if (pos.getY() < worldIn.getSeaLevel() - 5) return false;
+		if (pos.getY() > worldIn.getSeaLevel() + 32) return false;
+		
 		if (worldIn.isClientSide()) {
 			return false;
 		}
 
 		ServerWorld w = (ServerWorld) worldIn;
-		
+		// TODO
+		MyConfig.debugMsg(1, pos, "checking spawn gurty");
+		// most of the time- must be light level 0-7 to spawn.
+//		if (lastSpawnTime+24000 > w.getGameTime()) {
+//			int lightLevel = w.getMaxLocalRawBrightness(pos);
+//			int roll = w.getRandom().nextInt(8);
+//			int roll2 = w.getRandom().nextInt(8);
+//			
+//			if (lightLevel > roll && lightLevel > roll2) { 
+//				return false;
+//			}
+//		} else { // once a day- can spawn at light level up to 9;
+//			lastSpawnTime = w.getGameTime();
+
+		Block b = worldIn.getBlockState(pos).getBlock();
+		// don't spawn unless air and night
+		int lightLevel1 = w.getBlockState(pos).getLightValue(w, pos);
+		int lightLevel = w.getMaxLocalRawBrightness(pos);
+		if (lightLevel > 8) { 
+			return false;
+		}
 
 		if (!w.dimensionType().hasSkyLight()) {
 			return false;  // no gurties in dimensions lacking skylight 
@@ -431,11 +462,7 @@ public class GurtyEntity extends WaterMobEntity implements IMob {
 
 		if (reason == SpawnReason.SPAWN_EGG)
 			return true;
-
-//		if (w.getLightValue(pos) > 13) {
-//			return false;
-//		}
-
+		
 		if (reason == SpawnReason.SPAWNER) {
 			return true;
 		}
@@ -453,56 +480,66 @@ public class GurtyEntity extends WaterMobEntity implements IMob {
 		}
 
 		// gurties require lots of nearby water.
-		if (!TwoGuysLib.findWaterBlock(gurtyIn, worldIn, pos, 21, 4, 9)) {
+		int XZSize = 10;
+		int YSize = 2;
+		int RequiredWaterBlocks = 9;
+		if (!TwoGuysLib.findWaterBlocks(gurtyIn, worldIn, pos, XZSize, YSize, RequiredWaterBlocks)) {
+			// TODO
+			MyConfig.debugMsg(1, pos, "Not enough water to spawn gurty");
 			return false;
 		}
 
+		
 
 		int gurtySpawnChance = MyConfig.getGurtySpawnChance();
 		int gurtySpawnCap = MyConfig.getGurtySpawnCap();
 		int gurtySpawnRoll = randomIn.nextInt(30);
 		int gurtyCount = ((ServerWorld) w).getEntities(ModEntities.GURTY, (entity) -> true).size();
 
-		if (gurtyCount < 7) {
+		if (gurtyCount < 3) {
 			gurtySpawnRoll = 0;
 		}
 		
 		Biome biome = w.getBiome(pos);
 		Category bC = biome.getBiomeCategory();
-		if ((bC == Category.OCEAN) || (bC == Category.RIVER) || (bC == Category.SWAMP) || (bC == Category.BEACH)) {
-			gurtySpawnChance += 7;
+		if (bC == Category.DESERT || bC == Category.NETHER 
+				|| bC == Category.MUSHROOM 
+				|| bC == Category.THEEND
+				|| bC == Category.SAVANNA) {
+			return false;
 		}
+//		if ((bC == Category.OCEAN) || (bC == Category.RIVER) || (bC == Category.SWAMP) || (bC == Category.BEACH)) {
+//			gurtySpawnChance += 7;
+//		}
+//
+//		if ((bC == Category.SWAMP) || (bC == Category.BEACH)) {
+//			gurtySpawnCap += 7;
+//		}
 
-		if ((bC == Category.SWAMP) || (bC == Category.BEACH)) {
-			gurtySpawnCap += 7;
-		}
 
-
-//			System.out.println(
-//					"Gurty Spawn Cap: " + gurtySpawnCap + " Count : " + gurtyCount + " Chance:" + gurtySpawnChance);
+			System.out.println(
+					"Gurty Spawn Cap: " + gurtySpawnCap + " Count : " + gurtyCount + " Chance:" + gurtySpawnChance);
 
 
 		if (gurtyCount > gurtySpawnCap) {
 			return false;
 		}
 
-		if (gurtySpawnRoll < gurtySpawnChance) {
-			Chunk c = (Chunk) w.getChunk(pos);
-			ClassInheritanceMultiMap<Entity>[] aL = c.getEntitySections();
-			int height = pos.getY() / 16;
-			if (height < 0) {
-				height = 0; // cubic chunk
-			}
-			if (aL[height].find(GurtyEntity.class).size() > 5) {
-				return false;
-			}
 
-			if (MyConfig.getaDebugLevel() > 0) {
-				System.out.println("spawn Gurty true at " + pos.getX() + " " + pos.getY() + " " + pos.getZ());
-			}
-			return true;
+		Chunk c = (Chunk) w.getChunk(pos);
+		ClassInheritanceMultiMap<Entity>[] aL = c.getEntitySections();
+		int height = pos.getY() / 16;
+		if (height < 0) {
+			height = 0; // cubic chunk
 		}
-		return false;
+		if (aL[height].find(GurtyEntity.class).size() > 5) {
+			return false;
+		}
+
+		if (MyConfig.getaDebugLevel() > 0) {
+			System.out.println("spawn Gurty true at " + pos.getX() + " " + pos.getY() + " " + pos.getZ());
+		}
+		return true;
 	}
 
 	@Override
@@ -532,7 +569,8 @@ public class GurtyEntity extends WaterMobEntity implements IMob {
 	@Override
 	public void checkDespawn() {
    if (this.level.getDifficulty() == Difficulty.PEACEFUL && this.shouldDespawnInPeaceful()) {
-      this.remove();
+	   removeNest();
+	   this.remove();
    } else if (!this.isPersistenceRequired() && !this.requiresCustomPersistence()) {
       Entity entity = this.level.getNearestPlayer(this, -1.0D);
       net.minecraftforge.eventbus.api.Event.Result result = net.minecraftforge.event.ForgeEventFactory.canEntityDespawn(this);
@@ -540,7 +578,8 @@ public class GurtyEntity extends WaterMobEntity implements IMob {
          noActionTime = 0;
          entity = null;
       } else if (result == net.minecraftforge.eventbus.api.Event.Result.ALLOW) {
-         this.remove();
+     	 removeNest();
+      	 this.remove();
          entity = null;
       }
       if (entity != null) {
@@ -556,7 +595,8 @@ public class GurtyEntity extends WaterMobEntity implements IMob {
          int k = this.getType().getCategory().getNoDespawnDistance();
          int l = k * k;
          if (this.noActionTime > 600 && this.random.nextInt(800) == 0 && d0 > (double)l && this.removeWhenFarAway(d0)) {
-            this.remove();
+        	 removeNest();
+        	 this.remove();
          } else if (d0 < (double)l) {
             this.noActionTime = 0;
          }
@@ -579,14 +619,14 @@ private void removeNest() {
 
 		BlockPos pos = blockPosition();
 		setNestPos(pos);
-		
+		Block b = worldIn.getBlockState(pos).getBlock();
 		setTravelPos(BlockPos.ZERO);
 		int nestCount = 0;
 		// Prevent nestSpam
 		for (int i = -5; i<6; i++) {
 			for (int j = -5; j<6; j++) {
 				for (int k = -1; k<2; k++) {
-					if (level.getBlockState(pos.west(i).north(j).above(k)).getBlock() == Blocks.CORNFLOWER) {
+					if (level.getBlockState(pos.west(i).north(j).above(k)).getBlock() == ModBlocks.NEST_BLOCK) {
 						nestCount++;
 						if (nestCount > 3) {
 							break;
@@ -595,8 +635,8 @@ private void removeNest() {
 				}
 			}
 		}
-		if (nestCount < 3) {
-			level.setBlockAndUpdate(pos, Blocks.CORNFLOWER.defaultBlockState());
+		if (nestCount == 0 ) {
+			level.setBlockAndUpdate(pos, ModBlocks.NEST_BLOCK.defaultBlockState());
 			this.hasNest = true;
 		}
 
@@ -714,6 +754,11 @@ private void removeNest() {
 
 			// villagers have secret tricks to make gurty's not want to eat them
 			if (entity instanceof VillagerEntity) {
+				return false;
+			}
+			
+			// gurtys are non-hostile to turtles.
+			if (entity instanceof TurtleEntity) {
 				return false;
 			}
 

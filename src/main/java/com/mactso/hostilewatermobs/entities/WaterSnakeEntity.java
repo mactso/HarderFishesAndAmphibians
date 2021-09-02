@@ -38,6 +38,7 @@ import net.minecraft.entity.ai.goal.RangedAttackGoal;
 import net.minecraft.entity.merchant.villager.VillagerEntity;
 import net.minecraft.entity.monster.IMob;
 import net.minecraft.entity.monster.MonsterEntity;
+import net.minecraft.entity.passive.TurtleEntity;
 import net.minecraft.entity.passive.WaterMobEntity;
 import net.minecraft.entity.player.PlayerEntity;
 import net.minecraft.entity.player.ServerPlayerEntity;
@@ -495,6 +496,12 @@ public class WaterSnakeEntity extends WaterMobEntity implements IMob, IRangedAtt
 				return false;
 			}
 
+			// watersnakes are non-hostile to turtles.
+			if (entity instanceof TurtleEntity) {
+				return false;
+			}
+
+			
 			// 's don't attack things they can't see unless attacked first.
 			if (!waterSnakeEntity.canSee(entity)) {
 				if (entity != waterSnakeEntity.getKillCredit()) {
@@ -690,6 +697,7 @@ public class WaterSnakeEntity extends WaterMobEntity implements IMob, IRangedAtt
 			DataSerializers.INT);
 	public static final int ANGER_MILD = 300;
 	public static final int ANGER_INTENSE = 1200;
+	private static long lastSpawnTime = 0;
 	public static final float SIZE = EntityType.PIG.getWidth() * 0.45f;
 	private static final RangedInteger rangedInteger = TickRangeConverter.rangeOfSeconds(20, 39);
 	public static boolean canSpawn(EntityType<? extends WaterSnakeEntity> watersnakeIn, IWorld worldIn,
@@ -699,8 +707,21 @@ public class WaterSnakeEntity extends WaterMobEntity implements IMob, IRangedAtt
 			return false;
 		}
 
+		
 		ServerWorld w = (ServerWorld) worldIn;
-
+		if (lastSpawnTime+24000 > w.getGameTime()) {
+			int lightLevel = w.getMaxLocalRawBrightness(pos);
+			int roll = w.getRandom().nextInt(8);
+			if (lightLevel > roll) { 
+				return false;
+			}
+		} else { // once a day- can spawn at light level up to 9;
+			lastSpawnTime = w.getGameTime();
+			int lightLevel = w.getMaxLocalRawBrightness(pos);
+			if (lightLevel > 9) { 
+				return false;
+			}
+		}
 //		if (w.getDifficulty() == Difficulty.PEACEFUL)
 //			return false;  // if peaceful will not attack player characters
 
@@ -728,7 +749,7 @@ public class WaterSnakeEntity extends WaterMobEntity implements IMob, IRangedAtt
 		}
 
 		// watersnakes require nearby water.
-		if (!TwoGuysLib.findWaterBlock(watersnakeIn, w, pos, 21, 4, 9) ) {
+		if (!TwoGuysLib.findWaterBlocks(watersnakeIn, w, pos, 21, 4, 9) ) {
 				return false;
 		}
 
@@ -772,6 +793,8 @@ public class WaterSnakeEntity extends WaterMobEntity implements IMob, IRangedAtt
 			if (MyConfig.getaDebugLevel() > 0) {
 				System.out.println("spawn watersnake true at " + pos.getX() + " " + pos.getY() + " " + pos.getZ());
 			}
+			// TODO
+			System.out.println("spawn watersnake true at " + pos.getX() + " " + pos.getY() + " " + pos.getZ());
 			return true;
 		}
 		return false;

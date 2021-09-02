@@ -146,10 +146,10 @@ public class ModEntities {
 			if (wsSC > 0)
 				spawns.add(new Spawners(WATER_SNAKE, weight = wsSC+(wsSC/3)+1, min = 1, max = 1));
 			if (gSC > 0) 
-				spawns.add(new Spawners(GURTY, weight = (gSC*9/10)+1, min = 1, max = 1));
+				spawns.add(new Spawners(GURTY, weight = gSC, min = 1, max = 1));
 			spawns.add(new Spawners(EntityType.COD, weight = MyConfig.getCodSpawnBoost()/3, min = 1, max = 2));
 			spawns.add(new Spawners(EntityType.SALMON, weight = MyConfig.getSalmonSpawnBoost()/5, min = 1, max = 2));
-			spawns.add(new Spawners(EntityType.SQUID, weight = MyConfig.getSquidSpawnBoost()/2, min = 1, max = 4));
+			spawns.add(new Spawners(EntityType.SQUID, weight = MyConfig.getSquidSpawnBoost()/2, min = 1, max = 2));
 		} else if (biomeCategory == Biome.Category.SWAMP) {
 			spawns.add(new Spawners(EntityType.COD, weight = MyConfig.getCodSpawnBoost()/2, min = 1, max = 2));
 			if (rgSC > 0) 
@@ -157,7 +157,7 @@ public class ModEntities {
 			if (sbSC > 0) 
 				spawns.add(new Spawners(SLIPPERY_BITER, weight = (sbSC*2/3)+1, min = 1, max = 1));
 			if (gSC > 0) 
-				spawns.add(new Spawners(GURTY, weight = gSC, min = 1, max = 3));
+				spawns.add(new Spawners(GURTY, weight = (gSC*110)/100, min = 1, max = 3));
 			if (wsSC > 0)
 				spawns.add(new Spawners(WATER_SNAKE, weight = wsSC+(wsSC/3)+1, min = 1, max = 1));
 		} else if (biomeCategory == Biome.Category.OCEAN) {
@@ -166,14 +166,14 @@ public class ModEntities {
 			if (sbSC > 0) 
 				spawns.add(new Spawners(SLIPPERY_BITER, weight = sbSC, min = 1, max = 3));
 			if (gSC > 0) 
-				spawns.add(new Spawners(GURTY, weight = (gSC/2)+1, min = 1, max = 1));
+				spawns.add(new Spawners(GURTY, weight = (gSC/2), min = 1, max = 1));
 			spawns.add(new Spawners(EntityType.COD, weight = MyConfig.getCodSpawnBoost(), min = 2, max = 4));
 			spawns.add(new Spawners(EntityType.SALMON, weight = MyConfig.getSalmonSpawnBoost(), min = 2, max = 4));
 			spawns.add(new Spawners(EntityType.SQUID, weight = MyConfig.getSquidSpawnBoost(), min = 1, max = 4));
 			spawns.add(new Spawners(EntityType.DOLPHIN, weight = MyConfig.getDolphinSpawnboost(), min = 1, max = 2));
 		} else if (biomeCategory == Biome.Category.BEACH) {
 			if (gSC > 0) 			
-				spawns.add(new Spawners(GURTY, weight = (1)+1, min = 1, max = 3));
+				spawns.add(new Spawners(GURTY, weight = gSC, min = 1, max = 3));
 			if (wsSC > 0)
 				spawns.add(new Spawners(WATER_SNAKE, weight = wsSC+(wsSC/3)+1, min = 1, max = 1));
 		} else {
@@ -182,7 +182,7 @@ public class ModEntities {
 			if (sbSC > 0) 
 				spawns.add(new Spawners(SLIPPERY_BITER, weight = (sbSC/8)+1, min = 1, max = 2));
 			if (gSC > 0) 
-				spawns.add(new Spawners(GURTY, weight = (gSC/8)+1, min = 1, max = 1));
+				spawns.add(new Spawners(GURTY, weight = (gSC/8), min = 1, max = 1));
 			if (wsSC > 0)
 				spawns.add(new Spawners(WATER_SNAKE, weight = 1, min = 1, max = 1));
 		}

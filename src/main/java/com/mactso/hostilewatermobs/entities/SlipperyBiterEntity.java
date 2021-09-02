@@ -36,6 +36,7 @@ import net.minecraft.entity.ai.goal.RandomSwimmingGoal;
 import net.minecraft.entity.ai.goal.ResetAngerGoal;
 import net.minecraft.entity.monster.IMob;
 import net.minecraft.entity.monster.MonsterEntity;
+import net.minecraft.entity.passive.TurtleEntity;
 import net.minecraft.entity.passive.WaterMobEntity;
 import net.minecraft.entity.player.PlayerEntity;
 import net.minecraft.nbt.CompoundNBT;
@@ -422,6 +423,7 @@ public class SlipperyBiterEntity extends WaterMobEntity implements IAngerable, I
 				return false;
 			}
 			
+
 			if (this.parentEntity.getTarget() != null) {
 				if (entity == this.parentEntity.getKillCredit()) {
 					return true;
@@ -432,6 +434,10 @@ public class SlipperyBiterEntity extends WaterMobEntity implements IAngerable, I
 
 			World w = entity.getCommandSenderWorld();
 
+			if (entity instanceof TurtleEntity) {
+				return false;
+			}
+			
 			boolean targetInWater = false;
 			if ((w.getFluidState(entity.blockPosition()).is(FluidTags.WATER))
 					|| (w.getFluidState(entity.blockPosition().above()).is(FluidTags.WATER))) {

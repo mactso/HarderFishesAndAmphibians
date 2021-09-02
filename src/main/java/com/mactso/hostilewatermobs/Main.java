@@ -1,6 +1,7 @@
 // 16.2+ harder farther
 package com.mactso.hostilewatermobs;
 
+import com.mactso.hostilewatermobs.block.ModBlocks;
 import com.mactso.hostilewatermobs.config.MyConfig;
 import com.mactso.hostilewatermobs.entities.ModEntities;
 import com.mactso.hostilewatermobs.item.ModItems;
@@ -8,6 +9,7 @@ import com.mactso.hostilewatermobs.item.crafting.HostileWaterMobsRecipe;
 import com.mactso.hostilewatermobs.sound.ModSounds;
 import com.mactso.hostilewatermobs.util.SpawnData;
 
+import net.minecraft.block.Block;
 import net.minecraft.client.Minecraft;
 import net.minecraft.entity.EntityType;
 import net.minecraft.item.Item;
@@ -38,8 +40,7 @@ public class Main {
  			MinecraftForge.EVENT_BUS.register(SpawnData.class);
  	        //   	        ModLoadingContext.get().registerExtensionPoint(ExtensionPoint.DISPLAYTEST, () -> Pair.of(() -> FMLNetworkConstants.IGNORESERVERONLY, (a, b) -> true));
 	    }
-
-
+	    
 		@SubscribeEvent 
 		public void preInit (final FMLCommonSetupEvent event) {
 				System.out.println(MODID + ": Registering Handlers");
@@ -57,6 +58,7 @@ public class Main {
 		public void setupClient(final FMLClientSetupEvent event)
 		{
 			Minecraft mc = event.getMinecraftSupplier().get();
+			ModBlocks.setRenderLayer();
 			ModEntities.register(mc.getEntityRenderDispatcher());
 		}
 		
@@ -65,7 +67,14 @@ public class Main {
 	    public static class ModEvents
 	    {
 
-	    	@SubscribeEvent
+			
+			@SubscribeEvent
+			public static void onBlocksRegistry(final RegistryEvent.Register<Block> event)
+			{
+				System.out.println("hostilewatermobs: Registering Blocks.");
+	    		ModBlocks.register(event.getRegistry());
+			}
+			@SubscribeEvent
 	    	public static void onItemsRegistry(final RegistryEvent.Register<Item> event)
 	    	{
 				System.out.println("hostilewatermobs: Registering Items.");

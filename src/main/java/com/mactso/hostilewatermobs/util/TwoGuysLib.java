@@ -87,13 +87,13 @@ public class TwoGuysLib {
 	}
 
 	@Nullable
-	public static boolean findWaterBlock(EntityType<? extends MobEntity> entityIn, IWorld world, BlockPos blockPos,
+	public static boolean findWaterBlocks(EntityType<? extends MobEntity> entityIn, IWorld world, BlockPos blockPos,
 			int maxXZ, int maxY, int MinWaterCount) {
 
 		int waterCount = 0;
-		for (int iX = -9; iX < 10; iX++) {
-			for (int iY = -1; iY < 2; iY++) {
-				for (int iZ = -9; iZ < 10; iZ++) {
+		for (int iX = -maxXZ; iX < maxXZ; iX++) {
+			for (int iY = -maxY; iY < maxY; iY++) {
+				for (int iZ = -maxXZ; iZ < maxXZ; iZ++) {
 					if (world.isWaterAt(blockPos.east(iX).above(iY).south(iZ))) {
 						waterCount++;
 						if (waterCount > MinWaterCount) {
