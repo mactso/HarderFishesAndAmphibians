@@ -9,12 +9,12 @@ import com.mactso.hostilewatermobs.item.crafting.HostileWaterMobsRecipe;
 import com.mactso.hostilewatermobs.sound.ModSounds;
 import com.mactso.hostilewatermobs.util.SpawnData;
 
-import net.minecraft.block.Block;
 import net.minecraft.client.Minecraft;
-import net.minecraft.entity.EntityType;
-import net.minecraft.item.Item;
-import net.minecraft.item.crafting.IRecipeSerializer;
-import net.minecraft.util.SoundEvent;
+import net.minecraft.sounds.SoundEvent;
+import net.minecraft.world.entity.EntityType;
+import net.minecraft.world.item.Item;
+import net.minecraft.world.item.crafting.RecipeSerializer;
+import net.minecraft.world.level.block.Block;
 import net.minecraftforge.api.distmarker.Dist;
 import net.minecraftforge.api.distmarker.OnlyIn;
 import net.minecraftforge.common.MinecraftForge;
@@ -96,7 +96,7 @@ public class Main {
 	        }
 	        
 	        @SubscribeEvent
-	        public static void onRecipeRegistry(final RegistryEvent.Register<IRecipeSerializer<?>> event)
+	        public static void onRecipeRegistry(final RegistryEvent.Register<RecipeSerializer<?>> event)
 	        {
 				System.out.println("hostilewatermobs: Registering Recipes");
 	        	event.getRegistry().register(HostileWaterMobsRecipe.CRAFTING_HOSTILEWATERMOBS);

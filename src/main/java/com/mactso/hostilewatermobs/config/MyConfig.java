@@ -8,19 +8,18 @@ import org.apache.logging.log4j.Logger;
 
 import com.mactso.hostilewatermobs.Main;
 
-import net.minecraft.entity.player.PlayerEntity;
-import net.minecraft.item.Item;
-import net.minecraft.item.Items;
-import net.minecraft.util.ResourceLocation;
-import net.minecraft.util.math.BlockPos;
-import net.minecraft.util.text.Color;
-import net.minecraft.util.text.StringTextComponent;
+import net.minecraft.core.BlockPos;
+import net.minecraft.resources.ResourceLocation;
+import net.minecraft.world.entity.player.Player;
+import net.minecraft.world.item.Item;
+import net.minecraft.world.item.Items;
 import net.minecraftforge.common.ForgeConfigSpec;
 import net.minecraftforge.common.ForgeConfigSpec.IntValue;
 import net.minecraftforge.common.ForgeConfigSpec.BooleanValue;
 import net.minecraftforge.eventbus.api.SubscribeEvent;
 import net.minecraftforge.fml.common.Mod;
 import net.minecraftforge.fml.config.ModConfig;
+import net.minecraftforge.fml.event.config.ModConfigEvent;
 import net.minecraftforge.registries.ForgeRegistries;
 
 @Mod.EventBusSubscriber(modid = Main.MODID, bus=Mod.EventBusSubscriber.Bus.MOD)
@@ -169,7 +168,7 @@ public class MyConfig {
 	public static final int KILLER_PLAYER = 2;
 
 	@SubscribeEvent
-	public static void onModConfigEvent(final ModConfig.ModConfigEvent configEvent)
+	public static void onModConfigEvent(final ModConfigEvent configEvent)
 	{
 		if (configEvent.getConfig().getSpec() == MyConfig.COMMON_SPEC)
 		{
@@ -445,7 +444,7 @@ public class MyConfig {
 	}
 	
 	// support for any color chattext
-	public static void sendChat(PlayerEntity p, String chatMessage, Color color) {
+	public static void sendChat(Player p, String chatMessage, Color color) {
 		StringTextComponent component = new StringTextComponent (chatMessage);
 		component.getStyle().withColor(color);
 		p.sendMessage(component, p.getUUID());

@@ -1,7 +1,6 @@
 package com.mactso.hostilewatermobs.block;
-import net.minecraft.block.Block;
-import net.minecraft.block.BushBlock;
 
+import net.minecraft.world.level.block.BushBlock;
 
 public class NestBlock extends BushBlock {
 

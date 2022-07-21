@@ -7,21 +7,22 @@ import javax.annotation.Nullable;
 import com.mactso.hostilewatermobs.config.MyConfig;
 import com.mactso.hostilewatermobs.entities.WaterSnakeEntity;
 
-import net.minecraft.block.Block;
-import net.minecraft.entity.EntityType;
-import net.minecraft.entity.MobEntity;
-import net.minecraft.util.math.BlockPos;
-import net.minecraft.util.math.vector.Vector3d;
-import net.minecraft.world.IWorld;
-import net.minecraft.world.World;
+import net.minecraft.core.BlockPos;
+import net.minecraft.world.entity.EntityType;
+import net.minecraft.world.entity.Mob;
+import net.minecraft.world.level.Level;
+import net.minecraft.world.level.LevelAccessor;
+import net.minecraft.world.level.block.Block;
+
+
 
 public class TwoGuysLib {
 
-	public int helperCountBlocksBB(Block searchBlock, int maxCount, World w, BlockPos bPos, int boxSize) {
+	public int helperCountBlocksBB(Block searchBlock, int maxCount, Level w, BlockPos bPos, int boxSize) {
 		return helperCountBlocksBB(searchBlock, maxCount, w, bPos, boxSize, boxSize); // "square" box subcase
 	}
 
-	public int helperCountBlocksBB(Block searchBlock, int maxCount, World w, BlockPos bPos, int boxSize, int ySize) {
+	public int helperCountBlocksBB(Block searchBlock, int maxCount, Level w, BlockPos bPos, int boxSize, int ySize) {
 		int count = 0;
 		int minX = bPos.getX() - boxSize;
 		int maxX = bPos.getX() + boxSize;
@@ -50,12 +51,12 @@ public class TwoGuysLib {
 		return count;
 	}
 
-	public int helperCountBlocksBB(Class<? extends Block> searchBlock, int maxCount, World w, BlockPos bPos,
+	public int helperCountBlocksBB(Class<? extends Block> searchBlock, int maxCount, Level w, BlockPos bPos,
 			int boxSize) {
 		return helperCountBlocksBB(searchBlock, maxCount, w, bPos, boxSize, 0);
 	}
 
-	public int helperCountBlocksBB(Class<? extends Block> searchBlock, int maxCount, World w, BlockPos bPos,
+	public int helperCountBlocksBB(Class<? extends Block> searchBlock, int maxCount, Level w, BlockPos bPos,
 			int boxSize, int ySize) {
 		int count = 0;
 		int minX = bPos.getX() - boxSize;
@@ -87,7 +88,7 @@ public class TwoGuysLib {
 	}
 
 	@Nullable
-	public static boolean findWaterBlocks(EntityType<? extends MobEntity> entityIn, IWorld world, BlockPos blockPos,
+	public static boolean findWaterBlocks(EntityType<? extends Mob> entityIn, LevelAccessor world, BlockPos blockPos,
 			int maxXZ, int maxY, int MinWaterCount) {
 
 		int waterCount = 0;

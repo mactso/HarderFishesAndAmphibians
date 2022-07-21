@@ -5,20 +5,15 @@ import com.google.gson.JsonObject;
 import com.google.gson.JsonParseException;
 import com.mactso.hostilewatermobs.Main;
 
-import net.minecraft.inventory.CraftingInventory;
-import net.minecraft.item.DyeItem;
-import net.minecraft.item.Item;
-import net.minecraft.item.ItemStack;
-import net.minecraft.item.Items;
-import net.minecraft.item.crafting.IRecipeSerializer;
-import net.minecraft.item.crafting.Ingredient;
-import net.minecraft.item.crafting.ShapedRecipe;
-import net.minecraft.item.crafting.ShapelessRecipe;
-import net.minecraft.nbt.CompoundNBT;
-import net.minecraft.network.PacketBuffer;
-import net.minecraft.util.JSONUtils;
-import net.minecraft.util.NonNullList;
-import net.minecraft.util.ResourceLocation;
+import net.minecraft.core.NonNullList;
+import net.minecraft.resources.ResourceLocation;
+import net.minecraft.world.inventory.CraftingContainer;
+import net.minecraft.world.item.ItemStack;
+import net.minecraft.world.item.crafting.Ingredient;
+import net.minecraft.world.item.crafting.RecipeSerializer;
+import net.minecraft.world.item.crafting.ShapelessRecipe;
+
+
 
 public class HostileWaterMobsRecipe extends ShapelessRecipe {
 	protected final String operation;
@@ -44,12 +39,12 @@ public class HostileWaterMobsRecipe extends ShapelessRecipe {
 	}
 
 	@Override
-	public IRecipeSerializer<?> getSerializer() {
+	public RecipeSerializer<?> getSerializer() {
 		return CRAFTING_HOSTILEWATERMOBS;
 	}
 
 	@Override
-	public ItemStack assemble(CraftingInventory inv) {
+	public ItemStack assemble(CraftingContainer inv) {
 		ItemStack ret = this.getResultItem().copy();
 		if (copyDamage) {
 			for (int j = 0; j < inv.getContainerSize(); ++j) {
