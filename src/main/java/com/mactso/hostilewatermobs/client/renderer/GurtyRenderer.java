@@ -5,13 +5,13 @@ import com.mactso.hostilewatermobs.Main;
 import com.mactso.hostilewatermobs.client.model.GurtyModel;
 import com.mactso.hostilewatermobs.client.renderer.layers.GurtyAngryLayer;
 import com.mactso.hostilewatermobs.entities.GurtyEntity;
-import com.mojang.blaze3d.matrix.MatrixStack;
+import com.mojang.blaze3d.vertex.PoseStack;
 
-import net.minecraft.client.renderer.IRenderTypeBuffer;
-import net.minecraft.client.renderer.entity.EntityRendererManager;
+import net.minecraft.client.renderer.MultiBufferSource;
+import net.minecraft.client.renderer.entity.EntityRenderDispatcher;
 import net.minecraft.client.renderer.entity.MobRenderer;
-import net.minecraft.util.ResourceLocation;
-import net.minecraft.util.math.MathHelper;
+import net.minecraft.resources.ResourceLocation;
+import net.minecraft.util.Mth;
 import net.minecraftforge.api.distmarker.Dist;
 import net.minecraftforge.api.distmarker.OnlyIn;
 
@@ -24,12 +24,12 @@ public class GurtyRenderer extends MobRenderer<GurtyEntity, GurtyModel<GurtyEnti
 			"textures/entity/gurty_texture.png");
 
 
-	public GurtyRenderer(final EntityRendererManager renderManagerIn) {
+	public GurtyRenderer(final EntityRenderDispatcher renderManagerIn) {
 		super(renderManagerIn, new GurtyModel<>(), 0.3f);
         addLayer(new GurtyAngryLayer<>(this));
 	}
 
-	protected void scale(GurtyEntity entityIn, MatrixStack matrixStackIn,
+	protected void scale(GurtyEntity entityIn, PoseStack matrixStackIn,
 		  float partialTickTime) 
 	{
 
@@ -51,11 +51,11 @@ public class GurtyRenderer extends MobRenderer<GurtyEntity, GurtyModel<GurtyEnti
 
 	}
 
-	public void render(GurtyEntity entityIn, float entityYaw, float partialTicks, MatrixStack matrixStackIn,
-			IRenderTypeBuffer bufferIn, int packedLightIn) {
+	public void render(GurtyEntity entityIn, float entityYaw, float partialTicks, PoseStack matrixStackIn,
+			MultiBufferSource bufferIn, int packedLightIn) {
 
 		float f = entityIn.yRotO;
-		float lerpYaw = MathHelper.lerp(partialTicks, f, entityYaw);
+		float lerpYaw = Mth.lerp(partialTicks, f, entityYaw);
 		super.render(entityIn, lerpYaw, partialTicks, matrixStackIn, bufferIn, packedLightIn);
 	}
 

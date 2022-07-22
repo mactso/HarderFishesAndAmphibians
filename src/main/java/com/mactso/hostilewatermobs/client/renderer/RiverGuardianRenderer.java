@@ -1,13 +1,13 @@
 package com.mactso.hostilewatermobs.client.renderer;
 import com.mactso.hostilewatermobs.Main;
 import com.mactso.hostilewatermobs.entities.RiverGuardianEntity;
-import com.mojang.blaze3d.matrix.MatrixStack;
+import com.mojang.blaze3d.vertex.PoseStack;
 
-import net.minecraft.client.renderer.IRenderTypeBuffer;
-import net.minecraft.client.renderer.entity.EntityRendererManager;
+import net.minecraft.client.renderer.MultiBufferSource;
+import net.minecraft.client.renderer.entity.EntityRenderDispatcher;
 import net.minecraft.client.renderer.entity.GuardianRenderer;
-import net.minecraft.entity.monster.GuardianEntity;
-import net.minecraft.util.ResourceLocation;
+import net.minecraft.world.entity.monster.Guardian;
+import net.minecraft.resources.ResourceLocation;
 import net.minecraftforge.api.distmarker.Dist;
 import net.minecraftforge.api.distmarker.OnlyIn;
 
@@ -29,24 +29,24 @@ public class RiverGuardianRenderer extends GuardianRenderer {
 //   private static final RenderType BEAM_RENDER_TYPE = RenderType.getEntityCutoutNoCull(RIVER_GUARDIAN_BEAM_TEXTURE);
    
    // suspect this is the size but may just be shadow size
-   public RiverGuardianRenderer(EntityRendererManager renderManagerIn) {
+   public RiverGuardianRenderer(EntityRenderDispatcher renderManagerIn) {
       super(renderManagerIn, RiverGuardianEntity.ELDER_SIZE_SCALE);
    }
 
-   protected void scale(GuardianEntity entitylivingbaseIn, MatrixStack matrixStackIn, float partialTickTime) {
+   protected void scale(Guardian entitylivingbaseIn, PoseStack matrixStackIn, float partialTickTime) {
 	   
       matrixStackIn.scale(RiverGuardianEntity.ELDER_SIZE_SCALE, RiverGuardianEntity.ELDER_SIZE_SCALE, RiverGuardianEntity.ELDER_SIZE_SCALE);
    }
 @Override
-	public void render(GuardianEntity entityIn, float entityYaw, float partialTicks, MatrixStack matrixStackIn,
-			IRenderTypeBuffer bufferIn, int packedLightIn) {
+	public void render(Guardian entityIn, float entityYaw, float partialTicks, PoseStack matrixStackIn,
+			MultiBufferSource bufferIn, int packedLightIn) {
 		// TODO Auto-generated method stub
-		super.render((GuardianEntity) entityIn, entityYaw, partialTicks, matrixStackIn, bufferIn, packedLightIn);
+		super.render((Guardian) entityIn, entityYaw, partialTicks, matrixStackIn, bufferIn, packedLightIn);
 	}
    /**
     * Returns the location of an entity's texture.
     */
-   public ResourceLocation getTextureLocation(GuardianEntity entity) {
+   public ResourceLocation getTextureLocation(Guardian entity) {
 	  int subtype = ((RiverGuardianEntity) entity).getSubType();
 	  subtype = (4 + subtype) %4;
 	  return TEXTURES [subtype];

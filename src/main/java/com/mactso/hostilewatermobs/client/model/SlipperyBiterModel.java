@@ -3,23 +3,23 @@ package com.mactso.hostilewatermobs.client.model;
 import com.google.common.collect.ImmutableList;
 import com.mactso.hostilewatermobs.entities.SlipperyBiterEntity;
 
-import net.minecraft.client.renderer.entity.model.SegmentedModel;
-import net.minecraft.client.renderer.model.ModelRenderer;
-import net.minecraft.entity.Entity;
-import net.minecraft.util.math.MathHelper;
+import net.minecraft.client.model.ListModel;
+import net.minecraft.client.model.geom.ModelPart;
+import net.minecraft.world.entity.Entity;
+import net.minecraft.util.Mth;
 import net.minecraftforge.api.distmarker.Dist;
 import net.minecraftforge.api.distmarker.OnlyIn;
 
 @OnlyIn(Dist.CLIENT)
-public class SlipperyBiterModel<T extends Entity> extends SegmentedModel<T> {
-	private final ModelRenderer body_front;
-	private final ModelRenderer fin_left;
-	private final ModelRenderer fin_right;
-	private final ModelRenderer body_rear;
-	private final ModelRenderer head;
-	private final ModelRenderer fin_back_1;
-	private final ModelRenderer fin_back_2;
-	private final ModelRenderer tail;
+public class SlipperyBiterModel<T extends Entity> extends ListModel<T> {
+	private final ModelPart body_front;
+	private final ModelPart fin_left;
+	private final ModelPart fin_right;
+	private final ModelPart body_rear;
+	private final ModelPart head;
+	private final ModelPart fin_back_1;
+	private final ModelPart fin_back_2;
+	private final ModelPart tail;
 
 	public SlipperyBiterModel() {
 
@@ -29,42 +29,42 @@ public class SlipperyBiterModel<T extends Entity> extends SegmentedModel<T> {
 		texWidth = 32;
 		texHeight = 32;
 
-		head = new ModelRenderer(this);
+		head = new ModelPart(this);
 		head.setPos(0.0F, 18.0F, -4.0F);
 		head.texOffs(22, 0).addBox(-1.0F, -2.0F, -3.0F, 2.0F, 4.0F, 3.0F, 0.0F, false);
 
-		body_front = new ModelRenderer(this);
+		body_front = new ModelPart(this);
 		body_front.setPos(0.0F, 18.0F, -4.0F);
 		body_front.texOffs(0, 0).addBox(-1.5F, -2.5F, 0.0F, 3.0F, 5.0F, 8.0F, 0.0F, false);
 
-		fin_back_1 = new ModelRenderer(this);
+		fin_back_1 = new ModelPart(this);
 		fin_back_1.setPos(0.0F, -4.5F, 5.0F);
 		body_front.addChild(fin_back_1);
 		fin_back_1.texOffs(4, 2).addBox(0.0F, 0.0F, 1.0F, 0.0F, 2.0F, 2.0F, 0.0F, false);
 
-		fin_left = new ModelRenderer(this);
+		fin_left = new ModelPart(this);
 		fin_left.setPos(-1.5F, 1.5F, 0.0F);
 		body_front.addChild(fin_left);
 		setRotationAngle(fin_left, -1.5708F, 0.0F, -0.7854F);
 		fin_left.texOffs(0, 0).addBox(-2.0F, -2.0F, 0.0F, 2.0F, 2.0F, 0.0F, 0.0F, false);
 
-		fin_right = new ModelRenderer(this);
+		fin_right = new ModelPart(this);
 		fin_right.setPos(1.5F, 1.5F, 0.0F);
 		body_front.addChild(fin_right);
 		setRotationAngle(fin_right, -1.5708F, 0.0F, 0.7854F);
 		fin_right.texOffs(4, 0).addBox(0.0F, -2.0F, 0.0F, 2.0F, 2.0F, 0.0F, 0.0F, false);
 
-		body_rear = new ModelRenderer(this);
+		body_rear = new ModelPart(this);
 		body_rear.setPos(0.0F, 18.0F, 4.0F);
 		body_rear.texOffs(0, 13).addBox(-1.5F, -2.5F, 0.0F, 3.0F, 5.0F, 8.0F, 0.0F, false);
 
-		fin_back_2 = new ModelRenderer(this);
+		fin_back_2 = new ModelPart(this);
 		fin_back_2.setPos(0.0F, -4.5F, -1.0F);
 		body_rear.addChild(fin_back_2);
 		setRotationAngle(fin_back_2, 0.0F, 0.0F, 0.0436F);
 		fin_back_2.texOffs(2, 3).addBox(0.0F, 0.0F, 1.0F, 0.0F, 2.0F, 3.0F, 0.0F, false);
 
-		tail = new ModelRenderer(this);
+		tail = new ModelPart(this);
 		tail.setPos(0.0F, 0.0F, 8.0F);
 		body_rear.addChild(tail);
 		tail.texOffs(20, 10).addBox(0.0F, -2.5F, 0.0F, 0.0F, 5.0F, 6.0F, 0.0F, false);
@@ -83,12 +83,12 @@ public class SlipperyBiterModel<T extends Entity> extends SegmentedModel<T> {
 //	}
 
 	@Override
-	public Iterable<ModelRenderer> parts() {
-		return (Iterable<ModelRenderer>) ImmutableList.of(this.body_front, this.body_rear, this.head);
+	public Iterable<ModelPart> parts() {
+		return (Iterable<ModelPart>) ImmutableList.of(this.body_front, this.body_rear, this.head);
 
 	}
 
-	public void setRotationAngle(ModelRenderer modelRenderer, float x, float y, float z) {
+	public void setRotationAngle(ModelPart modelRenderer, float x, float y, float z) {
 		modelRenderer.xRot = x;
 		modelRenderer.yRot = y;
 		modelRenderer.zRot = z;
@@ -101,8 +101,8 @@ public class SlipperyBiterModel<T extends Entity> extends SegmentedModel<T> {
 		final float age = ageInTicks - entity.tickCount;
 
 		if ((ageInTicks / 1000) % 3 == 0) {
-			setRotationAngle(fin_left, -1.5708F, -0.2F * MathHelper.cos(ageInTicks / 20 * 0.3F), -0.7854F);
-			setRotationAngle(fin_right, -1.5708F, -0.2F * MathHelper.cos(ageInTicks / 20 * 0.3F), 0.7854F);
+			setRotationAngle(fin_left, -1.5708F, -0.2F * Mth.cos(ageInTicks / 20 * 0.3F), -0.7854F);
+			setRotationAngle(fin_right, -1.5708F, -0.2F * Mth.cos(ageInTicks / 20 * 0.3F), 0.7854F);
 		} else {
 			setRotationAngle(fin_left, -1.5708F, -0.2F, -0.7854F);
 			setRotationAngle(fin_right, -1.5708F, -0.2F, 0.7854F);
@@ -116,10 +116,10 @@ public class SlipperyBiterModel<T extends Entity> extends SegmentedModel<T> {
 		/* linear interpolation */
 		SlipperyBiterEntity s = (SlipperyBiterEntity) entity;
 		
-		final float lerpTailValue = MathHelper.lerp(age, s.getClientSideTailAnimationO(),
+		final float lerpTailValue = Mth.lerp(age, s.getClientSideTailAnimationO(),
 				s.getClientSideTailAnimation());
-		this.body_rear.zRot = MathHelper.sin(lerpTailValue) * 3.1415927f * 0.05f * tailSwingMagnitude;
-		this.fin_back_2.zRot = MathHelper.sin(lerpTailValue) * 3.1415927f * 0.1f * tailSwingMagnitude;
+		this.body_rear.zRot = Mth.sin(lerpTailValue) * 3.1415927f * 0.05f * tailSwingMagnitude;
+		this.fin_back_2.zRot = Mth.sin(lerpTailValue) * 3.1415927f * 0.1f * tailSwingMagnitude;
 
 	}
 

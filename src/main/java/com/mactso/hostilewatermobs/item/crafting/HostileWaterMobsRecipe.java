@@ -5,15 +5,20 @@ import com.google.gson.JsonObject;
 import com.google.gson.JsonParseException;
 import com.mactso.hostilewatermobs.Main;
 
+import net.minecraft.world.inventory.CraftingContainer;
+import net.minecraft.world.item.DyeItem;
+import net.minecraft.world.item.Item;
+import net.minecraft.world.item.ItemStack;
+import net.minecraft.world.item.Items;
+import net.minecraft.world.item.crafting.RecipeSerializer;
+import net.minecraft.world.item.crafting.Ingredient;
+import net.minecraft.world.item.crafting.ShapedRecipe;
+import net.minecraft.world.item.crafting.ShapelessRecipe;
+import net.minecraft.nbt.CompoundTag;
+import net.minecraft.network.FriendlyByteBuf;
+import net.minecraft.util.GsonHelper;
 import net.minecraft.core.NonNullList;
 import net.minecraft.resources.ResourceLocation;
-import net.minecraft.world.inventory.CraftingContainer;
-import net.minecraft.world.item.ItemStack;
-import net.minecraft.world.item.crafting.Ingredient;
-import net.minecraft.world.item.crafting.RecipeSerializer;
-import net.minecraft.world.item.crafting.ShapelessRecipe;
-
-
 
 public class HostileWaterMobsRecipe extends ShapelessRecipe {
 	protected final String operation;
@@ -63,7 +68,7 @@ public class HostileWaterMobsRecipe extends ShapelessRecipe {
 			}
 		}
 		if (operation.equals("reset_color")) {
-			CompoundNBT compoundnbt = ret.getTagElement("display");
+			CompoundTag compoundnbt = ret.getTagElement("display");
 			if (compoundnbt != null && compoundnbt.contains("color", 99))
 				compoundnbt.remove("color");
 		} else if (operation.equals("set_color")) {
@@ -89,12 +94,12 @@ public class HostileWaterMobsRecipe extends ShapelessRecipe {
 				}
 			}
 			if (color >= 0) {
-				CompoundNBT compoundnbt = ret.getOrCreateTagElement("display");
+				CompoundTag compoundnbt = ret.getOrCreateTagElement("display");
 				compoundnbt.putInt("color", color);
 			} else
 				ret = ItemStack.EMPTY;
 		} else if (operation.equals("remove")) {
-			CompoundNBT compoundnbt = ret.getTagElement("display");
+			CompoundTag compoundnbt = ret.getTagElement("display");
 			if (compoundnbt != null) {
 				compoundnbt.remove("color");
 				compoundnbt.remove("glint");
@@ -110,15 +115,15 @@ public class HostileWaterMobsRecipe extends ShapelessRecipe {
 
 		@Override
 		public HostileWaterMobsRecipe fromJson(ResourceLocation recipeId, JsonObject json) {
-			String s = JSONUtils.getAsString(json, "group", "");
-			NonNullList<Ingredient> nonnulllist = readIngredients(JSONUtils.getAsJsonArray(json, "ingredients"));
+			String s = GsonHelper.getAsString(json, "group", "");
+			NonNullList<Ingredient> nonnulllist = readIngredients(GsonHelper.getAsJsonArray(json, "ingredients"));
 			if (nonnulllist.isEmpty()) {
 				throw new JsonParseException("No ingredients for shapeless recipe");
 //		        } else if (nonnulllist.size() > ShapedRecipe.getWidth() * ShapedRecipe.getHeight()) {
 //		           throw new JsonParseException("Too many ingredients for shapeless recipe the max is " + (ShapedRecipe.getWidth() * ShapedRecipe.getHeight()));
 			} else {
-				ItemStack itemstack = ShapedRecipe.itemFromJson(JSONUtils.getAsJsonObject(json, "result"));
-				String s2 = JSONUtils.getAsString(json, "operation", "");
+				ItemStack itemstack = ShapedRecipe.itemStackFromJson(GsonHelper.getAsJsonObject(json, "result"));
+				String s2 = GsonHelper.getAsString(json, "operation", "");
 				return new HostileWaterMobsRecipe(recipeId, s, itemstack, nonnulllist, s2);
 			}
 		}
@@ -137,7 +142,7 @@ public class HostileWaterMobsRecipe extends ShapelessRecipe {
 		}
 
 		@Override
-		public HostileWaterMobsRecipe fromNetwork(ResourceLocation recipeId, PacketBuffer buffer) {
+		public HostileWaterMobsRecipe fromNetwork(ResourceLocation recipeId, FriendlyByteBuf buffer) {
 			String s = buffer.readUtf(32767);
 			int i = buffer.readVarInt();
 			NonNullList<Ingredient> nonnulllist = NonNullList.withSize(i, Ingredient.EMPTY);
@@ -152,7 +157,7 @@ public class HostileWaterMobsRecipe extends ShapelessRecipe {
 		}
 
 		@Override
-		public void toNetwork(PacketBuffer buffer, ShapelessRecipe recipe) {
+		public void toNetwork(FriendlyByteBuf buffer, ShapelessRecipe recipe) {
 			super.toNetwork(buffer, recipe);
 			buffer.writeUtf(((HostileWaterMobsRecipe) recipe).operation);
 		}

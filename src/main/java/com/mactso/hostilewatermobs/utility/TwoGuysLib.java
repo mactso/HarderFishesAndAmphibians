@@ -1,11 +1,8 @@
-package com.mactso.hostilewatermobs.util;
-
-import java.util.Random;
+package com.mactso.hostilewatermobs.utility;
 
 import javax.annotation.Nullable;
 
 import com.mactso.hostilewatermobs.config.MyConfig;
-import com.mactso.hostilewatermobs.entities.WaterSnakeEntity;
 
 import net.minecraft.core.BlockPos;
 import net.minecraft.world.entity.EntityType;
@@ -13,8 +10,6 @@ import net.minecraft.world.entity.Mob;
 import net.minecraft.world.level.Level;
 import net.minecraft.world.level.LevelAccessor;
 import net.minecraft.world.level.block.Block;
-
-
 
 public class TwoGuysLib {
 

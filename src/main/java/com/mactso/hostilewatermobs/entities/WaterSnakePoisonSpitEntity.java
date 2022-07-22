@@ -1,44 +1,44 @@
 package com.mactso.hostilewatermobs.entities;
 
-import net.minecraft.block.AbstractBlock;
-import net.minecraft.entity.Entity;
-import net.minecraft.entity.EntityType;
-import net.minecraft.entity.LivingEntity;
-import net.minecraft.entity.projectile.LlamaSpitEntity;
-import net.minecraft.entity.projectile.ProjectileHelper;
-import net.minecraft.network.IPacket;
-import net.minecraft.network.play.server.SSpawnObjectPacket;
-import net.minecraft.particles.ParticleTypes;
-import net.minecraft.potion.EffectInstance;
-import net.minecraft.potion.Effects;
-import net.minecraft.util.DamageSource;
-import net.minecraft.util.math.BlockRayTraceResult;
-import net.minecraft.util.math.EntityRayTraceResult;
-import net.minecraft.util.math.MathHelper;
-import net.minecraft.util.math.RayTraceResult;
-import net.minecraft.util.math.vector.Vector3d;
-import net.minecraft.world.World;
+import net.minecraft.core.particles.ParticleTypes;
+import net.minecraft.network.protocol.Packet;
+import net.minecraft.network.protocol.game.ClientboundAddEntityPacket;
+import net.minecraft.util.Mth;
+import net.minecraft.world.damagesource.DamageSource;
+import net.minecraft.world.effect.MobEffectInstance;
+import net.minecraft.world.effect.MobEffects;
+import net.minecraft.world.entity.Entity;
+import net.minecraft.world.entity.EntityType;
+import net.minecraft.world.entity.LivingEntity;
+import net.minecraft.world.entity.projectile.LlamaSpit;
+import net.minecraft.world.entity.projectile.ProjectileUtil;
+import net.minecraft.world.level.Level;
+import net.minecraft.world.level.block.state.BlockBehaviour;
+import net.minecraft.world.phys.BlockHitResult;
+import net.minecraft.world.phys.EntityHitResult;
+import net.minecraft.world.phys.HitResult;
+import net.minecraft.world.phys.Vec3;
 import net.minecraftforge.api.distmarker.Dist;
 import net.minecraftforge.api.distmarker.OnlyIn;
 
-public class WaterSnakePoisonSpitEntity extends LlamaSpitEntity {
+public class WaterSnakePoisonSpitEntity extends LlamaSpit {
 
-	public WaterSnakePoisonSpitEntity(EntityType<LlamaSpitEntity> csSpit, World w) {
+	public WaterSnakePoisonSpitEntity(EntityType<LlamaSpit> csSpit, Level w) {
 		super(csSpit, w);
 	}
 
-	public WaterSnakePoisonSpitEntity(World p_i47273_1_, WaterSnakeEntity p_i47273_2_) {
+	public WaterSnakePoisonSpitEntity(Level p_i47273_1_, WaterSnakeEntity p_i47273_2_) {
 		this(EntityType.LLAMA_SPIT, p_i47273_1_);
 		super.setOwner(p_i47273_2_);
 		this.setPos(
 				p_i47273_2_.getX() - (double) (p_i47273_2_.getBbWidth() + 1.0F) * 0.5D
-						* (double) MathHelper.sin(p_i47273_2_.yBodyRot * ((float) Math.PI / 180F)),
+						* (double) Mth.sin(p_i47273_2_.yBodyRot * ((float) Math.PI / 180F)),
 				p_i47273_2_.getEyeY() - (double) 0.1F, p_i47273_2_.getZ() + (double) (p_i47273_2_.getBbWidth() + 1.0F)
-						* 0.5D * (double) MathHelper.cos(p_i47273_2_.yBodyRot * ((float) Math.PI / 180F)));
+						* 0.5D * (double) Mth.cos(p_i47273_2_.yBodyRot * ((float) Math.PI / 180F)));
 	}
 
 	@OnlyIn(Dist.CLIENT)
-	public WaterSnakePoisonSpitEntity(World p_i47274_1_, double p_i47274_2_, double p_i47274_4_, double p_i47274_6_,
+	public WaterSnakePoisonSpitEntity(Level p_i47274_1_, double p_i47274_2_, double p_i47274_4_, double p_i47274_6_,
 			double p_i47274_8_, double p_i47274_10_, double p_i47274_12_) {
 		this(EntityType.LLAMA_SPIT, p_i47274_1_);
 		this.setPos(p_i47274_2_, p_i47274_4_, p_i47274_6_);
@@ -54,9 +54,9 @@ public class WaterSnakePoisonSpitEntity extends LlamaSpitEntity {
 
 	public void tick() {
 		super.tick();
-		Vector3d vector3d = this.getDeltaMovement();
-		RayTraceResult raytraceresult = ProjectileHelper.getHitResult(this, this::canHitEntity);
-		if (raytraceresult != null && raytraceresult.getType() != RayTraceResult.Type.MISS
+		Vec3 vector3d = this.getDeltaMovement();
+		HitResult raytraceresult = ProjectileUtil.getHitResult(this, this::canHitEntity);
+		if (raytraceresult != null && raytraceresult.getType() != HitResult.Type.MISS
 				&& !net.minecraftforge.event.ForgeEventFactory.onProjectileImpact(this, raytraceresult)) {
 			this.onHit(raytraceresult);
 		}
@@ -67,10 +67,10 @@ public class WaterSnakePoisonSpitEntity extends LlamaSpitEntity {
 		this.updateRotation();
 		float f = 0.99F;
 		float f1 = 0.06F;
-		if (this.level.getBlockStates(this.getBoundingBox()).noneMatch(AbstractBlock.AbstractBlockState::isAir)) {
-			this.remove();
+		if (this.level.getBlockStates(this.getBoundingBox()).noneMatch(BlockBehaviour.BlockStateBase::isAir)) {
+			this.remove(RemovalReason.DISCARDED);
 		} else if (this.isInWaterOrBubble()) {
-			this.remove();
+			this.remove(RemovalReason.DISCARDED);
 		} else {
 			this.setDeltaMovement(vector3d.scale((double) 0.99F));
 			if (!this.isNoGravity()) {
@@ -81,7 +81,7 @@ public class WaterSnakePoisonSpitEntity extends LlamaSpitEntity {
 		}
 	}
 
-	protected void onHitEntity(EntityRayTraceResult targetRayTraceResult) {
+	protected void onHitEntity(EntityHitResult targetRayTraceResult) {
 		super.onHitEntity(targetRayTraceResult);
 
 		if (!(targetRayTraceResult.getEntity() instanceof LivingEntity)) {
@@ -92,22 +92,22 @@ public class WaterSnakePoisonSpitEntity extends LlamaSpitEntity {
 		if (spitOwnerEntity instanceof WaterSnakeEntity) {
             targetEntity.hurt(DamageSource.indirectMobAttack(this, (LivingEntity) spitOwnerEntity).setProjectile(),
 					0.25F);  // direct damage from attack is small.
-			EffectInstance ei =  targetEntity.getEffect(Effects.POISON);
+			MobEffectInstance ei =  targetEntity.getEffect(MobEffects.POISON);
     		if (ei != null) {
     			if (ei.getDuration() > 10) return;
     			if (ei.getAmplifier() > 0) return;
     		}
-    		targetEntity.removeEffect(Effects.POISON);
-			targetEntity.addEffect(new EffectInstance(Effects.POISON, 160, 1));
+    		targetEntity.removeEffect(MobEffects.POISON);
+			targetEntity.addEffect(new MobEffectInstance(MobEffects.POISON, 160, 1));
 
 		}
 
 	}
 
-	protected void onHitBlock(BlockRayTraceResult p_230299_1_) {
+	protected void onHitBlock(BlockHitResult p_230299_1_) {
 		super.onHitBlock(p_230299_1_);
 		if (!this.level.isClientSide) {
-			this.remove();
+			this.remove(RemovalReason.DISCARDED);
 		}
 
 	}
@@ -115,7 +115,7 @@ public class WaterSnakePoisonSpitEntity extends LlamaSpitEntity {
 	protected void defineSynchedData() {
 	}
 
-	public IPacket<?> getAddEntityPacket() {
-		return new SSpawnObjectPacket(this);
+	public Packet<?> getAddEntityPacket() {
+		return new ClientboundAddEntityPacket(this);
 	}
 }

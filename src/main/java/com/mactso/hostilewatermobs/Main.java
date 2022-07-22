@@ -7,14 +7,14 @@ import com.mactso.hostilewatermobs.entities.ModEntities;
 import com.mactso.hostilewatermobs.item.ModItems;
 import com.mactso.hostilewatermobs.item.crafting.HostileWaterMobsRecipe;
 import com.mactso.hostilewatermobs.sound.ModSounds;
-import com.mactso.hostilewatermobs.util.SpawnData;
+import com.mactso.hostilewatermobs.utility.SpawnData;
 
+import net.minecraft.world.level.block.Block;
 import net.minecraft.client.Minecraft;
-import net.minecraft.sounds.SoundEvent;
 import net.minecraft.world.entity.EntityType;
 import net.minecraft.world.item.Item;
 import net.minecraft.world.item.crafting.RecipeSerializer;
-import net.minecraft.world.level.block.Block;
+import net.minecraft.sounds.SoundEvent;
 import net.minecraftforge.api.distmarker.Dist;
 import net.minecraftforge.api.distmarker.OnlyIn;
 import net.minecraftforge.common.MinecraftForge;

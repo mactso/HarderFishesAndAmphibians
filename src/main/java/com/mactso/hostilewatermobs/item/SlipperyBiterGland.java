@@ -1,16 +1,16 @@
 package com.mactso.hostilewatermobs.item;
 
-import net.minecraft.block.Blocks;
-import net.minecraft.entity.LivingEntity;
-import net.minecraft.entity.player.PlayerEntity;
-import net.minecraft.item.Item;
-import net.minecraft.item.ItemStack;
+import net.minecraft.world.level.block.Blocks;
+import net.minecraft.world.entity.LivingEntity;
+import net.minecraft.world.entity.player.Player;
+import net.minecraft.world.item.Item;
+import net.minecraft.world.item.ItemStack;
 import net.minecraft.tags.FluidTags;
-import net.minecraft.util.SoundCategory;
-import net.minecraft.util.SoundEvents;
-import net.minecraft.util.math.BlockPos;
-import net.minecraft.util.math.MathHelper;
-import net.minecraft.world.World;
+import net.minecraft.sounds.SoundSource;
+import net.minecraft.sounds.SoundEvents;
+import net.minecraft.core.BlockPos;
+import net.minecraft.util.Mth;
+import net.minecraft.world.level.Level;
 
 public class SlipperyBiterGland extends Item {
 	public SlipperyBiterGland(final Item.Properties builder) {
@@ -18,7 +18,7 @@ public class SlipperyBiterGland extends Item {
 
 	}
 
-	public ItemStack finishUsingItem(final ItemStack stack, final World worldIn, final LivingEntity livingEntityIn) {
+	public ItemStack finishUsingItem(final ItemStack stack, final Level worldIn, final LivingEntity livingEntityIn) {
 
 		ItemStack returnStack = super.finishUsingItem(stack, worldIn, livingEntityIn);
 		returnStack.setCount(returnStack.getCount()-1);
@@ -32,7 +32,7 @@ public class SlipperyBiterGland extends Item {
 
 		for (int i = 0; i < 8; ++i) {
 			double potX = leX + (livingEntityIn.getRandom().nextDouble() - 0.5) * 18.0;
-			double potY = MathHelper.clamp(
+			double potY = Mth.clamp(
 					leY + (livingEntityIn.getRandom().nextInt(4) - 2), 0.0,
 					(double) (worldIn.getHeight() - 1));
 			double potZ = leZ + (livingEntityIn.getRandom().nextDouble() - 0.5) * 18.0;
@@ -50,15 +50,15 @@ public class SlipperyBiterGland extends Item {
 
 				if (topSafe && bottomSafe ) {
 					livingEntityIn.teleportTo(potX, potY, potZ);
-					worldIn.playSound((PlayerEntity) null, leX, leY, leZ, SoundEvents.FOX_TELEPORT, SoundCategory.PLAYERS,
+					worldIn.playSound((Player) null, leX, leY, leZ, SoundEvents.FOX_TELEPORT, SoundSource.PLAYERS,
 								0.6f, 0.5f);
 					livingEntityIn.playSound(SoundEvents.FOX_TELEPORT, 0.8f, 0.5f);
 					break;
 				}		    	
 		    }
 		}
-		if (livingEntityIn instanceof PlayerEntity) {
-			((PlayerEntity) livingEntityIn).getCooldowns().addCooldown((Item) this, 20);
+		if (livingEntityIn instanceof Player) {
+			((Player) livingEntityIn).getCooldowns().addCooldown((Item) this, 20);
 
 		}
 

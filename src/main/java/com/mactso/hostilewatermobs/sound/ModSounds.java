@@ -2,8 +2,8 @@ package com.mactso.hostilewatermobs.sound;
 
 import com.mactso.hostilewatermobs.Main;
 
-import net.minecraft.util.ResourceLocation;
-import net.minecraft.util.SoundEvent;
+import net.minecraft.resources.ResourceLocation;
+import net.minecraft.sounds.SoundEvent;
 import net.minecraftforge.registries.IForgeRegistry;
 
 public class ModSounds

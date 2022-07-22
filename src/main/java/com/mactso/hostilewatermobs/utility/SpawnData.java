@@ -1,4 +1,4 @@
-package com.mactso.hostilewatermobs.util;
+package com.mactso.hostilewatermobs.utility;
 
 import java.util.ArrayList;
 
@@ -8,8 +8,8 @@ import java.util.List;
 
 import com.mactso.hostilewatermobs.entities.ModEntities;
 
-import net.minecraft.world.biome.MobSpawnInfo.Spawners;
-import net.minecraftforge.common.world.MobSpawnInfoBuilder;
+import net.minecraft.world.level.biome.MobSpawnSettings.SpawnerData;
+import net.minecraftforge.common.world.MobSpawnSettingsBuilder;
 import net.minecraftforge.event.world.BiomeLoadingEvent;
 import net.minecraftforge.event.world.StructureSpawnListGatherEvent;
 import net.minecraftforge.eventbus.api.EventPriority;
@@ -33,12 +33,12 @@ public class SpawnData
 //	}
 
 	private static void addSpawnsToBiomes(BiomeLoadingEvent event) {
-		MobSpawnInfoBuilder builder = event.getSpawns();
-		List<Spawners> list = new ArrayList<>();
+		MobSpawnSettingsBuilder builder = event.getSpawns();
+		List<SpawnerData> list = new ArrayList<>();
 		ModEntities.getBiomeSpawnData( list, event);
 		for (int i = 0; i < list.size(); ++i)
 		{
-			Spawners spawner = list.get(i);
+			SpawnerData spawner = list.get(i);
 			builder.addSpawn(spawner.type.getCategory(), spawner).addMobCharge(list.get(i).type, 0.08, 2.0);
 		}
 	}
@@ -58,11 +58,11 @@ public class SpawnData
 //	}
 	
 	private static void addSpawnsToStructures(StructureSpawnListGatherEvent event) {
-		List<Spawners> list = new ArrayList<>();
+		List<SpawnerData> list = new ArrayList<>();
 		ModEntities.getFeatureSpawnData(list, event.getStructure());
 		for (int i = 0; i < list.size(); ++i)
 		{
-			Spawners spawner = list.get(i);
+			SpawnerData spawner = list.get(i);
 			event.addEntitySpawn(spawner.type.getCategory(), spawner);
 		}
 	}

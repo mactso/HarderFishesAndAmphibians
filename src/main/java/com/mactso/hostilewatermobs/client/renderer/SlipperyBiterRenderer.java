@@ -4,12 +4,12 @@ import com.mactso.hostilewatermobs.Main;
 import com.mactso.hostilewatermobs.client.model.SlipperyBiterModel;
 import com.mactso.hostilewatermobs.client.renderer.layers.SlipperyBiterEyesLayer;
 import com.mactso.hostilewatermobs.entities.SlipperyBiterEntity;
-import com.mojang.blaze3d.matrix.MatrixStack;
+import com.mojang.blaze3d.vertex.PoseStack;
 
-import net.minecraft.client.renderer.IRenderTypeBuffer;
-import net.minecraft.client.renderer.entity.EntityRendererManager;
+import net.minecraft.client.renderer.MultiBufferSource;
+import net.minecraft.client.renderer.entity.EntityRenderDispatcher;
 import net.minecraft.client.renderer.entity.MobRenderer;
-import net.minecraft.util.ResourceLocation;
+import net.minecraft.resources.ResourceLocation;
 import net.minecraftforge.api.distmarker.Dist;
 import net.minecraftforge.api.distmarker.OnlyIn;
 
@@ -23,12 +23,12 @@ public class SlipperyBiterRenderer extends MobRenderer<SlipperyBiterEntity, Slip
 			"textures/entity/slipperybiter.png");
 
 	// suspect this is the size but may just be shadow size
-	public SlipperyBiterRenderer(final EntityRendererManager renderManagerIn) {
+	public SlipperyBiterRenderer(final EntityRenderDispatcher renderManagerIn) {
 		super(renderManagerIn, new SlipperyBiterModel<>(), 0.3f);
         addLayer(new SlipperyBiterEyesLayer<>(this));
 	}
 
-	protected void scale(SlipperyBiterEntity entityIn, MatrixStack matrixStackIn,
+	protected void scale(SlipperyBiterEntity entityIn, PoseStack matrixStackIn,
 			float partialTickTime) {
 		  int subtype = ((SlipperyBiterEntity) entityIn).getSubType();
 		  int eSize = (((SlipperyBiterEntity) entityIn).getId()%16)-8;
@@ -44,8 +44,8 @@ public class SlipperyBiterRenderer extends MobRenderer<SlipperyBiterEntity, Slip
 		  }
 	}
 
-	public void render(SlipperyBiterEntity entityIn, float entityYaw, float partialTicks, MatrixStack matrixStackIn,
-			IRenderTypeBuffer bufferIn, int packedLightIn) {
+	public void render(SlipperyBiterEntity entityIn, float entityYaw, float partialTicks, PoseStack matrixStackIn,
+			MultiBufferSource bufferIn, int packedLightIn) {
 		super.render((SlipperyBiterEntity) entityIn, entityYaw, partialTicks, matrixStackIn, bufferIn, packedLightIn);
 	}
 

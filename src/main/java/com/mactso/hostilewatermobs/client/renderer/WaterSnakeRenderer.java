@@ -5,13 +5,13 @@ import com.mactso.hostilewatermobs.Main;
 import com.mactso.hostilewatermobs.client.model.WaterSnakeModel;
 import com.mactso.hostilewatermobs.client.renderer.layers.WaterSnakeAngryLayer;
 import com.mactso.hostilewatermobs.entities.WaterSnakeEntity;
-import com.mojang.blaze3d.matrix.MatrixStack;
+import com.mojang.blaze3d.vertex.PoseStack;
 
-import net.minecraft.client.renderer.IRenderTypeBuffer;
-import net.minecraft.client.renderer.entity.EntityRendererManager;
+import net.minecraft.client.renderer.MultiBufferSource;
+import net.minecraft.client.renderer.entity.EntityRenderDispatcher;
 import net.minecraft.client.renderer.entity.MobRenderer;
-import net.minecraft.util.ResourceLocation;
-import net.minecraft.util.math.MathHelper;
+import net.minecraft.resources.ResourceLocation;
+import net.minecraft.util.Mth;
 import net.minecraftforge.api.distmarker.Dist;
 import net.minecraftforge.api.distmarker.OnlyIn;
 
@@ -24,12 +24,12 @@ public class WaterSnakeRenderer extends MobRenderer<WaterSnakeEntity, WaterSnake
 			"textures/entity/classicsnake_texture.png");
 
 
-	public WaterSnakeRenderer(final EntityRendererManager renderManagerIn) {
+	public WaterSnakeRenderer(final EntityRenderDispatcher renderManagerIn) {
 		super(renderManagerIn, new WaterSnakeModel<>(), 0.3f);
         addLayer(new WaterSnakeAngryLayer<>(this));
 	}
 
-	protected void scale(WaterSnakeEntity entityIn, MatrixStack matrixStackIn,
+	protected void scale(WaterSnakeEntity entityIn, PoseStack matrixStackIn,
 		  float partialTickTime) 
 	{
 
@@ -47,11 +47,11 @@ public class WaterSnakeRenderer extends MobRenderer<WaterSnakeEntity, WaterSnake
 
 	}
 
-	public void render(WaterSnakeEntity entityIn, float entityYaw, float partialTicks, MatrixStack matrixStackIn,
-			IRenderTypeBuffer bufferIn, int packedLightIn) {
+	public void render(WaterSnakeEntity entityIn, float entityYaw, float partialTicks, PoseStack matrixStackIn,
+			MultiBufferSource bufferIn, int packedLightIn) {
 
 		float f = entityIn.yRotO;
-		float lerpYaw = MathHelper.lerp(partialTicks, f, entityYaw);
+		float lerpYaw = Mth.lerp(partialTicks, f, entityYaw);
 		super.render(entityIn, lerpYaw, partialTicks, matrixStackIn, bufferIn, packedLightIn);
 	}
 
