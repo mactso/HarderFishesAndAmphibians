@@ -2,30 +2,28 @@ package com.mactso.hostilewatermobs.client.renderer;
 
 import com.mactso.hostilewatermobs.Main;
 import com.mactso.hostilewatermobs.client.model.SlipperyBiterModel;
-import com.mactso.hostilewatermobs.client.renderer.layers.SlipperyBiterEyesLayer;
+import com.mactso.hostilewatermobs.client.renderer.layers.GlowingLayer;
 import com.mactso.hostilewatermobs.entities.SlipperyBiterEntity;
-import com.mojang.blaze3d.vertex.PoseStack;
 
+import com.mojang.blaze3d.vertex.PoseStack;
+import net.minecraft.client.model.EntityModel;
 import net.minecraft.client.renderer.MultiBufferSource;
-import net.minecraft.client.renderer.entity.EntityRenderDispatcher;
+import net.minecraft.client.renderer.entity.EntityRendererProvider;
 import net.minecraft.client.renderer.entity.MobRenderer;
 import net.minecraft.resources.ResourceLocation;
-import net.minecraftforge.api.distmarker.Dist;
-import net.minecraftforge.api.distmarker.OnlyIn;
 
-@OnlyIn(Dist.CLIENT)
-public class SlipperyBiterRenderer extends MobRenderer<SlipperyBiterEntity, SlipperyBiterModel<SlipperyBiterEntity>> {
 
-//		BiomeMaker b;
-	// public static final ResourceLocation ALBINO_RIVER_GUARDIAN_TEXTURE = new
-	// ResourceLocation(Main.MODID , "textures/entity/albino_river_guardian.png");
-	private static final ResourceLocation SlIPPERY_BITER_TEXTURES = new ResourceLocation(Main.MODID,
-			"textures/entity/slipperybiter.png");
+
+public class SlipperyBiterRenderer extends MobRenderer<SlipperyBiterEntity, EntityModel<SlipperyBiterEntity>> {
+
+	private static final ResourceLocation SlIPPERY_BITER_TEXTURES 
+		= new ResourceLocation(Main.MODID,	"textures/entity/slipperybiter.png");
+    private static final ResourceLocation SLIPPERY_BITER_EYES = new ResourceLocation(Main.MODID, "textures/entity/slipperybiter_eyes.png");
 
 	// suspect this is the size but may just be shadow size
-	public SlipperyBiterRenderer(final EntityRenderDispatcher renderManagerIn) {
+	public SlipperyBiterRenderer(EntityRendererProvider.Context renderManagerIn) {
 		super(renderManagerIn, new SlipperyBiterModel<>(), 0.3f);
-        addLayer(new SlipperyBiterEyesLayer<>(this));
+		this.addLayer(new GlowingLayer<>(this, SLIPPERY_BITER_EYES));
 	}
 
 	protected void scale(SlipperyBiterEntity entityIn, PoseStack matrixStackIn,
@@ -35,12 +33,9 @@ public class SlipperyBiterRenderer extends MobRenderer<SlipperyBiterEntity, Slip
 		  float uniqueSize = (float)eSize/48;
 		  subtype = (2 + subtype) %2;
 		  if (subtype == SlipperyBiterEntity.LARGE_SLIPPERY_BITER) {
-//			  System.out.println ("Large ("+SlipperyBiterEntity.LARGE_SIZE+") + "+uniqueSize);
 				matrixStackIn.scale(SlipperyBiterEntity.LARGE_SIZE+uniqueSize+0.4f, SlipperyBiterEntity.LARGE_SIZE+uniqueSize+0.35f, SlipperyBiterEntity.LARGE_SIZE+uniqueSize+0.4f);
 		  } else {
-//			  System.out.println ("Normal ("+SlipperyBiterEntity.SIZE+") + " + uniqueSize);
 				matrixStackIn.scale(SlipperyBiterEntity.SIZE+uniqueSize, SlipperyBiterEntity.SIZE+uniqueSize, SlipperyBiterEntity.SIZE+uniqueSize);
-			  
 		  }
 	}
 

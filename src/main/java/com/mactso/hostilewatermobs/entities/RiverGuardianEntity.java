@@ -1,5 +1,6 @@
 package com.mactso.hostilewatermobs.entities;
 
+import java.util.List;
 import java.util.Random;
 import java.util.function.Predicate;
 
@@ -7,6 +8,8 @@ import javax.annotation.Nullable;
 
 import com.mactso.hostilewatermobs.config.MyConfig;
 import com.mactso.hostilewatermobs.sound.ModSounds;
+import com.mactso.hostilewatermobs.utility.Utility;
+
 import net.minecraft.world.entity.Entity;
 import net.minecraft.world.entity.EntityType;
 import net.minecraft.world.entity.SpawnGroupData;
@@ -51,6 +54,7 @@ import net.minecraft.world.level.Level;
 import net.minecraft.world.level.biome.Biome;
 import net.minecraft.world.level.biome.Biome.BiomeCategory;
 import net.minecraft.world.level.chunk.LevelChunk;
+import net.minecraft.world.phys.AABB;
 import net.minecraft.server.level.ServerLevel;
 import net.minecraftforge.common.BiomeDictionary;
 
@@ -166,14 +170,20 @@ public class RiverGuardianEntity extends Guardian implements Enemy {
 	public static boolean canSpawn(EntityType<? extends RiverGuardianEntity> type, LevelAccessor world, MobSpawnType reason,
 			BlockPos pos, Random randomIn) {
 
-		if (world.getDifficulty() == Difficulty.PEACEFUL)
+		if (world.isClientSide()) {
+			return false;
+		}
+
+		ServerLevel sl = (ServerLevel)world;
+		
+		if (sl.getDifficulty() == Difficulty.PEACEFUL)
 			return false;
 
 		if (reason == MobSpawnType.SPAWN_EGG)
 			return true;
 
-		boolean inWater = world.getFluidState(pos).is(FluidTags.WATER)
-				|| world.getFluidState(pos.above()).is(FluidTags.WATER);
+		boolean inWater = sl.getFluidState(pos).is(FluidTags.WATER)
+				|| sl.getFluidState(pos.above()).is(FluidTags.WATER);
 		if (!inWater) {
 			return false;
 		}
@@ -187,77 +197,46 @@ public class RiverGuardianEntity extends Guardian implements Enemy {
 			return false;
 		}
 
-		int riverGuardianSpawnChance = MyConfig.getRiverGuardianSpawnChance();
+
 		int riverGuardianCap = MyConfig.getRiverGuardianSpawnCap();
-		int riverGuardianSpawnRoll = randomIn.nextInt(30);
+
 
 		if (isDeep) {
 			riverGuardianCap += 6;
-			riverGuardianSpawnChance += 9;
-			if (MyConfig.getDebugLevel() > 0) {
-				System.out.println("spawn deep riverGuardian +9");
-			}
 		}
 
 		Biome biome = world.getBiome(pos);
 		BiomeCategory bC = biome.getBiomeCategory();
-		if (bC == BiomeCategory.OCEAN) {
-			if (pos.getY() > 33) {
-				return false;
-			}
-			if (world.getMaxLocalRawBrightness(pos) > 8) {
-				return false;
-			}
-		}
+		if ((bC == BiomeCategory.OCEAN) && (pos.getY() > 35) ) 
+			return false;
 
 		if (bC == BiomeCategory.SWAMP) {
-			riverGuardianSpawnChance += 7;
 			riverGuardianCap += 7;
-			if (MyConfig.getDebugLevel() > 0) {
-				System.out.println("spawn swamp riverGuardian +7");
-			}
 		}
 
 		if (bC == BiomeCategory.RIVER) {
 			riverGuardianCap += 9;
-			riverGuardianSpawnChance += 11;
-			if (MyConfig.getDebugLevel() > 0) {
-				System.out.println("spawn riverGuardian +9");
-			}
 		}
 
-		if (world instanceof ServerLevel) {
-			int riverGuardianCount = ((ServerLevel) world).getEntities(ModEntities.RIVER_GUARDIAN, (entity) -> true)
-					.size();
-			if (MyConfig.getDebugLevel() > 0) {
-				System.out.println("River Guardian Count : " + riverGuardianCount);
-			}
-			if (riverGuardianCount > riverGuardianCap) {
-				return false;
-			}
+		int riverGuardianCount = sl.getEntities(ModEntities.RIVER_GUARDIAN, (entity) -> true).size();
+		if (riverGuardianCount > riverGuardianCap) 
+			return false;
+		
+
+		// local gurty cap.
+		List<RiverGuardianEntity> list = sl.getEntitiesOfClass(RiverGuardianEntity.class,
+				new AABB(pos.north(16).west(16).above(8), pos.south(16).east(16).below(8)));
+
+		if (list.size() > 5) {
+			return false;
 		}
 
-		if (MyConfig.getDebugLevel() > 0) {
-			System.out.println(
-					"River Guardian Spawn Cap:" + riverGuardianCap + " Spawn Chance:" + riverGuardianSpawnChance);
-		}
+		Utility.debugMsg(1, pos,"spawn riverGuardian spawned.");
 
-		if ((riverGuardianSpawnRoll < riverGuardianSpawnChance) || !(world.canSeeSkyFromBelowWater(pos))) {
-			LevelChunk c = (LevelChunk) world.getChunk(pos);
-			ClassInstanceMultiMap<Entity>[] aL = c.getEntitySections();
-			int height = pos.getY() / 16;
-			if (height < 0)
-				height = 0; // cubic chunks
-			if (aL[height].find(RiverGuardianEntity.class).size() > 1) {
-				return false;
-			}
-			if (MyConfig.getDebugLevel() > 0) {
-				System.out.println("spawn riverGuardian true at " + pos.getX() + " " + pos.getY() + " " + pos.getZ());
-			}
-			return true;
-		}
+		return true;
 
-		return false;
+
+
 	}
 
 	public int getAttackDuration() {

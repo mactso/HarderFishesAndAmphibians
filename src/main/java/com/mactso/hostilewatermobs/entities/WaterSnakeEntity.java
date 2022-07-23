@@ -838,7 +838,7 @@ public class WaterSnakeEntity extends WaterAnimal implements Enemy, RangedAttack
 		return world.getBlockState(pos).is(Blocks.BUBBLE_COLUMN);
 	}
 
-	public static AttributeSupplier.Builder registerAttributes() {
+	public static AttributeSupplier.Builder createAttributes() {
 
 		return Monster.createMonsterAttributes().add(Attributes.MOVEMENT_SPEED, (double) 0.26F)
 				.add(Attributes.FOLLOW_RANGE, 20.0D).add(Attributes.ATTACK_DAMAGE, 2.5D)

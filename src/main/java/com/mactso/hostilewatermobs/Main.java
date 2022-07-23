@@ -80,6 +80,7 @@ public class Main {
 				System.out.println("hostilewatermobs: Registering Items.");
 	    		ModItems.register(event.getRegistry());
 	    	}
+
 			
 	        @SubscribeEvent
 	        public static void onEntityRegistry(final RegistryEvent.Register<EntityType<?>> event)

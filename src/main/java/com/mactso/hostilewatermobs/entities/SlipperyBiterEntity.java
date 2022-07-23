@@ -255,7 +255,7 @@ public class SlipperyBiterEntity extends WaterAnimal implements NeutralMob, Enem
 		return new EntityDimensions(width, height, fixed_size);
 	}
 
-	public static AttributeSupplier.Builder registerAttributes() {
+	public static AttributeSupplier.Builder createAttributes() {
 		return Monster.createMonsterAttributes().add(Attributes.MOVEMENT_SPEED, 0.16D)
 				.add(Attributes.FOLLOW_RANGE, 20.0D)
 				.add(Attributes.ATTACK_DAMAGE, 2.5D)

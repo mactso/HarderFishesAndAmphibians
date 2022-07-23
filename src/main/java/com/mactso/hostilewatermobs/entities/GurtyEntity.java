@@ -127,7 +127,7 @@ public class GurtyEntity extends PathfinderMob implements NeutralMob,Enemy {
 		nestProtectionDistSq = (nestProtectionDistSq * nestProtectionDistSq) + 3;
 	}
 
-	public static AttributeSupplier.Builder registerAttributes() {
+	public static AttributeSupplier.Builder createAttributes() {
 
 		return Monster.createMonsterAttributes().add(Attributes.MOVEMENT_SPEED, (double) 0.26F)
 				.add(Attributes.FOLLOW_RANGE, 20.0D)
@@ -459,41 +459,35 @@ public class GurtyEntity extends PathfinderMob implements NeutralMob,Enemy {
 	public static boolean canSpawn(EntityType<? extends GurtyEntity> gurtyIn, LevelAccessor worldIn, MobSpawnType reason,
 			BlockPos pos, Random randomIn) {
 
-		if (pos.getY() < worldIn.getSeaLevel() - 5) return false;
-		if (pos.getY() > worldIn.getSeaLevel() + 32) return false;
-		
-		if (worldIn.isClientSide()) {
+		if (worldIn.isClientSide()) 
 			return false;
-		}
+		
+		if (worldIn.getDifficulty() == Difficulty.PEACEFUL)
+			return false;
+		
+		if (reason == MobSpawnType.SPAWN_EGG)
+			return true;
+		
+		// this keeps gurty's from spawning too deep or too high.
+		if (pos.getY() < worldIn.getSeaLevel() - 5) 
+			return false;
+		if (pos.getY() > worldIn.getSeaLevel() + 32) 
+			return false;
+
+
+		MyConfig.debugMsg(1, pos, "checking spawn gurty");
 
 		ServerLevel w = (ServerLevel) worldIn;
-		// TODO
-		MyConfig.debugMsg(1, pos, "checking spawn gurty");
-		// most of the time- must be light level 0-7 to spawn.
-//		if (lastSpawnTime+24000 > w.getGameTime()) {
-//			int lightLevel = w.getMaxLocalRawBrightness(pos);
-//			int roll = w.getRandom().nextInt(8);
-//			int roll2 = w.getRandom().nextInt(8);
-//			
-//			if (lightLevel > roll && lightLevel > roll2) { 
-//				return false;
-//			}
-//		} else { // once a day- can spawn at light level up to 9;
-//			lastSpawnTime = w.getGameTime();
-
-		Block b = worldIn.getBlockState(pos).getBlock();
+		Block b = w.getBlockState(pos).getBlock();
 		// don't spawn unless air and night
-		int lightLevel1 = w.getBlockState(pos).getLightEmission(w, pos);
 		int lightLevel = w.getMaxLocalRawBrightness(pos);
-		if (lightLevel > 8) { 
+		if (lightLevel > 7) { 
 			return false;
 		}
 
 		if (!w.dimensionType().hasSkyLight()) {
 			return false;  // no gurties in dimensions lacking skylight 
 		}
-//		if (w.getDifficulty() == Difficulty.PEACEFUL)
-//			return false;  // if peaceful will not attack player characters
 
 		if (reason == MobSpawnType.SPAWN_EGG)
 			return true;
@@ -502,6 +496,16 @@ public class GurtyEntity extends PathfinderMob implements NeutralMob,Enemy {
 			return true;
 		}
 
+		Biome biome = w.getBiome(pos);
+		BiomeCategory bC = biome.getBiomeCategory();
+		if (bC == BiomeCategory.DESERT || bC == BiomeCategory.NETHER 
+				|| bC == BiomeCategory.MUSHROOM 
+				|| bC == BiomeCategory.THEEND
+				|| bC == BiomeCategory.SAVANNA) {
+			return false;
+		}
+
+		
 		if (w.getBlockState(pos).getMaterial().isLiquid()) {
 			return false;
 		}
@@ -524,46 +528,15 @@ public class GurtyEntity extends PathfinderMob implements NeutralMob,Enemy {
 			return false;
 		}
 
-		
-
-		int gurtySpawnChance = MyConfig.getGurtySpawnChance();
-		int gurtySpawnCap = MyConfig.getGurtySpawnCap();
-		int gurtySpawnRoll = randomIn.nextInt(30);
 		int gurtyCount = ((ServerLevel) w).getEntities(ModEntities.GURTY, (entity) -> true).size();
-
-		if (gurtyCount < 3) {
-			gurtySpawnRoll = 0;
-		}
+		if (gurtyCount >= MyConfig.getGurtySpawnCap())   // global gurty spawn cap.
+			return false;
 		
-		Biome biome = w.getBiome(pos);
-		BiomeCategory bC = biome.getBiomeCategory();
-		if (bC == BiomeCategory.DESERT || bC == BiomeCategory.NETHER 
-				|| bC == BiomeCategory.MUSHROOM 
-				|| bC == BiomeCategory.THEEND
-				|| bC == BiomeCategory.SAVANNA) {
-			return false;
-		}
-//		if ((bC == Category.OCEAN) || (bC == Category.RIVER) || (bC == Category.SWAMP) || (bC == Category.BEACH)) {
-//			gurtySpawnChance += 7;
-//		}
-//
-//		if ((bC == Category.SWAMP) || (bC == Category.BEACH)) {
-//			gurtySpawnCap += 7;
-//		}
-
-
-//			System.out.println(
-//					"Gurty Spawn Cap: " + gurtySpawnCap + " Count : " + gurtyCount + " Chance:" + gurtySpawnChance);
-
-
-		if (gurtyCount > gurtySpawnCap) {
-			return false;
-		}
-
-		List<GurtyEntity> listG = worldIn.getEntitiesOfClass(GurtyEntity.class,
+		// local gurty cap.
+		List<GurtyEntity> list = worldIn.getEntitiesOfClass(GurtyEntity.class,
 				new AABB(pos.north(16).west(16).above(8), pos.south(16).east(16).below(8)));
 
-		if (listG.size() > 5) {
+		if (list.size() > 5) {
 			return false;
 		}
 
