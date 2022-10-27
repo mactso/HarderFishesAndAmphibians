@@ -1,7 +1,7 @@
 package com.mactso.hostilewatermobs.client.renderer;
 
 import com.mactso.hostilewatermobs.Main;
-import com.mactso.hostilewatermobs.entities.RiverGuardianEntity;
+import com.mactso.hostilewatermobs.entities.RiverGuardian;
 import com.mojang.blaze3d.vertex.PoseStack;
 
 import net.minecraft.client.renderer.MultiBufferSource;
@@ -34,8 +34,8 @@ public class RiverGuardianRenderer extends GuardianRenderer {
 
 	protected void scale(Guardian entitylivingbaseIn, PoseStack matrixStackIn, float partialTickTime) {
 
-		matrixStackIn.scale(RiverGuardianEntity.ELDER_SIZE_SCALE, RiverGuardianEntity.ELDER_SIZE_SCALE,
-				RiverGuardianEntity.ELDER_SIZE_SCALE);
+		matrixStackIn.scale(RiverGuardian.ELDER_SIZE_SCALE, RiverGuardian.ELDER_SIZE_SCALE,
+				RiverGuardian.ELDER_SIZE_SCALE);
 	}
 
 	@Override
@@ -49,7 +49,7 @@ public class RiverGuardianRenderer extends GuardianRenderer {
 	 * Returns the location of an entity's texture.
 	 */
 	public ResourceLocation getTextureLocation(Guardian entity) {
-		int subtype = ((RiverGuardianEntity) entity).getSubType();
+		int subtype = ((RiverGuardian) entity).getSubType();
 		subtype = (4 + subtype) % 4;
 		return TEXTURES[subtype];
 	}

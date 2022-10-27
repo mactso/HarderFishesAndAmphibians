@@ -80,20 +80,20 @@ import net.minecraft.world.level.pathfinder.PathFinder;
 import net.minecraft.world.phys.AABB;
 import net.minecraft.world.phys.Vec3;
 
-public class GurtyEntity extends PathfinderMob implements NeutralMob,Enemy {
+public class Gurty extends PathfinderMob implements NeutralMob,Enemy {
 	
 
-	private static final EntityDataAccessor<Integer> TARGET_ENTITY = SynchedEntityData.defineId(GurtyEntity.class,
+	private static final EntityDataAccessor<Integer> TARGET_ENTITY = SynchedEntityData.defineId(Gurty.class,
 			EntityDataSerializers.INT);
-	private static final EntityDataAccessor<Boolean> ANGRY = SynchedEntityData.defineId(GurtyEntity.class,
+	private static final EntityDataAccessor<Boolean> ANGRY = SynchedEntityData.defineId(Gurty.class,
 			EntityDataSerializers.BOOLEAN);
-	private static final EntityDataAccessor<Boolean> GOING_NEST = SynchedEntityData.defineId(GurtyEntity.class,
+	private static final EntityDataAccessor<Boolean> GOING_NEST = SynchedEntityData.defineId(Gurty.class,
 			EntityDataSerializers.BOOLEAN);
-	private static final EntityDataAccessor<BlockPos> NEST_POS = SynchedEntityData.defineId(GurtyEntity.class,
+	private static final EntityDataAccessor<BlockPos> NEST_POS = SynchedEntityData.defineId(Gurty.class,
 			EntityDataSerializers.BLOCK_POS);
-	private static final EntityDataAccessor<BlockPos> TRAVEL_POS = SynchedEntityData.defineId(GurtyEntity.class,
+	private static final EntityDataAccessor<BlockPos> TRAVEL_POS = SynchedEntityData.defineId(Gurty.class,
 			EntityDataSerializers.BLOCK_POS);
-	private static final EntityDataAccessor<Boolean> TRAVELLING = SynchedEntityData.defineId(GurtyEntity.class,
+	private static final EntityDataAccessor<Boolean> TRAVELLING = SynchedEntityData.defineId(Gurty.class,
 			EntityDataSerializers.BOOLEAN);
 
 	private int angerTime;
@@ -116,12 +116,12 @@ public class GurtyEntity extends PathfinderMob implements NeutralMob,Enemy {
 	private LivingEntity targetedEntity;
 
 
-	public GurtyEntity(EntityType<? extends GurtyEntity> type, Level worldIn) {
+	public Gurty(EntityType<? extends Gurty> type, Level worldIn) {
 
 		super(type, worldIn);
 		this.xpReward = 7;
 		this.setPathfindingMalus(BlockPathTypes.WATER, 0.0f);
-		this.moveControl = new GurtyEntity.MoveHelperController(this);
+		this.moveControl = new Gurty.MoveHelperController(this);
 		this.maxUpStep = 1.0f;
 		this.nestProtectionDistSq = MyConfig.getGurtyNestDistance();
 		nestProtectionDistSq = (nestProtectionDistSq * nestProtectionDistSq) + 3;
@@ -167,7 +167,6 @@ public class GurtyEntity extends PathfinderMob implements NeutralMob,Enemy {
 	}
 
 	
-	
 	@Override
 	public void setRemainingPersistentAngerTime(int val) {
 		this.angerTime = val;
@@ -200,11 +199,11 @@ public class GurtyEntity extends PathfinderMob implements NeutralMob,Enemy {
 	}
 
 	public boolean hasTargetedEntity() {
-		return (int) this.entityData.get((EntityDataAccessor<Integer>) GurtyEntity.TARGET_ENTITY) != 0;
+		return (int) this.entityData.get((EntityDataAccessor<Integer>) Gurty.TARGET_ENTITY) != 0;
 	}
 
 	public boolean isAngry() {
-		return this.entityData.get((EntityDataAccessor<Boolean>) GurtyEntity.ANGRY);
+		return this.entityData.get((EntityDataAccessor<Boolean>) Gurty.ANGRY);
 	}
 
 	private void setGoingNest(boolean goNest) {
@@ -225,11 +224,11 @@ public class GurtyEntity extends PathfinderMob implements NeutralMob,Enemy {
 	}
 
 	public void setAngry(boolean bool) {
-		this.entityData.set((EntityDataAccessor<Boolean>) GurtyEntity.ANGRY, bool);
+		this.entityData.set((EntityDataAccessor<Boolean>) Gurty.ANGRY, bool);
 	}
 
 	private void setTargetedEntity(final int targetEntityId) {
-		this.entityData.set((EntityDataAccessor<Integer>) GurtyEntity.TARGET_ENTITY, targetEntityId);
+		this.entityData.set((EntityDataAccessor<Integer>) Gurty.TARGET_ENTITY, targetEntityId);
 	}
 
 	@Override
@@ -439,7 +438,7 @@ public class GurtyEntity extends PathfinderMob implements NeutralMob,Enemy {
 	}
 
 	@Nullable
-	private static Vec3 findSolidBlock(EntityType<? extends GurtyEntity> gurtyIn, LevelAccessor world, BlockPos blockPos,
+	private static Vec3 findSolidBlock(EntityType<? extends Gurty> gurtyIn, LevelAccessor world, BlockPos blockPos,
 			int maxXZ, int maxY) {
 		Random rand = world.getRandom();
 		for (int i = 0; i < 12; ++i) {
@@ -456,7 +455,7 @@ public class GurtyEntity extends PathfinderMob implements NeutralMob,Enemy {
 	}
 
 
-	public static boolean canSpawn(EntityType<? extends GurtyEntity> gurtyIn, LevelAccessor worldIn, MobSpawnType reason,
+	public static boolean canSpawn(EntityType<? extends Gurty> gurtyIn, LevelAccessor worldIn, MobSpawnType reason,
 			BlockPos pos, Random randomIn) {
 
 		if (worldIn.isClientSide()) 
@@ -533,7 +532,7 @@ public class GurtyEntity extends PathfinderMob implements NeutralMob,Enemy {
 			return false;
 		
 		// local gurty cap.
-		List<GurtyEntity> list = worldIn.getEntitiesOfClass(GurtyEntity.class,
+		List<Gurty> list = worldIn.getEntitiesOfClass(Gurty.class,
 				new AABB(pos.north(16).west(16).above(8), pos.south(16).east(16).below(8)));
 
 		if (list.size() > 5) {
@@ -667,11 +666,11 @@ private void removeNest() {
 
 		this.goalSelector.addGoal(0, new MeleeAttackGoal(this, 2.3D, true));
 		this.goalSelector.addGoal(1, new LeapAtTargetGoal(this, 0.2F));
-		this.goalSelector.addGoal(3, new GurtyEntity.GoNestGoal(this,1.0D));
-		this.goalSelector.addGoal(3, new GurtyEntity.GoWaterGoal(this, swimSpeedModifier, rndSwimOdds));
-		this.goalSelector.addGoal(3, new GurtyEntity.GoLandGoal(this, walkSpeedModifier, rndWalkOdds));
-		this.goalSelector.addGoal(4, new GurtyEntity.PanicGoal(this, 1.4D));
-		this.goalSelector.addGoal(4, new GurtyEntity.GoWanderGoal(this, 1.4D, 40));
+		this.goalSelector.addGoal(3, new Gurty.GoNestGoal(this,1.0D));
+		this.goalSelector.addGoal(3, new Gurty.GoWaterGoal(this, swimSpeedModifier, rndSwimOdds));
+		this.goalSelector.addGoal(3, new Gurty.GoLandGoal(this, walkSpeedModifier, rndWalkOdds));
+		this.goalSelector.addGoal(4, new Gurty.PanicGoal(this, 1.4D));
+		this.goalSelector.addGoal(4, new Gurty.GoWanderGoal(this, 1.4D, 40));
 		this.goalSelector.addGoal(5, new RandomLookAroundGoal(this));
 		this.goalSelector.addGoal(5, new LookAtPlayerGoal(this, Player.class, 12.0F));
 		this.goalSelector.addGoal(6, new SwimGoal(this,60));
@@ -699,7 +698,7 @@ private void removeNest() {
 			return this.targetedEntity;
 		}
 		final Entity targetEntity = this.level
-				.getEntity((int) this.entityData.get((EntityDataAccessor<Integer>) GurtyEntity.TARGET_ENTITY));
+				.getEntity((int) this.entityData.get((EntityDataAccessor<Integer>) Gurty.TARGET_ENTITY));
 		if (targetEntity instanceof LivingEntity) {
 			return this.targetedEntity = (LivingEntity) targetEntity;
 		}
@@ -708,8 +707,8 @@ private void removeNest() {
 
 	protected void defineSynchedData() {
 		super.defineSynchedData();
-		this.entityData.define((EntityDataAccessor<Integer>) GurtyEntity.TARGET_ENTITY, 0);
-		this.entityData.define((EntityDataAccessor<Boolean>) GurtyEntity.ANGRY, false);
+		this.entityData.define((EntityDataAccessor<Integer>) Gurty.TARGET_ENTITY, 0);
+		this.entityData.define((EntityDataAccessor<Boolean>) Gurty.ANGRY, false);
 		this.entityData.define(NEST_POS, BlockPos.ZERO);
 
 		this.entityData.define(TRAVEL_POS, BlockPos.ZERO);
@@ -742,9 +741,9 @@ private void removeNest() {
 	}
 
 	static class TargetPredicate implements Predicate<LivingEntity> {
-		private final GurtyEntity gurtyEntity;
+		private final Gurty gurtyEntity;
 
-		public TargetPredicate(GurtyEntity gurtyIn) {
+		public TargetPredicate(Gurty gurtyIn) {
 			gurtyEntity = gurtyIn;
 		}
 
@@ -752,7 +751,7 @@ private void removeNest() {
 		public boolean test(@Nullable LivingEntity entity) {
 
 			// gurty's don't attack each other
-			if (entity instanceof GurtyEntity) {
+			if (entity instanceof Gurty) {
 				return false;
 			}
 
@@ -874,7 +873,7 @@ private void removeNest() {
 	// Movement and Navigator Section
 	// Returns new PathNavigateGround instance
 	protected PathNavigation createNavigation(Level worldIn) {
-		return new GurtyEntity.Navigator(this, worldIn);
+		return new Gurty.Navigator(this, worldIn);
 	}
 
 	@Override
@@ -894,10 +893,10 @@ private void removeNest() {
 	}
 
 	static class MoveHelperController extends MoveControl {
-		private final GurtyEntity gurty;
+		private final Gurty gurty;
 		private int jumpTimer = 0;
 
-		public MoveHelperController(final GurtyEntity gurtyEntityIn) {
+		public MoveHelperController(final Gurty gurtyEntityIn) {
 			super(gurtyEntityIn);
 			this.gurty = gurtyEntityIn;
 
@@ -945,9 +944,9 @@ private void removeNest() {
 	}
 
 	static class GoWanderGoal extends RandomStrollGoal {
-		      private final GurtyEntity gurty;
+		      private final Gurty gurty;
 
-		      private GoWanderGoal(GurtyEntity gurtyIn, double speedIn, int chance) {
+		      private GoWanderGoal(Gurty gurtyIn, double speedIn, int chance) {
 		         super(gurtyIn, speedIn, chance);
 		         gurty = gurtyIn;
 		      }
@@ -962,15 +961,15 @@ private void removeNest() {
 	}
 	
 	static class SwimGoal extends net.minecraft.world.entity.ai.goal.FloatGoal {
-		GurtyEntity gurty;
+		Gurty gurty;
 		int chance;
-		SwimGoal(GurtyEntity gurtyIn) {
+		SwimGoal(Gurty gurtyIn) {
 			super(gurtyIn);
 			this.chance = 40;
 			this.gurty = gurtyIn;
 		}
 
-		SwimGoal(GurtyEntity gurtyIn, int chanceIn) {
+		SwimGoal(Gurty gurtyIn, int chanceIn) {
 			super(gurtyIn);
 			this.chance = chanceIn;
 			this.gurty = gurtyIn;
@@ -991,7 +990,7 @@ private void removeNest() {
 	}
 	
 	static class Navigator extends WaterBoundPathNavigation {
-		Navigator(GurtyEntity gurty, Level worldIn) {
+		Navigator(Gurty gurty, Level worldIn) {
 			super(gurty, worldIn);
 		}
 
@@ -1009,8 +1008,8 @@ private void removeNest() {
 		}
 
 		public boolean isStableDestination(BlockPos pos) {
-			if (this.mob instanceof GurtyEntity) {
-				GurtyEntity gurty = (GurtyEntity) this.mob;
+			if (this.mob instanceof Gurty) {
+				Gurty gurty = (Gurty) this.mob;
 				if (gurty.isTravelling()) {
 					return this.level.getBlockState(pos).is(Blocks.WATER);
 				}
@@ -1025,12 +1024,12 @@ private void removeNest() {
 	//
 
 	static class GoNestGoal extends Goal {
-		private GurtyEntity gurty;
+		private Gurty gurty;
 		private double speed;
 		private boolean noPath;
 		private int timer;
 
-		GoNestGoal(GurtyEntity gurty, double speedIn) {
+		GoNestGoal(Gurty gurty, double speedIn) {
 			this.gurty = gurty;
 			this.speed = speedIn;
 		}
@@ -1118,7 +1117,7 @@ private void removeNest() {
 
 	
 	static class PanicGoal extends net.minecraft.world.entity.ai.goal.PanicGoal {
-		PanicGoal(GurtyEntity gurty, double speedIn) {
+		PanicGoal(Gurty gurty, double speedIn) {
 			super(gurty, speedIn);
 		}
 
@@ -1147,12 +1146,12 @@ private void removeNest() {
 	}
 
 	static class GoLandGoal extends Goal {
-		private final GurtyEntity gurty;
+		private final Gurty gurty;
 		private final double speed;
 		private int chance;
 		private boolean finished;
 
-		GoLandGoal(GurtyEntity gurtyIn, double speedIn, int chanceIn ) {
+		GoLandGoal(Gurty gurtyIn, double speedIn, int chanceIn ) {
 			this.gurty = gurtyIn;
 			this.speed = speedIn;
 			this.chance = chanceIn;
@@ -1244,10 +1243,10 @@ private void removeNest() {
 	}
 	
 	static class GoWaterGoal extends MoveToBlockGoal {
-		private final GurtyEntity gurty;
+		private final Gurty gurty;
 		private int chance;
 
-		private GoWaterGoal(GurtyEntity gurtyIn, double speedIn, int chanceIn) {
+		private GoWaterGoal(Gurty gurtyIn, double speedIn, int chanceIn) {
 			super(gurtyIn, speedIn, 24);
 			gurty = gurtyIn;
 			chance = chanceIn;

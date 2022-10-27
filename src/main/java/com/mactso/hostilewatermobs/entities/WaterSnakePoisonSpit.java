@@ -21,13 +21,13 @@ import net.minecraft.world.phys.Vec3;
 import net.minecraftforge.api.distmarker.Dist;
 import net.minecraftforge.api.distmarker.OnlyIn;
 
-public class WaterSnakePoisonSpitEntity extends LlamaSpit {
+public class WaterSnakePoisonSpit extends LlamaSpit {
 
-	public WaterSnakePoisonSpitEntity(EntityType<LlamaSpit> csSpit, Level w) {
+	public WaterSnakePoisonSpit(EntityType<LlamaSpit> csSpit, Level w) {
 		super(csSpit, w);
 	}
 
-	public WaterSnakePoisonSpitEntity(Level p_i47273_1_, WaterSnakeEntity p_i47273_2_) {
+	public WaterSnakePoisonSpit(Level p_i47273_1_, WaterSnake p_i47273_2_) {
 		this(EntityType.LLAMA_SPIT, p_i47273_1_);
 		super.setOwner(p_i47273_2_);
 		this.setPos(
@@ -38,7 +38,7 @@ public class WaterSnakePoisonSpitEntity extends LlamaSpit {
 	}
 
 	@OnlyIn(Dist.CLIENT)
-	public WaterSnakePoisonSpitEntity(Level p_i47274_1_, double p_i47274_2_, double p_i47274_4_, double p_i47274_6_,
+	public WaterSnakePoisonSpit(Level p_i47274_1_, double p_i47274_2_, double p_i47274_4_, double p_i47274_6_,
 			double p_i47274_8_, double p_i47274_10_, double p_i47274_12_) {
 		this(EntityType.LLAMA_SPIT, p_i47274_1_);
 		this.setPos(p_i47274_2_, p_i47274_4_, p_i47274_6_);
@@ -89,7 +89,7 @@ public class WaterSnakePoisonSpitEntity extends LlamaSpit {
 		}
 		LivingEntity targetEntity = (LivingEntity) targetRayTraceResult.getEntity();
 		Entity spitOwnerEntity = this.getOwner(); // who owns the projectile (the snake).
-		if (spitOwnerEntity instanceof WaterSnakeEntity) {
+		if (spitOwnerEntity instanceof WaterSnake) {
             targetEntity.hurt(DamageSource.indirectMobAttack(this, (LivingEntity) spitOwnerEntity).setProjectile(),
 					0.25F);  // direct damage from attack is small.
 			MobEffectInstance ei =  targetEntity.getEffect(MobEffects.POISON);

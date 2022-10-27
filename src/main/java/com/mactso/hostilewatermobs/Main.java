@@ -2,6 +2,10 @@
 package com.mactso.hostilewatermobs;
 
 import com.mactso.hostilewatermobs.block.ModBlocks;
+import com.mactso.hostilewatermobs.client.model.GurtyModel;
+import com.mactso.hostilewatermobs.client.model.SlipperyBiterModel;
+import com.mactso.hostilewatermobs.client.renderer.GurtyRenderer;
+import com.mactso.hostilewatermobs.client.renderer.RiverGuardianRenderer;
 import com.mactso.hostilewatermobs.config.MyConfig;
 import com.mactso.hostilewatermobs.entities.ModEntities;
 import com.mactso.hostilewatermobs.item.ModItems;
@@ -9,16 +13,18 @@ import com.mactso.hostilewatermobs.item.crafting.HostileWaterMobsRecipe;
 import com.mactso.hostilewatermobs.sound.ModSounds;
 import com.mactso.hostilewatermobs.utility.SpawnData;
 
-import net.minecraft.world.level.block.Block;
-import net.minecraft.client.Minecraft;
+import net.minecraft.sounds.SoundEvent;
 import net.minecraft.world.entity.EntityType;
 import net.minecraft.world.item.Item;
 import net.minecraft.world.item.crafting.RecipeSerializer;
-import net.minecraft.sounds.SoundEvent;
+import net.minecraft.world.level.block.Block;
 import net.minecraftforge.api.distmarker.Dist;
 import net.minecraftforge.api.distmarker.OnlyIn;
+import net.minecraftforge.client.event.EntityRenderersEvent.RegisterLayerDefinitions;
+import net.minecraftforge.client.event.EntityRenderersEvent.RegisterRenderers;
 import net.minecraftforge.common.MinecraftForge;
 import net.minecraftforge.event.RegistryEvent;
+import net.minecraftforge.event.entity.EntityAttributeCreationEvent;
 import net.minecraftforge.eventbus.api.SubscribeEvent;
 import net.minecraftforge.fml.ModLoadingContext;
 import net.minecraftforge.fml.common.Mod;
@@ -53,13 +59,26 @@ public class Main {
 				//				MinecraftForge.EVENT_BUS.register(new MyEntityPlaceEvent());
 		}   
 
+		
+		@OnlyIn(Dist.CLIENT)
+		@SubscribeEvent
+		public void registerLayerDefinitions(final RegisterLayerDefinitions event)
+		{
+			event.registerLayerDefinition(GurtyModel.LAYER_LOCATION, ()-> GurtyModel.createBodyLayer());
+			event.registerLayerDefinition(SlipperyBiterModel.LAYER_LOCATION, ()-> SlipperyBiterModel.createBodyLayer());
+
+		}
+		
+	
+	    
+	    
+	    
+	    
 		@OnlyIn(Dist.CLIENT)
 		@SubscribeEvent
 		public void setupClient(final FMLClientSetupEvent event)
 		{
-			Minecraft mc = event.getMinecraftSupplier().get();
-			ModBlocks.setRenderLayer();
-			ModEntities.register(mc.getEntityRenderDispatcher());
+			event.enqueueWork(() -> ModBlocks.setRenderLayer());
 		}
 		
 		
@@ -74,6 +93,7 @@ public class Main {
 				System.out.println("hostilewatermobs: Registering Blocks.");
 	    		ModBlocks.register(event.getRegistry());
 			}
+			
 			@SubscribeEvent
 	    	public static void onItemsRegistry(final RegistryEvent.Register<Item> event)
 	    	{
@@ -82,12 +102,28 @@ public class Main {
 	    	}
 
 			
+			
 	        @SubscribeEvent
 	        public static void onEntityRegistry(final RegistryEvent.Register<EntityType<?>> event)
 	        {
 				System.out.println("hostilewatermobs: Registering Entities.");
 	        	ModEntities.register(event.getRegistry());
 	        }
+
+	        @SubscribeEvent
+	        public static void onRenderers(final RegisterRenderers event)
+	        {
+				System.out.println("hostilewatermobs: Registering Entity Renderers.");
+	        	ModEntities.registerEntityRenderers(event);
+	        }
+	        
+
+	        @SubscribeEvent
+	        public static void onAttribute(final EntityAttributeCreationEvent event)
+	        {
+	        	ModEntities.onAttribute(event);
+	        }
+	        
 	        
 	        @SubscribeEvent
 	        public static void onSoundRegistry(final RegistryEvent.Register<SoundEvent> event)

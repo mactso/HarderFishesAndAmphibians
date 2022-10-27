@@ -10,85 +10,83 @@ import com.mactso.hostilewatermobs.config.MyConfig;
 import com.mactso.hostilewatermobs.sound.ModSounds;
 import com.mactso.hostilewatermobs.utility.TwoGuysLib;
 
-import net.minecraft.world.level.block.state.BlockState;
-import net.minecraft.world.level.block.Blocks;
-import net.minecraft.world.entity.PathfinderMob;
+import net.minecraft.core.BlockPos;
+import net.minecraft.core.Vec3i;
+import net.minecraft.nbt.CompoundTag;
+import net.minecraft.network.syncher.EntityDataAccessor;
+import net.minecraft.network.syncher.EntityDataSerializers;
+import net.minecraft.network.syncher.SynchedEntityData;
+import net.minecraft.server.level.ServerLevel;
+import net.minecraft.server.level.ServerPlayer;
+import net.minecraft.sounds.SoundEvent;
+import net.minecraft.sounds.SoundEvents;
+import net.minecraft.sounds.SoundSource;
+import net.minecraft.tags.FluidTags;
+import net.minecraft.util.Mth;
+import net.minecraft.util.TimeUtil;
+import net.minecraft.util.valueproviders.UniformInt;
+import net.minecraft.world.Difficulty;
+import net.minecraft.world.DifficultyInstance;
+import net.minecraft.world.damagesource.DamageSource;
+import net.minecraft.world.effect.MobEffect;
+import net.minecraft.world.effect.MobEffectInstance;
+import net.minecraft.world.effect.MobEffects;
 import net.minecraft.world.entity.Entity;
 import net.minecraft.world.entity.EntityDimensions;
 import net.minecraft.world.entity.EntityType;
-import net.minecraft.world.entity.SpawnGroupData;
-import net.minecraft.world.entity.monster.RangedAttackMob;
 import net.minecraft.world.entity.LivingEntity;
-import net.minecraft.world.entity.MoverType;
 import net.minecraft.world.entity.MobSpawnType;
-import net.minecraft.world.entity.ai.util.DefaultRandomPos;
+import net.minecraft.world.entity.MoverType;
+import net.minecraft.world.entity.PathfinderMob;
+import net.minecraft.world.entity.SpawnGroupData;
 import net.minecraft.world.entity.ai.attributes.AttributeModifier;
 import net.minecraft.world.entity.ai.attributes.AttributeModifier.Operation;
 import net.minecraft.world.entity.ai.attributes.AttributeSupplier;
 import net.minecraft.world.entity.ai.attributes.Attributes;
 import net.minecraft.world.entity.ai.control.MoveControl;
 import net.minecraft.world.entity.ai.goal.Goal;
-import net.minecraft.world.entity.ai.goal.target.HurtByTargetGoal;
 import net.minecraft.world.entity.ai.goal.LookAtPlayerGoal;
-import net.minecraft.world.entity.ai.goal.RandomLookAroundGoal;
 import net.minecraft.world.entity.ai.goal.MeleeAttackGoal;
 import net.minecraft.world.entity.ai.goal.MoveToBlockGoal;
-import net.minecraft.world.entity.ai.goal.target.NearestAttackableTargetGoal;
+import net.minecraft.world.entity.ai.goal.RandomLookAroundGoal;
 import net.minecraft.world.entity.ai.goal.RandomStrollGoal;
 import net.minecraft.world.entity.ai.goal.RangedAttackGoal;
-import net.minecraft.world.entity.npc.Villager;
-import net.minecraft.world.entity.monster.Enemy;
-import net.minecraft.world.entity.monster.Monster;
+import net.minecraft.world.entity.ai.goal.target.HurtByTargetGoal;
+import net.minecraft.world.entity.ai.goal.target.NearestAttackableTargetGoal;
+import net.minecraft.world.entity.ai.navigation.PathNavigation;
+import net.minecraft.world.entity.ai.navigation.WaterBoundPathNavigation;
+import net.minecraft.world.entity.ai.util.DefaultRandomPos;
 import net.minecraft.world.entity.animal.Turtle;
 import net.minecraft.world.entity.animal.WaterAnimal;
+import net.minecraft.world.entity.monster.Enemy;
+import net.minecraft.world.entity.monster.Monster;
+import net.minecraft.world.entity.monster.RangedAttackMob;
+import net.minecraft.world.entity.npc.Villager;
 import net.minecraft.world.entity.player.Player;
-import net.minecraft.server.level.ServerPlayer;
-import net.minecraft.nbt.CompoundTag;
-import net.minecraft.network.syncher.EntityDataAccessor;
-import net.minecraft.network.syncher.EntityDataSerializers;
-import net.minecraft.network.syncher.SynchedEntityData;
-import net.minecraft.world.level.pathfinder.PathFinder;
-import net.minecraft.world.entity.ai.navigation.PathNavigation;
-import net.minecraft.world.level.pathfinder.AmphibiousNodeEvaluator;
-import net.minecraft.world.level.pathfinder.BlockPathTypes;
-import net.minecraft.world.entity.ai.navigation.WaterBoundPathNavigation;
-import net.minecraft.world.effect.MobEffect;
-import net.minecraft.world.effect.MobEffectInstance;
-import net.minecraft.world.effect.MobEffects;
-import net.minecraft.tags.FluidTags;
-import net.minecraft.util.ClassInstanceMultiMap;
-import net.minecraft.world.damagesource.DamageSource;
-import net.minecraft.sounds.SoundSource;
-import net.minecraft.sounds.SoundEvent;
-import net.minecraft.sounds.SoundEvents;
-import net.minecraft.util.TimeUtil;
-import net.minecraft.util.valueproviders.UniformInt;
-import net.minecraft.world.phys.AABB;
-import net.minecraft.core.BlockPos;
-import net.minecraft.util.Mth;
-import net.minecraft.world.phys.Vec3;
-import net.minecraft.core.Vec3i;
-import net.minecraft.world.Difficulty;
-import net.minecraft.world.DifficultyInstance;
-import net.minecraft.world.level.ServerLevelAccessor;
-import net.minecraft.world.level.LevelAccessor;
-import net.minecraft.world.level.LevelReader;
 import net.minecraft.world.level.BlockGetter;
 import net.minecraft.world.level.Level;
+import net.minecraft.world.level.LevelAccessor;
+import net.minecraft.world.level.LevelReader;
+import net.minecraft.world.level.ServerLevelAccessor;
 import net.minecraft.world.level.biome.Biome;
 import net.minecraft.world.level.biome.Biome.BiomeCategory;
-import net.minecraft.world.level.chunk.LevelChunk;
-import net.minecraft.server.level.ServerLevel;
+import net.minecraft.world.level.block.Blocks;
+import net.minecraft.world.level.block.state.BlockState;
+import net.minecraft.world.level.pathfinder.AmphibiousNodeEvaluator;
+import net.minecraft.world.level.pathfinder.BlockPathTypes;
+import net.minecraft.world.level.pathfinder.PathFinder;
+import net.minecraft.world.phys.AABB;
+import net.minecraft.world.phys.Vec3;
 
-public class WaterSnakeEntity extends WaterAnimal implements Enemy, RangedAttackMob {
+public class WaterSnake extends WaterAnimal implements Enemy, RangedAttackMob {
 	static class GoLandGoal extends Goal {
-		private final WaterSnakeEntity watersnake;
+		private final WaterSnake watersnake;
 		private final double speed;
 		private int chance;
 		private int timer;
 		private boolean finished;
 
-		GoLandGoal(WaterSnakeEntity watersnakeIn, double speedIn, int chanceIn) {
+		GoLandGoal(WaterSnake watersnakeIn, double speedIn, int chanceIn) {
 			this.watersnake = watersnakeIn;
 			this.speed = speedIn;
 			this.chance = chanceIn;
@@ -184,12 +182,12 @@ public class WaterSnakeEntity extends WaterAnimal implements Enemy, RangedAttack
 	}
 
 	static class GoNestGoal extends Goal {
-		private WaterSnakeEntity watersnake;
+		private WaterSnake watersnake;
 		private double speed;
 		private boolean noPath;
 		private int timer;
 
-		GoNestGoal(WaterSnakeEntity watersnake, double speedIn) {
+		GoNestGoal(WaterSnake watersnake, double speedIn) {
 			this.watersnake = watersnake;
 			this.speed = speedIn;
 		}
@@ -280,9 +278,9 @@ public class WaterSnakeEntity extends WaterAnimal implements Enemy, RangedAttack
 	}
 
 	static class GoWanderGoal extends RandomStrollGoal {
-		private final WaterSnakeEntity watersnake;
+		private final WaterSnake watersnake;
 
-		private GoWanderGoal(WaterSnakeEntity watersnakeIn, double speedIn, int chance) {
+		private GoWanderGoal(WaterSnake watersnakeIn, double speedIn, int chance) {
 			super(watersnakeIn, speedIn, chance);
 			watersnake = watersnakeIn;
 		}
@@ -297,10 +295,10 @@ public class WaterSnakeEntity extends WaterAnimal implements Enemy, RangedAttack
 	}
 
 	static class GoWaterGoal extends MoveToBlockGoal {
-		private final WaterSnakeEntity watersnake;
+		private final WaterSnake watersnake;
 		private int chance;
 
-		private GoWaterGoal(WaterSnakeEntity watersnakeIn, double speedIn, int chanceIn) {
+		private GoWaterGoal(WaterSnake watersnakeIn, double speedIn, int chanceIn) {
 			super(watersnakeIn, speedIn, 24);
 			watersnake = watersnakeIn;
 			chance = chanceIn;
@@ -345,10 +343,10 @@ public class WaterSnakeEntity extends WaterAnimal implements Enemy, RangedAttack
 	}
 
 	static class MoveHelperController extends MoveControl {
-		private final WaterSnakeEntity watersnake;
+		private final WaterSnake watersnake;
 		private int jumpTimer = 0;
 
-		public MoveHelperController(final WaterSnakeEntity watersnakeEntityIn) {
+		public MoveHelperController(final WaterSnake watersnakeEntityIn) {
 			super(watersnakeEntityIn);
 			this.watersnake = watersnakeEntityIn;
 
@@ -403,7 +401,7 @@ public class WaterSnakeEntity extends WaterAnimal implements Enemy, RangedAttack
 	}
 
 	static class Navigator extends WaterBoundPathNavigation {
-		Navigator(WaterSnakeEntity watersnake, Level worldIn) {
+		Navigator(WaterSnake watersnake, Level worldIn) {
 			super(watersnake, worldIn);
 		}
 
@@ -420,8 +418,8 @@ public class WaterSnakeEntity extends WaterAnimal implements Enemy, RangedAttack
 		}
 
 		public boolean isStableDestination(BlockPos pos) {
-			if (this.mob instanceof WaterSnakeEntity) {
-				WaterSnakeEntity watersnake = (WaterSnakeEntity) this.mob;
+			if (this.mob instanceof WaterSnake) {
+				WaterSnake watersnake = (WaterSnake) this.mob;
 				if (watersnake.isTravelling()) {
 					return this.level.getBlockState(pos).is(Blocks.WATER);
 				}
@@ -432,7 +430,7 @@ public class WaterSnakeEntity extends WaterAnimal implements Enemy, RangedAttack
 	}
 
 	static class PanicGoal extends net.minecraft.world.entity.ai.goal.PanicGoal {
-		PanicGoal(WaterSnakeEntity watersnake, double speedIn) {
+		PanicGoal(WaterSnake watersnake, double speedIn) {
 			super(watersnake, speedIn);
 		}
 
@@ -462,16 +460,16 @@ public class WaterSnakeEntity extends WaterAnimal implements Enemy, RangedAttack
 	}
 
 	static class SwimGoal extends net.minecraft.world.entity.ai.goal.FloatGoal {
-		WaterSnakeEntity watersnake;
+		WaterSnake watersnake;
 		int chance;
 
-		SwimGoal(WaterSnakeEntity watersnakeIn) {
+		SwimGoal(WaterSnake watersnakeIn) {
 			super(watersnakeIn);
 			this.chance = 40;
 			this.watersnake = watersnakeIn;
 		}
 
-		SwimGoal(WaterSnakeEntity watersnakeIn, int chanceIn) {
+		SwimGoal(WaterSnake watersnakeIn, int chanceIn) {
 			super(watersnakeIn);
 			this.chance = chanceIn;
 			this.watersnake = watersnakeIn;
@@ -492,9 +490,9 @@ public class WaterSnakeEntity extends WaterAnimal implements Enemy, RangedAttack
 	}
 
 	static class TargetPredicate implements Predicate<LivingEntity> {
-		private final WaterSnakeEntity waterSnakeEntity;
+		private final WaterSnake waterSnakeEntity;
 
-		public TargetPredicate(WaterSnakeEntity waterSnakeIn) {
+		public TargetPredicate(WaterSnake waterSnakeIn) {
 			waterSnakeEntity = waterSnakeIn;
 		}
 
@@ -502,7 +500,7 @@ public class WaterSnakeEntity extends WaterAnimal implements Enemy, RangedAttack
 		public boolean test(@Nullable LivingEntity entity) {
 
 			// 's don't attack each other
-			if (entity instanceof WaterSnakeEntity) {
+			if (entity instanceof WaterSnake) {
 				return false;
 			}
 
@@ -622,9 +620,9 @@ public class WaterSnakeEntity extends WaterAnimal implements Enemy, RangedAttack
 	}
 
 	public class WatersnakeAttackGoal extends MeleeAttackGoal {
-		private final WaterSnakeEntity snake;
+		private final WaterSnake snake;
 
-		public WatersnakeAttackGoal(final WaterSnakeEntity snakeIn, final double speedBoost,
+		public WatersnakeAttackGoal(final WaterSnake snakeIn, final double speedBoost,
 				final boolean followingTargetEvenIfNotSeen) {
 			super((PathfinderMob) snakeIn, speedBoost, followingTargetEvenIfNotSeen);
 			this.snake = snakeIn;
@@ -649,10 +647,10 @@ public class WaterSnakeEntity extends WaterAnimal implements Enemy, RangedAttack
 	// GOAL section
 	//
 	public class WatersnakeSpitAttackGoal extends RangedAttackGoal {
-		private final WaterSnakeEntity snake;
+		private final WaterSnake snake;
 		private final float attackRadius;
 
-		public WatersnakeSpitAttackGoal(final WaterSnakeEntity snakeIn, final double speedModifier,
+		public WatersnakeSpitAttackGoal(final WaterSnake snakeIn, final double speedModifier,
 				final int attackIntervalMin, final int attackIntervalMax, final float attackRadius) {
 
 			super(snakeIn, speedModifier, attackIntervalMin, attackIntervalMax, attackRadius);
@@ -695,21 +693,21 @@ public class WaterSnakeEntity extends WaterAnimal implements Enemy, RangedAttack
 
 	}
 
-	private static final EntityDataAccessor<Integer> TARGET_ENTITY = SynchedEntityData.defineId(WaterSnakeEntity.class,
+	private static final EntityDataAccessor<Integer> TARGET_ENTITY = SynchedEntityData.defineId(WaterSnake.class,
 			EntityDataSerializers.INT);
-	private static final EntityDataAccessor<Boolean> ANGRY = SynchedEntityData.defineId(WaterSnakeEntity.class,
+	private static final EntityDataAccessor<Boolean> ANGRY = SynchedEntityData.defineId(WaterSnake.class,
 			EntityDataSerializers.BOOLEAN);
-	private static final EntityDataAccessor<Boolean> GOING_NEST = SynchedEntityData.defineId(WaterSnakeEntity.class,
+	private static final EntityDataAccessor<Boolean> GOING_NEST = SynchedEntityData.defineId(WaterSnake.class,
 			EntityDataSerializers.BOOLEAN);
-	private static final EntityDataAccessor<BlockPos> NEST_POS = SynchedEntityData.defineId(WaterSnakeEntity.class,
+	private static final EntityDataAccessor<BlockPos> NEST_POS = SynchedEntityData.defineId(WaterSnake.class,
 			EntityDataSerializers.BLOCK_POS);
-	private static final EntityDataAccessor<BlockPos> TRAVEL_POS = SynchedEntityData.defineId(WaterSnakeEntity.class,
+	private static final EntityDataAccessor<BlockPos> TRAVEL_POS = SynchedEntityData.defineId(WaterSnake.class,
 			EntityDataSerializers.BLOCK_POS);
-	private static final EntityDataAccessor<Boolean> TRAVELLING = SynchedEntityData.defineId(WaterSnakeEntity.class,
+	private static final EntityDataAccessor<Boolean> TRAVELLING = SynchedEntityData.defineId(WaterSnake.class,
 			EntityDataSerializers.BOOLEAN);
-	private static final EntityDataAccessor<Integer> ATK_ANIM_TIME = SynchedEntityData.defineId(WaterSnakeEntity.class,
+	private static final EntityDataAccessor<Integer> ATK_ANIM_TIME = SynchedEntityData.defineId(WaterSnake.class,
 			EntityDataSerializers.INT);
-	private static final EntityDataAccessor<Integer> SPIT_TIME = SynchedEntityData.defineId(WaterSnakeEntity.class,
+	private static final EntityDataAccessor<Integer> SPIT_TIME = SynchedEntityData.defineId(WaterSnake.class,
 			EntityDataSerializers.INT);
 	public static final int ANGER_MILD = 300;
 	public static final int ANGER_INTENSE = 1200;
@@ -717,16 +715,21 @@ public class WaterSnakeEntity extends WaterAnimal implements Enemy, RangedAttack
 	public static final float SIZE = EntityType.PIG.getWidth() * 0.45f;
 	private static final UniformInt rangedInteger = TimeUtil.rangeOfSeconds(20, 39);
 
-	public static boolean canSpawn(EntityType<? extends WaterSnakeEntity> watersnakeIn, LevelAccessor worldIn,
+	public static boolean canSpawn(EntityType<? extends WaterSnake> watersnakeIn, LevelAccessor worldIn,
 			MobSpawnType reason, BlockPos pos, Random randomIn) {
 
+		// TODO: Temporary disable code.
+		boolean disableWatersnake = true;
+		if (disableWatersnake)
+			return false;
+		
 		if (worldIn.isClientSide()) {
 			return false;
 		}
 
 		ServerLevel w = (ServerLevel) worldIn;
 
-		MyConfig.debugMsg(1, pos, "checking spawn gurty");
+		MyConfig.debugMsg(1, pos, "checking spawn watersnake");
 
 //		if (lastSpawnTime+24000 > w.getGameTime()) {
 //			int lightLevel = w.getMaxLocalRawBrightness(pos);
@@ -775,11 +778,11 @@ public class WaterSnakeEntity extends WaterAnimal implements Enemy, RangedAttack
 		int watersnakeSpawnChance = MyConfig.getWatersnakeSpawnChance();
 		int watersnakeSpawnCap = MyConfig.getWatersnakeSpawnCap();
 		int watersnakeSpawnRoll = randomIn.nextInt(30);
-		int watersnakeCount = ((ServerLevel) w).getEntities(ModEntities.WATER_SNAKE, (entity) -> true).size();
+//		int watersnakeCount = ((ServerLevel) w).getEntities(ModEntities.WATER_SNAKE, (entity) -> true).size();
 
-		if (watersnakeCount < 7) {
-			watersnakeSpawnRoll = 0;
-		}
+//		if (watersnakeCount < 7) {
+//			watersnakeSpawnRoll = 0;
+//		}
 
 		Biome biome = w.getBiome(pos);
 		BiomeCategory bC = biome.getBiomeCategory();
@@ -795,13 +798,13 @@ public class WaterSnakeEntity extends WaterAnimal implements Enemy, RangedAttack
 //			System.out.println(
 //					"Classic Snake Spawn Cap: " + watersnakeSpawnCap + " Count : " + watersnakeCount + " Chance:" + watersnakeSpawnChance);
 
-		if (watersnakeCount > watersnakeSpawnCap)
-			return false;
+//		if (watersnakeCount > watersnakeSpawnCap)
+//			return false;
 
 		if (watersnakeSpawnRoll > watersnakeSpawnChance)
 			return false;
 
-		List<GurtyEntity> listG = worldIn.getEntitiesOfClass(GurtyEntity.class,
+		List<Gurty> listG = worldIn.getEntitiesOfClass(Gurty.class,
 				new AABB(pos.north(16).west(16).above(8), pos.south(16).east(16).below(8)));
 
 		if (listG.size() > 5) {
@@ -818,7 +821,7 @@ public class WaterSnakeEntity extends WaterAnimal implements Enemy, RangedAttack
 	}
 
 	@Nullable
-	private static Vec3 findSolidBlock(EntityType<? extends WaterSnakeEntity> snakeIn, LevelAccessor world,
+	private static Vec3 findSolidBlock(EntityType<? extends WaterSnake> snakeIn, LevelAccessor world,
 			BlockPos blockPos, int maxXZ, int maxY) {
 		Random rand = world.getRandom();
 		for (int i = 0; i < 12; ++i) {
@@ -871,12 +874,12 @@ public class WaterSnakeEntity extends WaterAnimal implements Enemy, RangedAttack
 
 	private LivingEntity targetedEntity;
 
-	public WaterSnakeEntity(EntityType<? extends WaterSnakeEntity> type, Level worldIn) {
+	public WaterSnake(EntityType<? extends WaterSnake> type, Level worldIn) {
 
 		super(type, worldIn);
 		this.xpReward = 7;
 		this.setPathfindingMalus(BlockPathTypes.WATER, 0.0f);
-		this.moveControl = new WaterSnakeEntity.MoveHelperController(this);
+		this.moveControl = new WaterSnake.MoveHelperController(this);
 		this.maxUpStep = 1.0f;
 		this.nestProtectionDistSq = MyConfig.getGurtyNestDistance();
 		nestProtectionDistSq = (nestProtectionDistSq * nestProtectionDistSq) + 3;
@@ -940,7 +943,7 @@ public class WaterSnakeEntity extends WaterAnimal implements Enemy, RangedAttack
 	}
 
 	public int AttackAnimTime() {
-		return (int) this.entityData.get((EntityDataAccessor<Integer>) WaterSnakeEntity.ATK_ANIM_TIME);
+		return (int) this.entityData.get((EntityDataAccessor<Integer>) WaterSnake.ATK_ANIM_TIME);
 	}
 
 	@Override
@@ -1009,13 +1012,13 @@ public class WaterSnakeEntity extends WaterAnimal implements Enemy, RangedAttack
 	// Movement and Navigator Section
 	// Returns new PathNavigateGround instance
 	protected PathNavigation createNavigation(Level worldIn) {
-		return new WaterSnakeEntity.Navigator(this, worldIn);
+		return new WaterSnake.Navigator(this, worldIn);
 	}
 
 	protected void defineSynchedData() {
 		super.defineSynchedData();
-		this.entityData.define((EntityDataAccessor<Integer>) WaterSnakeEntity.TARGET_ENTITY, 0);
-		this.entityData.define((EntityDataAccessor<Boolean>) WaterSnakeEntity.ANGRY, false);
+		this.entityData.define((EntityDataAccessor<Integer>) WaterSnake.TARGET_ENTITY, 0);
+		this.entityData.define((EntityDataAccessor<Boolean>) WaterSnake.ANGRY, false);
 		this.entityData.define(NEST_POS, BlockPos.ZERO);
 
 		this.entityData.define(TRAVEL_POS, BlockPos.ZERO);
@@ -1142,7 +1145,7 @@ public class WaterSnakeEntity extends WaterAnimal implements Enemy, RangedAttack
 			return this.targetedEntity;
 		}
 		final Entity targetEntity = this.level
-				.getEntity((int) this.entityData.get((EntityDataAccessor<Integer>) WaterSnakeEntity.TARGET_ENTITY));
+				.getEntity((int) this.entityData.get((EntityDataAccessor<Integer>) WaterSnake.TARGET_ENTITY));
 		if (targetEntity instanceof LivingEntity) {
 			return this.targetedEntity = (LivingEntity) targetEntity;
 		}
@@ -1159,7 +1162,7 @@ public class WaterSnakeEntity extends WaterAnimal implements Enemy, RangedAttack
 	}
 
 	public boolean hasTargetedEntity() {
-		return (int) this.entityData.get((EntityDataAccessor<Integer>) WaterSnakeEntity.TARGET_ENTITY) != 0;
+		return (int) this.entityData.get((EntityDataAccessor<Integer>) WaterSnake.TARGET_ENTITY) != 0;
 	}
 
 	private BlockPos helperFindExistingNest(BlockPos pos) {
@@ -1201,7 +1204,7 @@ public class WaterSnakeEntity extends WaterAnimal implements Enemy, RangedAttack
 	}
 
 	public boolean isAngry() {
-		return this.entityData.get((EntityDataAccessor<Boolean>) WaterSnakeEntity.ANGRY);
+		return this.entityData.get((EntityDataAccessor<Boolean>) WaterSnake.ANGRY);
 	}
 
 	private boolean isGoingNest() {
@@ -1261,11 +1264,11 @@ public class WaterSnakeEntity extends WaterAnimal implements Enemy, RangedAttack
 		// snakeIn, speedModifier, attackIntervalMin, attackIntervalMax, attackRadius
 		this.goalSelector.addGoal(0, (Goal) new WatersnakeSpitAttackGoal(this, 1.25, 40, 50, 12.0f));
 //		this.goalSelector.addGoal(1, new LeapAtTargetGoal(this, 0.2F));
-		this.goalSelector.addGoal(3, new WaterSnakeEntity.GoNestGoal(this, 1.0D));
-		this.goalSelector.addGoal(3, new WaterSnakeEntity.GoWaterGoal(this, swimSpeedModifier, rndSwimOdds));
-		this.goalSelector.addGoal(3, new WaterSnakeEntity.GoLandGoal(this, walkSpeedModifier, rndWalkOdds));
+		this.goalSelector.addGoal(3, new WaterSnake.GoNestGoal(this, 1.0D));
+		this.goalSelector.addGoal(3, new WaterSnake.GoWaterGoal(this, swimSpeedModifier, rndSwimOdds));
+		this.goalSelector.addGoal(3, new WaterSnake.GoLandGoal(this, walkSpeedModifier, rndWalkOdds));
 //		this.goalSelector.addGoal(4, new WaterSnakeEntity.PanicGoal(this, 1.4D));
-		this.goalSelector.addGoal(4, new WaterSnakeEntity.GoWanderGoal(this, 1.4D, 40));
+		this.goalSelector.addGoal(4, new WaterSnake.GoWanderGoal(this, 1.4D, 40));
 		this.goalSelector.addGoal(5, new RandomLookAroundGoal(this));
 		this.goalSelector.addGoal(5, new LookAtPlayerGoal(this, Player.class, 12.0F));
 		this.goalSelector.addGoal(6, new SwimGoal(this, 60));
@@ -1285,27 +1288,28 @@ public class WaterSnakeEntity extends WaterAnimal implements Enemy, RangedAttack
 
 	@Override
 	public boolean requiresCustomPersistence() {
-
-		if (this.level instanceof ServerLevel) {
-			int watersnakeCount = ((ServerLevel) this.level).getEntities(ModEntities.WATER_SNAKE, (entity) -> true)
-					.size();
-			if (watersnakeCount < 3) {
-				return true;
-			}
-			if (this.isAngry()) {
-				return true;
-			}
-		}
+		
+// disabled
+//		if (this.level instanceof ServerLevel) {
+//			int watersnakeCount = ((ServerLevel) this.level).getEntities(ModEntities.WATER_SNAKE, (entity) -> true)
+//					.size();
+//			if (watersnakeCount < 3) {
+//				return true;
+//			}
+//			if (this.isAngry()) {
+//				return true;
+//			}
+//		}
 		return super.requiresCustomPersistence();
 	}
 
 	public void setAngry(boolean bool) {
 		this.angryTime = this.level.getGameTime();
-		this.entityData.set((EntityDataAccessor<Boolean>) WaterSnakeEntity.ANGRY, bool);
+		this.entityData.set((EntityDataAccessor<Boolean>) WaterSnake.ANGRY, bool);
 	}
 
 	private void setAttackAnimTime(final int attackAnimTime) {
-		this.entityData.set((EntityDataAccessor<Integer>) WaterSnakeEntity.ATK_ANIM_TIME, attackAnimTime);
+		this.entityData.set((EntityDataAccessor<Integer>) WaterSnake.ATK_ANIM_TIME, attackAnimTime);
 	}
 
 
@@ -1354,7 +1358,7 @@ public class WaterSnakeEntity extends WaterAnimal implements Enemy, RangedAttack
 	}
 
 	private void setTargetedEntity(final int targetEntityId) {
-		this.entityData.set((EntityDataAccessor<Integer>) WaterSnakeEntity.TARGET_ENTITY, targetEntityId);
+		this.entityData.set((EntityDataAccessor<Integer>) WaterSnake.TARGET_ENTITY, targetEntityId);
 	}
 
 	private void setTravelling(boolean bool) {
@@ -1366,7 +1370,7 @@ public class WaterSnakeEntity extends WaterAnimal implements Enemy, RangedAttack
 	}
 
 	private void spit(final LivingEntity p_190713_1_) {
-		final WaterSnakePoisonSpitEntity lvt_2_1_ = new WaterSnakePoisonSpitEntity(this.level, this);
+		final WaterSnakePoisonSpit lvt_2_1_ = new WaterSnakePoisonSpit(this.level, this);
 		final double lvt_3_1_ = p_190713_1_.getX() - this.getX();
 		final double lvt_5_1_ = p_190713_1_.getY(0.3333333333333333) - lvt_2_1_.getY();
 		final double lvt_7_1_ = p_190713_1_.getZ() - this.getZ();
