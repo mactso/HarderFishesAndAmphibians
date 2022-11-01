@@ -9,6 +9,7 @@ import javax.annotation.Nullable;
 import com.mactso.hostilewatermobs.config.MyConfig;
 import com.mactso.hostilewatermobs.sound.ModSounds;
 import com.mactso.hostilewatermobs.utility.TwoGuysLib;
+import com.mactso.hostilewatermobs.utility.Utility;
 
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.Vec3i;
@@ -120,7 +121,7 @@ public class WaterSnake extends WaterAnimal implements Enemy, RangedAttackMob {
 		 * Execute a one shot task or start executing a continuous task
 		 */
 		public void start() {
-			MyConfig.debugMsg(1, watersnake.blockPosition(), "Start Walking to Land");
+			Utility.debugMsg(1, watersnake.blockPosition(), "Start swimming to Land");
 			Random random = watersnake.random;
 			int k = random.nextInt(128) - 64;
 			int l = random.nextInt(9) - 4;
@@ -244,7 +245,7 @@ public class WaterSnake extends WaterAnimal implements Enemy, RangedAttackMob {
 			boolean isNearNest = blockpos.closerThan(watersnake.position(), 16.0D);
 
 			if (watersnake.getCommandSenderWorld().getGameTime() % 20 == 0) {
-				MyConfig.debugMsg(1, watersnake.blockPosition(), "Tick GoToNest at " + watersnake.getNestPos());
+				Utility.debugMsg(1, watersnake.blockPosition(), "Tick GoToNest at " + watersnake.getNestPos());
 			}
 
 			if (isNearNest) {
@@ -363,7 +364,7 @@ public class WaterSnake extends WaterAnimal implements Enemy, RangedAttackMob {
 			}
 
 			if (watersnake.getCommandSenderWorld().getGameTime() % 20 == 0) {
-				MyConfig.debugMsg(2, watersnake.blockPosition(),
+				Utility.debugMsg(2, watersnake.blockPosition(),
 						"Tick MoveHelperController to " + watersnake.getTravelPos());
 			}
 			if (this.operation == MoveControl.Operation.MOVE_TO && !watersnake.getNavigation().isDone()) {
@@ -631,13 +632,13 @@ public class WaterSnake extends WaterAnimal implements Enemy, RangedAttackMob {
 
 		public void start() {
 			super.start();
-			MyConfig.debugMsg(1, "Start Melee Attack");
+			Utility.debugMsg(1, "Start Melee Attack");
 			this.snake.setAggressive(true);
 		}
 
 		public void stop() {
 			super.stop();
-			MyConfig.debugMsg(1, "Stop Melee Attack");
+			Utility.debugMsg(1, "Stop Melee Attack");
 			this.snake.setAggressive(false);
 		}
 
@@ -663,13 +664,13 @@ public class WaterSnake extends WaterAnimal implements Enemy, RangedAttackMob {
 		public void start() {
 			super.start();
 			snake.startSpittingTime = snake.level.getGameTime() + 16;
-			MyConfig.debugMsg(1, "Start Spitting");
+			Utility.debugMsg(2, "Start Spitting");
 			this.snake.setAggressive(true);
 		}
 
 		public void stop() {
 			super.stop();
-			MyConfig.debugMsg(1, "Stop Spitting");
+			Utility.debugMsg(2, "Stop Spitting");
 			this.snake.setAggressive(false);
 		}
 
@@ -679,14 +680,14 @@ public class WaterSnake extends WaterAnimal implements Enemy, RangedAttackMob {
 //				return;
 //			}
 //			double distance = this.snake.distanceToSqr(this.snake.getTarget().getX(), this.snake.getTarget().getY(), this.snake.getTarget().getZ());
-//			MyConfig.debugMsg(0, "Distance to Target: "+ distance);
+//			Utility.debugMsg(0, "Distance to Target: "+ distance);
 //
 //			if (distance < 3.0d) {
-//				MyConfig.debugMsg(0, "Too Close Stop Spitting");
+//				Utility.debugMsg(0, "Too Close Stop Spitting");
 //				stop();
 //			}
 //			if (distance > this.attackRadius) {
-//				MyConfig.debugMsg(0, "Too Far Stop Spitting");
+//				Utility.debugMsg(0, "Too Far Stop Spitting");
 //				stop();
 //			}
 //		}
@@ -729,7 +730,7 @@ public class WaterSnake extends WaterAnimal implements Enemy, RangedAttackMob {
 
 		ServerLevel w = (ServerLevel) worldIn;
 
-		MyConfig.debugMsg(1, pos, "checking spawn watersnake");
+		Utility.debugMsg(1, pos, "checking spawn watersnake");
 
 //		if (lastSpawnTime+24000 > w.getGameTime()) {
 //			int lightLevel = w.getMaxLocalRawBrightness(pos);
@@ -778,11 +779,6 @@ public class WaterSnake extends WaterAnimal implements Enemy, RangedAttackMob {
 		int watersnakeSpawnChance = MyConfig.getWatersnakeSpawnChance();
 		int watersnakeSpawnCap = MyConfig.getWatersnakeSpawnCap();
 		int watersnakeSpawnRoll = randomIn.nextInt(30);
-//		int watersnakeCount = ((ServerLevel) w).getEntities(ModEntities.WATER_SNAKE, (entity) -> true).size();
-
-//		if (watersnakeCount < 7) {
-//			watersnakeSpawnRoll = 0;
-//		}
 
 		Biome biome = w.getBiome(pos);
 		BiomeCategory bC = biome.getBiomeCategory();
@@ -795,12 +791,6 @@ public class WaterSnake extends WaterAnimal implements Enemy, RangedAttackMob {
 			watersnakeSpawnCap += 7;
 		}
 
-//			System.out.println(
-//					"Classic Snake Spawn Cap: " + watersnakeSpawnCap + " Count : " + watersnakeCount + " Chance:" + watersnakeSpawnChance);
-
-//		if (watersnakeCount > watersnakeSpawnCap)
-//			return false;
-
 		if (watersnakeSpawnRoll > watersnakeSpawnChance)
 			return false;
 
@@ -811,13 +801,9 @@ public class WaterSnake extends WaterAnimal implements Enemy, RangedAttackMob {
 			return false;
 		}
 
-		if (MyConfig.getDebugLevel() > 0) {
-			System.out.println("spawn watersnake true at " + pos.getX() + " " + pos.getY() + " " + pos.getZ());
-		}
-		// TODO
-		System.out.println("spawn watersnake true at " + pos.getX() + " " + pos.getY() + " " + pos.getZ());
-		return true;
+		Utility.debugMsg(1, "spawn watersnake true at " + pos.getX() + " " + pos.getY() + " " + pos.getZ());
 
+		return true;
 	}
 
 	@Nullable
@@ -1053,7 +1039,7 @@ public class WaterSnake extends WaterAnimal implements Enemy, RangedAttackMob {
 		nestPos = helperFindExistingNest(pos);
 		if (nestPos == null) {
 			setNestPos(pos);
-			level.setBlockAndUpdate(pos, Blocks.CORNFLOWER.defaultBlockState());
+			level.setBlockAndUpdate(pos, Blocks.GRASS.defaultBlockState());
 		} else {
 			setNestPos(nestPos);
 		}

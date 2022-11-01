@@ -8,6 +8,7 @@ import com.mactso.hostilewatermobs.config.MyConfig;
 import net.minecraft.ChatFormatting;
 import net.minecraft.core.BlockPos;
 import net.minecraft.network.chat.TextComponent;
+import net.minecraft.resources.ResourceLocation;
 import net.minecraft.server.level.ServerLevel;
 import net.minecraft.world.effect.MobEffect;
 import net.minecraft.world.effect.MobEffectInstance;
@@ -16,7 +17,10 @@ import net.minecraft.world.entity.LivingEntity;
 import net.minecraft.world.entity.Mob;
 import net.minecraft.world.entity.MobSpawnType;
 import net.minecraft.world.entity.player.Player;
+import net.minecraft.world.item.Item;
+import net.minecraft.world.item.Items;
 import net.minecraft.world.level.levelgen.Heightmap.Types;
+import net.minecraftforge.registries.ForgeRegistries;
 
 public class Utility {
 	
@@ -116,6 +120,25 @@ public class Utility {
 	
 	public static boolean isOutside(BlockPos pos, ServerLevel serverLevel) {
 		return serverLevel.getHeightmapPos(Types.MOTION_BLOCKING_NO_LEAVES, pos) == pos;
+	}
+	
+	public static Item getItemFromString (String name)
+	{
+		Item ret = Items.PAPER;
+		try {
+			ResourceLocation key = new ResourceLocation(name);
+			if (ForgeRegistries.ITEMS.containsKey(key))
+			{
+				ret = ForgeRegistries.ITEMS.getValue(key);
+			}
+			else
+				LOGGER.warn("Unknown item: " + name);
+		}
+		catch (Exception e)
+		{
+			LOGGER.warn("Bad item: " + name);
+		}
+		return ret;
 	}
 
 }

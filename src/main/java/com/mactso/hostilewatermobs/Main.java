@@ -4,8 +4,7 @@ package com.mactso.hostilewatermobs;
 import com.mactso.hostilewatermobs.block.ModBlocks;
 import com.mactso.hostilewatermobs.client.model.GurtyModel;
 import com.mactso.hostilewatermobs.client.model.SlipperyBiterModel;
-import com.mactso.hostilewatermobs.client.renderer.GurtyRenderer;
-import com.mactso.hostilewatermobs.client.renderer.RiverGuardianRenderer;
+import com.mactso.hostilewatermobs.client.model.WaterSnakeModel;
 import com.mactso.hostilewatermobs.config.MyConfig;
 import com.mactso.hostilewatermobs.entities.ModEntities;
 import com.mactso.hostilewatermobs.item.ModItems;
@@ -66,7 +65,7 @@ public class Main {
 		{
 			event.registerLayerDefinition(GurtyModel.LAYER_LOCATION, ()-> GurtyModel.createBodyLayer());
 			event.registerLayerDefinition(SlipperyBiterModel.LAYER_LOCATION, ()-> SlipperyBiterModel.createBodyLayer());
-
+			event.registerLayerDefinition(WaterSnakeModel.LAYER_LOCATION, ()-> WaterSnakeModel.createBodyLayer());
 		}
 		
 	

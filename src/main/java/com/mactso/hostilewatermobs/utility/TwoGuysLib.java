@@ -2,8 +2,6 @@ package com.mactso.hostilewatermobs.utility;
 
 import javax.annotation.Nullable;
 
-import com.mactso.hostilewatermobs.config.MyConfig;
-
 import net.minecraft.core.BlockPos;
 import net.minecraft.world.entity.EntityType;
 import net.minecraft.world.entity.Mob;
@@ -30,7 +28,7 @@ public class TwoGuysLib {
 			for (int dz = minZ; dz <= maxZ; dz++) {
 				for (int dy = minY; dy <= maxY; dy++) {
 					Block b = w.getBlockState(new BlockPos(dx, dy, dz)).getBlock();
-					MyConfig.debugMsg(2, "dx:" + dx + ", dz:" + dz + ", dy:" + dy + "  Block:"
+					Utility.debugMsg(2, "dx:" + dx + ", dz:" + dz + ", dy:" + dy + "  Block:"
 							+ b.getRegistryName().toString() + ", count:" + count);
 					if (w.getBlockState(new BlockPos(dx, dy, dz)).getBlock() == searchBlock)
 						count++;
@@ -40,7 +38,7 @@ public class TwoGuysLib {
 			}
 		}
 
-		MyConfig.debugMsg(1, bPos,
+		Utility.debugMsg(1, bPos,
 				searchBlock.getRegistryName().toString() + " Sparse count:" + count + " countBlockBB ");
 
 		return count;
@@ -65,7 +63,7 @@ public class TwoGuysLib {
 			for (int dz = minZ; dz <= maxZ; dz++) {
 				for (int dy = minY; dy <= maxY; dy++) {
 					Block b = w.getBlockState(new BlockPos(dx, dy, dz)).getBlock();
-					MyConfig.debugMsg(2, "dx:" + dx + ", dz:" + dz + ", dy:" + dy + "  Block:"
+					Utility.debugMsg(2, "dx:" + dx + ", dz:" + dz + ", dy:" + dy + "  Block:"
 							+ b.getRegistryName().toString() + ", count:" + count);
 					if (searchBlock.isInstance(w.getBlockState(new BlockPos(dx, dy, dz)).getBlock())) {
 						count++;
@@ -77,7 +75,7 @@ public class TwoGuysLib {
 			}
 		}
 
-		MyConfig.debugMsg(1, bPos, searchBlock.getSimpleName() + " Sparse count:" + count + " countBlockBB ");
+		Utility.debugMsg(1, bPos, searchBlock.getSimpleName() + " Sparse count:" + count + " countBlockBB ");
 
 		return count;
 	}

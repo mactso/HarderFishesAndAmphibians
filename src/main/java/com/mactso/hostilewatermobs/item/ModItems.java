@@ -11,7 +11,8 @@ import net.minecraft.world.item.SpawnEggItem;
 import net.minecraftforge.registries.IForgeRegistry;
 
 public class ModItems {
-	;
+
+	// note eggs changing to ForgeSpawnEggItem with a suppliler
 	public static final Item RIVER_GUARDIAN_SPAWN_EGG = new SpawnEggItem(ModEntities.RIVER_GUARDIAN, 0x799ABA, 0xBF4A0B, new Properties().tab(CreativeModeTab.TAB_MISC)).setRegistryName("river_guardian_spawn_egg");
 	public static final Item RIVER_GUARDIAN_SCALES = new Item((new Item.Properties()).tab(CreativeModeTab.TAB_MATERIALS)).setRegistryName("river_guardian_scales");
 	
@@ -23,8 +24,8 @@ public class ModItems {
 	public static final Item GURTY_GUTS = new Item((new Item.Properties()).tab(CreativeModeTab.TAB_MATERIALS)).setRegistryName("gurty_guts");
 	public static final Item GURTY_GLAND = new GurtyGland ((new Item.Properties().food(new FoodProperties.Builder().nutrition(3).saturationMod(1.0F).fast().alwaysEat().build())).tab(CreativeModeTab.TAB_FOOD).stacksTo(16)).setRegistryName("gurty_gland");
 
-//	public static final Item WATERSNAKE_SPAWN_EGG = new SpawnEggItem(ModEntities.WATER_SNAKE, 0x49AA3A, 0xBF442B, new Properties().tab(CreativeModeTab.TAB_MISC)).setRegistryName("classicsnake_spawn_egg");
-	public static final Item WATERSNAKE_SCALES = new Item((new Item.Properties()).tab(CreativeModeTab.TAB_MATERIALS)).setRegistryName("classicsnake_scales");
+	public static final Item WATERSNAKE_SPAWN_EGG = new SpawnEggItem(ModEntities.WATER_SNAKE, 0x49AA3A, 0xBF442B, new Properties().tab(CreativeModeTab.TAB_MISC)).setRegistryName("watersnake_spawn_egg");
+	public static final Item WATERSNAKE_SCALES = new Item((new Item.Properties()).tab(CreativeModeTab.TAB_MATERIALS)).setRegistryName("watersnake_scales");
 
 	public static final Item NEST_ITEM = new BlockItem(ModBlocks.NEST_BLOCK, new Properties().tab(CreativeModeTab.TAB_DECORATIONS)).setRegistryName("nest_item");
 
@@ -37,7 +38,7 @@ public class ModItems {
 		forgeRegistry.registerAll(SLIPPERY_BITER_SPAWN_EGG);
 		forgeRegistry.registerAll(SLIPPERY_BITER_GLAND,SLIPPERY_BITER_SCALES);
 		forgeRegistry.registerAll(GURTY_SPAWN_EGG,GURTY_GUTS,GURTY_GLAND);
-//		forgeRegistry.registerAll(WATERSNAKE_SPAWN_EGG);
+		forgeRegistry.registerAll(WATERSNAKE_SPAWN_EGG);
 		forgeRegistry.registerAll(WATERSNAKE_SCALES);
 		forgeRegistry.registerAll(NEST_ITEM);		
 	}

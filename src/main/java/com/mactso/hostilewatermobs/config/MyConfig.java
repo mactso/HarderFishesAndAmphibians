@@ -7,21 +7,17 @@ import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 
 import com.mactso.hostilewatermobs.Main;
+import com.mactso.hostilewatermobs.utility.Utility;
 
-import net.minecraft.core.BlockPos;
 import net.minecraft.network.chat.TextColor;
 import net.minecraft.network.chat.TextComponent;
-import net.minecraft.resources.ResourceLocation;
 import net.minecraft.world.entity.player.Player;
-import net.minecraft.world.item.Item;
-import net.minecraft.world.item.Items;
 import net.minecraftforge.common.ForgeConfigSpec;
 import net.minecraftforge.common.ForgeConfigSpec.BooleanValue;
 import net.minecraftforge.common.ForgeConfigSpec.IntValue;
 import net.minecraftforge.eventbus.api.SubscribeEvent;
 import net.minecraftforge.fml.common.Mod;
 import net.minecraftforge.fml.event.config.ModConfigEvent;
-import net.minecraftforge.registries.ForgeRegistries;
 
 @Mod.EventBusSubscriber(modid = Main.MODID, bus=Mod.EventBusSubscriber.Bus.MOD)
 public class MyConfig {
@@ -240,9 +236,7 @@ public class MyConfig {
 		zombifiedPiglinSpawnBoost = COMMON.zombifiedPiglinSpawnBoost.get();
 		ghastSpawnBoost = COMMON.ghastSpawnBoost.get();		
 		
-		if (debugLevel > 0) {
-			System.out.println("Harder Farther Debug Level: " + debugLevel );
-		}
+		Utility.debugMsg(1,"Harder Farther Debug Level: " + debugLevel );
 	}
 	
 	public static class Common {
@@ -410,37 +404,6 @@ public class MyConfig {
 			
 			builder.pop();
 			
-		}
-	}
-	
-	private static Item getItemFromString (String name)
-	{
-		Item ret = Items.PAPER;
-		try {
-			ResourceLocation key = new ResourceLocation(name);
-			if (ForgeRegistries.ITEMS.containsKey(key))
-			{
-				ret = ForgeRegistries.ITEMS.getValue(key);
-			}
-			else
-				LOGGER.warn("Unknown item: " + name);
-		}
-		catch (Exception e)
-		{
-			LOGGER.warn("Bad item: " + name);
-		}
-		return ret;
-	}
-	
-	public static void debugMsg (int level, String dMsg) {
-		if (debugLevel > level-1) {
-			System.out.println("L"+level + ":" + dMsg);
-		}
-	}
-
-	public static void debugMsg (int level, BlockPos pos, String dMsg) {
-		if (debugLevel > level-1) {
-			System.out.println("L"+level+" ("+pos.getX()+","+pos.getY()+","+pos.getZ()+"): " + dMsg);
 		}
 	}
 	

@@ -11,6 +11,7 @@ import com.mactso.hostilewatermobs.block.ModBlocks;
 import com.mactso.hostilewatermobs.config.MyConfig;
 import com.mactso.hostilewatermobs.sound.ModSounds;
 import com.mactso.hostilewatermobs.utility.TwoGuysLib;
+import com.mactso.hostilewatermobs.utility.Utility;
 
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.Vec3i;
@@ -474,7 +475,7 @@ public class Gurty extends PathfinderMob implements NeutralMob,Enemy {
 			return false;
 
 
-		MyConfig.debugMsg(1, pos, "checking spawn gurty");
+		Utility.debugMsg(1, pos, "checking spawn gurty");
 
 		ServerLevel w = (ServerLevel) worldIn;
 		Block b = w.getBlockState(pos).getBlock();
@@ -522,8 +523,7 @@ public class Gurty extends PathfinderMob implements NeutralMob,Enemy {
 		int YSize = 2;
 		int RequiredWaterBlocks = 9;
 		if (!TwoGuysLib.findWaterBlocks(gurtyIn, worldIn, pos, XZSize, YSize, RequiredWaterBlocks)) {
-			// TODO
-			MyConfig.debugMsg(1, pos, "Not enough water to spawn gurty");
+			Utility.debugMsg(2, pos, "Not enough water to spawn gurty");
 			return false;
 		}
 
@@ -540,7 +540,7 @@ public class Gurty extends PathfinderMob implements NeutralMob,Enemy {
 		}
 
 		if (MyConfig.getDebugLevel() > 0) {
-			System.out.println("spawn Gurty true at " + pos.getX() + " " + pos.getY() + " " + pos.getZ());
+			Utility.debugMsg(1, "spawn Gurty true at " + pos.getX() + " " + pos.getY() + " " + pos.getZ());
 		}
 		return true;
 	}

@@ -1,0 +1,220 @@
+{
+  "profession": "cartographer",
+  "removeOtherTrades": true,
+  "trades": [
+    {
+      "offer": {
+        "itemKey": "minecraft:emerald",
+        "amount": 1,
+        "enchantments": [
+        ]
+      },
+      "request": {
+        "itemKey": "minecraft:paper",
+        "amount": 24
+      },
+      "tradeExp": 1,
+      "maxUses": 9,
+      "priceMultiplier": 0.1,
+      "demand": 1,
+      "tradeLevel": 1
+    },
+    {
+      "offer": {
+        "itemKey": "minecraft:map",
+        "amount": 1
+      },
+      "request": {
+        "itemKey": "minecraft:emerald",
+        "amount": 7
+      },
+      "tradeExp": 1,
+      "maxUses": 7,
+      "priceMultiplier": 0.1,
+      "demand": 3,
+      "tradeLevel": 1
+    },
+    {
+      "offer": {
+        "itemKey": "minecraft:emerald",
+        "amount": 1
+      },
+      "request": {
+        "itemKey": "minecraft:glass_pane",
+        "amount": 11
+      },
+      "tradeExp": 4,
+      "maxUses": 9,
+      "priceMultiplier": 0.1,
+      "demand": 3,
+      "tradeLevel": 2
+    },
+	{
+      "offer": {
+        "itemKey": "minecraft:filled_map",
+        "customName": "Monument Map",
+        "amount": 1,
+        "mapStructure": "minecraft:monument"
+      },
+      "request": {
+        "itemKey": "minecraft:emerald",
+        "amount": 13
+      },
+      "additionalRequest": {
+        "itemKey": "minecraft:compass",
+        "amount": 1
+      },
+      "tradeExp": 4,
+      "maxUses": 3,
+      "priceMultiplier": 0.1,
+      "demand": 3,
+      "tradeLevel": 2
+    },
+    {
+      "offer": {
+        "itemKey": "minecraft:emerald",
+        "amount": 1
+      },
+      "request": {
+        "itemKey": "minecraft:compass",
+        "amount": 1
+      },
+      "tradeExp": 5,
+      "maxUses": 7,
+      "priceMultiplier": 0.1,
+      "demand": 3,
+      "tradeLevel": 2
+    },
+    {
+      "offer": {
+        "itemKey": "minecraft:filled_map",
+        "customName": "Mansion Map",
+        "amount": 1,
+        "mapStructure": "minecraft:mansion"
+      },
+      "request": {
+        "itemKey": "minecraft:emerald",
+        "amount": 14
+      },
+      "additionalRequest": {
+        "itemKey": "minecraft:compass",
+        "amount": 1
+      },
+      "tradeExp": 7,
+      "maxUses": 3,
+      "priceMultiplier": 0.1,
+      "demand": 3,
+      "tradeLevel": 3
+    },
+    {
+      "offer": {
+        "itemKey": "minecraft:white_banner",
+        "amount": 1,
+        "enchantments": [
+        ]
+      },
+      "request": {
+        "itemKey": "minecraft:emerald",
+        "amount": 5
+      },
+      "tradeExp": 7,
+      "maxUses": 6,
+      "priceMultiplier": 0.1,
+      "demand": 2,
+      "tradeLevel": 3
+    },
+    {
+      "offer": {
+        "itemKey": "minecraft:item_frame",
+        "amount": 1,
+        "enchantments": [
+        ]
+      },
+      "request": {
+        "itemKey": "minecraft:emerald",
+        "amount": 5
+      },
+      "tradeExp": 9,
+      "maxUses": 9,
+      "priceMultiplier": 0.1,
+      "demand": 2,
+      "tradeLevel": 4
+    },
+    {
+      "offer": {
+        "itemKey": "minecraft:flower_banner_pattern",
+        "amount": 1,
+        "enchantments": [
+        ]
+      },
+      "request": {
+        "itemKey": "minecraft:emerald",
+        "amount": 11
+      },
+      "tradeExp": 9,
+      "maxUses": 3,
+      "priceMultiplier": 0.1,
+      "demand": 4,
+      "tradeLevel": 4
+    },    
+    {
+      "offer": {
+        "itemKey": "minecraft:filled_map",
+        "customName": "Pillager Map",
+        "amount": 1,
+        "mapStructure": "minecraft:pillager_outpost"
+      },
+      "request": {
+        "itemKey": "minecraft:emerald",
+        "amount": 14
+      },
+      "additionalRequest": {
+        "itemKey": "minecraft:compass",
+        "amount": 1
+      },
+      "tradeExp": 7,
+      "maxUses": 3,
+      "priceMultiplier": 0.1,
+      "demand": 4,
+      "tradeLevel": 5
+    },
+    {
+      "offer": {
+        "itemKey": "minecraft:filled_map",
+        "customName": "Desert Pyramid Map",
+        "amount": 1,
+        "mapStructure": "minecraft:desert_pyramid"
+      },
+      "request": {
+        "itemKey": "minecraft:emerald",
+        "amount": 13
+      },
+      "additionalRequest": {
+        "itemKey": "minecraft:compass",
+        "amount": 1
+      },
+      "tradeExp": 9,
+      "maxUses": 3,
+      "priceMultiplier": 0.1,
+      "demand": 4,
+      "tradeLevel": 5
+    },
+    {
+      "offer": {
+        "itemKey": "minecraft:creeper_banner_pattern",
+        "amount": 1,
+        "enchantments": [
+        ]
+      },
+      "request": {
+        "itemKey": "minecraft:diamond",
+        "amount": 1
+      },
+      "tradeExp": 7,
+      "maxUses": 3,
+      "priceMultiplier": 0.1,
+      "demand": 4,
+      "tradeLevel": 5
+    }
+  ]
+}

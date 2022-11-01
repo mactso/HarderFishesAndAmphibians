@@ -1,7 +1,6 @@
 package com.mactso.hostilewatermobs.client.renderer;
 
 import com.mactso.hostilewatermobs.Main;
-import com.mactso.hostilewatermobs.client.model.GurtyModel;
 import com.mactso.hostilewatermobs.client.model.SlipperyBiterModel;
 import com.mactso.hostilewatermobs.client.renderer.layers.SlipperyBiterGlowingLayer;
 import com.mactso.hostilewatermobs.entities.SlipperyBiter;
@@ -38,10 +37,8 @@ public class SlipperyBiterRenderer extends MobRenderer<SlipperyBiter, SlipperyBi
 		  float uniqueSize = (float)eSize/48;
 		  subtype = (2 + subtype) %2;
 		  if (subtype == SlipperyBiter.LARGE_SLIPPERY_BITER) {
-//			  System.out.println ("Large ("+SlipperyBiterEntity.LARGE_SIZE+") + "+uniqueSize);
 				matrixStackIn.scale(SlipperyBiter.LARGE_SIZE+uniqueSize+0.4f, SlipperyBiter.LARGE_SIZE+uniqueSize+0.35f, SlipperyBiter.LARGE_SIZE+uniqueSize+0.4f);
 		  } else {
-//			  System.out.println ("Normal ("+SlipperyBiterEntity.SIZE+") + " + uniqueSize);
 				matrixStackIn.scale(SlipperyBiter.SIZE+uniqueSize, SlipperyBiter.SIZE+uniqueSize, SlipperyBiter.SIZE+uniqueSize);
 			  
 		  }

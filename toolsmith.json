@@ -1,0 +1,544 @@
+{
+  "profession": "toolsmith",
+  "removeOtherTrades": true,
+  "trades": [
+    {
+      "offer": {
+        "itemKey": "minecraft:coal",
+        "amount": 15,
+        "enchantments": [
+        ]
+      },
+      "request": {
+        "itemKey": "minecraft:emerald",
+        "amount": 6
+      },
+      "tradeExp": 1,
+      "maxUses": 9,
+      "priceMultiplier": 0.1,
+      "demand": 7,
+      "tradeLevel": 1
+    },
+    {
+      "offer": {
+        "itemKey": "minecraft:stone_axe",
+        "amount": 1,
+        "enchantments": [
+        ]
+      },
+      "request": {
+        "itemKey": "minecraft:emerald",
+        "amount": 2
+      },
+      "tradeExp": 3,
+      "maxUses": 3,
+      "priceMultiplier": 0.1,
+      "demand": 5,
+      "tradeLevel": 1
+    },
+    {
+      "offer": {
+        "itemKey": "minecraft:stone_shovel",
+        "amount": 1
+      },
+      "request": {
+        "itemKey": "minecraft:emerald",
+        "amount": 1
+      },
+      "tradeExp": 2,
+      "maxUses": 7,
+      "priceMultiplier": 0.1,
+      "demand": 5,
+      "tradeLevel": 1
+    },
+    {
+      "offer": {
+        "itemKey": "minecraft:stone_pickaxe",
+        "amount": 1,
+        "enchantments": [
+        ]
+      },
+      "request": {
+        "itemKey": "minecraft:emerald",
+        "amount": 2
+      },
+      "tradeExp": 2,
+      "maxUses": 5,
+      "priceMultiplier": 0.1,
+      "demand": 5,
+      "tradeLevel": 1
+    },
+    {
+      "offer": {
+        "itemKey": "minecraft:stone_sword",
+        "amount": 1,
+        "enchantments": [
+        ]
+      },
+      "request": {
+        "itemKey": "minecraft:emerald",
+        "amount": 1
+      },
+      "tradeExp": 1,
+      "maxUses": 5,
+      "priceMultiplier": 0.1,
+      "demand": 5,
+      "tradeLevel": 1
+    },
+    {
+      "offer": {
+        "itemKey": "minecraft:stone_sword",
+        "amount": 1,
+        "enchantments": [
+        ]
+      },
+      "request": {
+        "itemKey": "minecraft:emerald",
+        "amount": 1
+      },
+      "tradeExp": 1,
+      "maxUses": 5,
+      "priceMultiplier": 0.1,
+      "demand": 5,
+      "tradeLevel": 1
+    },
+    {
+      "offer": {
+        "itemKey": "minecraft:stone_hoe",
+        "amount": 1,
+       "enchantments": [
+        ]
+     },
+      "request": {
+        "itemKey": "minecraft:emerald",
+        "amount": 5
+      },
+      "tradeExp": 2,
+      "maxUses": 10,
+      "priceMultiplier": 0.1,
+      "demand": 5,
+      "tradeLevel": 1
+    },
+    {
+      "offer": {
+        "itemKey": "minecraft:stone_axe",
+        "amount": 1,
+        "enchantments": [
+          {
+            "enchantmentKey": "minecraft:unbreaking",
+            "enchantmentLevel": -1,
+            "maxEnchantmentLevel": 1
+          },
+          {
+            "enchantmentKey": "minecraft:efficiency",
+            "enchantmentLevel": -1,
+            "maxEnchantmentLevel": 1
+          }
+        ]
+      },
+      "request": {
+        "itemKey": "minecraft:emerald",
+        "amount": 3
+      },
+      "tradeExp": 3,
+      "maxUses": 3,
+      "priceMultiplier": 0.1,
+      "demand": 5,
+      "tradeLevel": 1
+    },
+    {
+      "offer": {
+        "itemKey": "minecraft:stone_shovel",
+        "amount": 1,
+        "enchantments": [
+          {
+            "enchantmentKey": "minecraft:unbreaking",
+            "enchantmentLevel": -1,
+            "maxEnchantmentLevel": 1
+          },
+          {
+            "enchantmentKey": "minecraft:efficiency",
+            "enchantmentLevel": -1,
+            "maxEnchantmentLevel": 1
+          }
+        ]
+
+      },
+      "request": {
+        "itemKey": "minecraft:emerald",
+        "amount": 2
+      },
+      "tradeExp": 2,
+      "maxUses": 7,
+      "priceMultiplier": 0.1,
+      "demand": 5,
+      "tradeLevel": 1
+    },
+    {
+      "offer": {
+        "itemKey": "minecraft:stone_pickaxe",
+        "amount": 1,
+        "enchantments": [
+          {
+            "enchantmentKey": "minecraft:unbreaking",
+            "enchantmentLevel": -1,
+            "maxEnchantmentLevel": 1
+          },
+          {
+            "enchantmentKey": "minecraft:efficiency",
+            "enchantmentLevel": -1,
+            "maxEnchantmentLevel": 1
+          },
+          {
+            "enchantmentKey": "minecraft:fortune",
+            "enchantmentLevel": -1,
+            "maxEnchantmentLevel": 1
+          }
+        ]
+      },
+      "request": {
+        "itemKey": "minecraft:emerald",
+        "amount": 2
+      },
+      "tradeExp": 2,
+      "maxUses": 5,
+      "priceMultiplier": 0.1,
+      "demand": 5,
+      "tradeLevel": 1
+    },
+    {
+      "offer": {
+        "itemKey": "minecraft:stone_sword",
+        "amount": 1,
+        "enchantments": [
+          {
+            "enchantmentKey": "minecraft:unbreaking",
+            "enchantmentLevel": -1,
+            "maxEnchantmentLevel": 1
+          },
+          {
+            "enchantmentKey": "minecraft:sharpness",
+            "enchantmentLevel": -1,
+            "maxEnchantmentLevel": 2
+          }
+        ]
+      },
+      "request": {
+        "itemKey": "minecraft:emerald",
+        "amount": 3
+      },
+      "tradeExp": 1,
+      "maxUses": 5,
+      "priceMultiplier": 0.1,
+      "demand": 5,
+      "tradeLevel": 1
+    },
+    {
+      "offer": {
+        "itemKey": "minecraft:stone_sword",
+        "amount": 1,
+        "enchantments": [
+          {
+            "enchantmentKey": "minecraft:unbreaking",
+            "enchantmentLevel": -1,
+            "maxEnchantmentLevel": 1
+          },
+          {
+            "enchantmentKey": "minecraft:smite",
+            "enchantmentLevel": -1,
+            "maxEnchantmentLevel": 1
+          }
+        ]
+      },
+      "request": {
+        "itemKey": "minecraft:emerald",
+        "amount": 3
+      },
+      "tradeExp": 1,
+      "maxUses": 5,
+      "priceMultiplier": 0.1,
+      "demand": 5,
+      "tradeLevel": 1
+    },
+    {
+      "offer": {
+        "itemKey": "minecraft:stone_hoe",
+        "amount": 1,
+       "enchantments": [
+          {
+            "enchantmentKey": "minecraft:unbreaking",
+            "enchantmentLevel": -1,
+            "maxEnchantmentLevel": 1
+          }
+        ]
+  
+     },
+      "request": {
+        "itemKey": "minecraft:emerald",
+        "amount": 5
+      },
+      "tradeExp": 2,
+      "maxUses": 10,
+      "priceMultiplier": 0.1,
+      "demand": 5,
+      "tradeLevel": 1
+    },
+    {
+      "offer": {
+        "itemKey": "minecraft:emerald",
+        "amount": 12,
+        "enchantments": [
+        ]
+      },
+      "request": {
+        "itemKey": "minecraft:iron_ingot",
+        "amount": 4
+      },
+      "tradeExp": 5,
+      "maxUses": 9,
+      "priceMultiplier": 0.1,
+      "demand": 7,
+      "tradeLevel": 2
+    },
+    {
+      "offer": {
+        "itemKey": "minecraft:bell",
+        "amount": 1,
+        "enchantments": [
+        ]
+      },
+      "request": {
+        "itemKey": "minecraft:emerald",
+        "amount": 36
+      },
+      "tradeExp": 7,
+      "maxUses": 3,
+      "priceMultiplier": 0.1,
+      "demand": 7,
+      "tradeLevel": 2
+    },
+    {
+      "offer": {
+        "itemKey": "minecraft:emerald",
+        "amount": 1,
+        "enchantments": [
+        ]
+      },
+      "request": {
+        "itemKey": "minecraft:copper_ingot",
+        "amount": 17
+      },
+      "tradeExp": 6,
+      "maxUses": 9,
+      "priceMultiplier": 0.1,
+      "demand": 6,
+      "tradeLevel": 3
+    },
+    {
+      "offer": {
+        "itemKey": "minecraft:iron_axe",
+        "amount": 1,
+        "enchantments": [
+          {
+            "enchantmentKey": "minecraft:unbreaking",
+            "enchantmentLevel": -1,
+            "maxEnchantmentLevel": 2
+          },
+          {
+            "enchantmentKey": "minecraft:efficiency",
+            "enchantmentLevel": -1,
+            "maxEnchantmentLevel": 3
+          }
+        ]
+      },
+      "request": {
+        "itemKey": "minecraft:emerald",
+        "amount": 7
+      },
+      "tradeExp": 7,
+      "maxUses": 5,
+      "priceMultiplier": 0.1,
+      "demand": 5,
+      "tradeLevel": 3
+    },
+    {
+      "offer": {
+        "itemKey": "minecraft:iron_shovel",
+        "amount": 1,
+        "enchantments": [
+          {
+            "enchantmentKey": "minecraft:unbreaking",
+            "enchantmentLevel": -1,
+            "maxEnchantmentLevel": 3
+          },
+          {
+            "enchantmentKey": "minecraft:efficiency",
+            "enchantmentLevel": -1,
+            "maxEnchantmentLevel": 3
+          }
+        ]
+      },
+      "request": {
+        "itemKey": "minecraft:emerald",
+        "amount": 5
+      },
+      "tradeExp": 6,
+      "maxUses": 7,
+      "priceMultiplier": 0.1,
+      "demand": 5,
+      "tradeLevel": 3
+    },
+    {
+      "offer": {
+        "itemKey": "minecraft:iron_pickaxe",
+        "amount": 1,
+        "enchantments": [
+          {
+            "enchantmentKey": "minecraft:unbreaking",
+            "enchantmentLevel": -1,
+            "maxEnchantmentLevel": 3
+          },
+          {
+            "enchantmentKey": "minecraft:efficiency",
+            "enchantmentLevel": -1,
+            "maxEnchantmentLevel": 3
+          }
+        ]
+      },
+      "request": {
+        "itemKey": "minecraft:emerald",
+        "amount": 9
+      },
+      "tradeExp": 6,
+      "maxUses": 5,
+      "priceMultiplier": 0.1,
+      "demand": 5,
+      "tradeLevel": 3
+    },
+    {
+      "offer": {
+        "itemKey": "minecraft:diamond_hoe",
+        "amount": 1,
+       "enchantments": [
+          {
+            "enchantmentKey": "minecraft:unbreaking",
+            "enchantmentLevel": -1,
+            "maxEnchantmentLevel": 3
+          },
+          {
+            "enchantmentKey": "minecraft:efficiency",
+            "enchantmentLevel": -1,
+            "maxEnchantmentLevel": 3
+          }
+	]
+       },
+      "request": {
+        "itemKey": "minecraft:emerald",
+        "amount": 5
+      },
+      "tradeExp": 7,
+      "maxUses": 5,
+      "priceMultiplier": 0.1,
+      "demand": 3,
+      "tradeLevel": 3
+    },
+    {
+      "offer": {
+        "itemKey": "minecraft:emerald",
+        "amount": 3,
+        "enchantments": [
+        ]
+      },
+      "request": {
+        "itemKey": "minecraft:diamond",
+        "amount": 1
+      },
+      "tradeExp": 13,
+      "maxUses": 9,
+      "priceMultiplier": 0.1,
+      "demand": 3,
+      "tradeLevel": 4
+    },
+    {
+      "offer": {
+        "itemKey": "minecraft:diamond_axe",
+        "amount": 1,
+        "enchantments": [
+          {
+            "enchantmentKey": "minecraft:unbreaking",
+            "enchantmentLevel": -1,
+            "maxEnchantmentLevel": 2
+          },
+          {
+            "enchantmentKey": "minecraft:efficiency",
+            "enchantmentLevel": -1,
+            "maxEnchantmentLevel": 3
+          }
+	]
+      },
+      "request": {
+        "itemKey": "minecraft:emerald",
+        "amount": 13
+      },
+      "tradeExp": 11,
+      "maxUses": 5,
+      "priceMultiplier": 0.1,
+      "demand": 6,
+      "tradeLevel": 4
+    },
+   {
+      "offer": {
+        "itemKey": "minecraft:diamond_shovel",
+        "amount": 1,
+        "enchantments": [
+          {
+            "enchantmentKey": "minecraft:unbreaking",
+            "enchantmentLevel": -1,
+            "maxEnchantmentLevel": 3
+          },
+          {
+            "enchantmentKey": "minecraft:efficiency",
+            "enchantmentLevel": -1,
+            "maxEnchantmentLevel": 3
+          }
+        ]
+      },
+      "request": {
+        "itemKey": "minecraft:emerald",
+        "amount": 7
+      },
+      "tradeExp": 11,
+      "maxUses": 5,
+      "priceMultiplier": 0.05,
+      "demand": 6,
+      "tradeLevel": 4
+    },
+    {
+      "offer": {
+        "itemKey": "minecraft:diamond_pickaxe",
+        "amount": 1,
+       "enchantments": [
+          {
+            "enchantmentKey": "minecraft:unbreaking",
+            "enchantmentLevel": -1,
+            "maxEnchantmentLevel": 3
+          },
+          {
+            "enchantmentKey": "minecraft:efficiency",
+            "enchantmentLevel": -1,
+            "maxEnchantmentLevel": 3
+          }
+        ]
+       },
+      "request": {
+        "itemKey": "minecraft:emerald",
+        "amount": 17
+      },
+      "tradeExp": 11,
+      "maxUses": 3,
+      "priceMultiplier": 0.05,
+      "demand": 4,
+      "tradeLevel": 5
+    }
+  ]
+}
