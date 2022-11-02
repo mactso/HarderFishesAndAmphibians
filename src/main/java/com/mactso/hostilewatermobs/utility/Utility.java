@@ -7,9 +7,11 @@ import com.mactso.hostilewatermobs.config.MyConfig;
 
 import net.minecraft.ChatFormatting;
 import net.minecraft.core.BlockPos;
+import net.minecraft.core.Holder;
 import net.minecraft.network.chat.TextComponent;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.server.level.ServerLevel;
+import net.minecraft.tags.BiomeTags;
 import net.minecraft.world.effect.MobEffect;
 import net.minecraft.world.effect.MobEffectInstance;
 import net.minecraft.world.entity.EntityType;
@@ -19,6 +21,7 @@ import net.minecraft.world.entity.MobSpawnType;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.item.Item;
 import net.minecraft.world.item.Items;
+import net.minecraft.world.level.biome.Biome;
 import net.minecraft.world.level.levelgen.Heightmap.Types;
 import net.minecraftforge.registries.ForgeRegistries;
 
@@ -26,6 +29,30 @@ public class Utility {
 	
 	final static int TWO_SECONDS = 40;
 	private static final Logger LOGGER = LogManager.getLogger();
+	
+	public static String NONE = "none";
+	public static String BEACH = "beach";
+	public static String BADLANDS = "badlands";
+	public static String DESERT = "desert";
+	public static String EXTREME_HILLS = "extreme_hills";
+	public static String ICY = "icy";
+	public static String JUNGLE = "jungle";
+	public static String THEEND = "the_end";
+	public static String FOREST = "forest";
+	public static String MESA = "mesa";
+	public static String MUSHROOM = "mushroom";
+	public static String MOUNTAIN = "mountain";
+	public static String NETHER = "nether";
+	public static String OCEAN = "ocean";
+	public static String PLAINS = "plains";
+	public static String RIVER = "river";
+	public static String SAVANNA = "savanna";
+	public static String SWAMP = "swamp";
+	public static String TAIGA = "taiga";
+	public static String UNDERGROUND = "underground";
+	
+	
+	
 	
 	public static void debugMsg (int level, String dMsg) {
 
@@ -43,6 +70,9 @@ public class Utility {
 		
 	}
 
+	
+	
+	
 	public static void sendBoldChat(Player p, String chatMessage, ChatFormatting textColor) {
 
 		TextComponent component = new TextComponent (chatMessage);
@@ -60,6 +90,9 @@ public class Utility {
 		p.sendMessage(component, p.getUUID());
 
 	}
+	
+	
+	
 	
 	public static void updateEffect(LivingEntity e, int amplifier,  MobEffect mobEffect, int duration) {
 		MobEffectInstance ei = e.getEffect(mobEffect);
@@ -121,6 +154,48 @@ public class Utility {
 	public static boolean isOutside(BlockPos pos, ServerLevel serverLevel) {
 		return serverLevel.getHeightmapPos(Types.MOTION_BLOCKING_NO_LEAVES, pos) == pos;
 	}
+
+	
+	public static String getBiomeCategory(Holder<Biome> testBiome) {
+		
+	if (testBiome.is(BiomeTags.HAS_VILLAGE_DESERT))
+		return Utility.DESERT;
+	if (testBiome.is(BiomeTags.IS_FOREST))
+		return Utility.FOREST;
+	if (testBiome.is(BiomeTags.IS_BEACH))
+		return Utility.BEACH;
+	if (testBiome.is(BiomeTags.HAS_VILLAGE_SNOWY))
+		return Utility.ICY;		
+	if (testBiome.is(BiomeTags.IS_JUNGLE))
+		return Utility.JUNGLE;		
+	if (testBiome.is(BiomeTags.IS_OCEAN))
+		return Utility.OCEAN;		
+	if (testBiome.is(BiomeTags.IS_DEEP_OCEAN))
+		return Utility.OCEAN;		
+	if (testBiome.is(BiomeTags.HAS_VILLAGE_PLAINS))
+		return Utility.PLAINS;		
+	if (testBiome.is(BiomeTags.IS_RIVER))
+		return Utility.RIVER;		
+	if (testBiome.is(BiomeTags.HAS_VILLAGE_SAVANNA))
+		return Utility.SAVANNA;		
+	if (testBiome.is(BiomeTags.HAS_SWAMP_HUT))
+		return Utility.SWAMP;		
+	if (testBiome.is(BiomeTags.HAS_RUINED_PORTAL_SWAMP))
+		return Utility.SWAMP;		
+	if (testBiome.is(BiomeTags.IS_TAIGA))
+		return Utility.TAIGA;		
+	if (testBiome.is(BiomeTags.IS_BADLANDS))
+		return Utility.BADLANDS;		
+	if (testBiome.is(BiomeTags.IS_MOUNTAIN))
+		return Utility.EXTREME_HILLS;		
+	if (testBiome.is(BiomeTags.IS_NETHER))
+		return Utility.NETHER;		
+	
+	return NONE;
+
+}
+	
+	
 	
 	public static Item getItemFromString (String name)
 	{

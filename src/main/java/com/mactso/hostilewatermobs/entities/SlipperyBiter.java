@@ -159,15 +159,14 @@ public class SlipperyBiter extends WaterAnimal implements NeutralMob, Enemy {
 			Utility.debugMsg(2, pos, "spawn deep slipperyBiter +9");
 		}
 
-		Biome biome = world.getBiome(pos);
-		BiomeCategory bC = biome.getBiomeCategory();
-		if (bC == BiomeCategory.OCEAN) {
+		String bC = Utility.getBiomeCategory(world.getBiome(pos));
+		if (bC == Utility.OCEAN) {
 			if (world.getMaxLocalRawBrightness(pos) > 13) {
 				return false;
 			}
 		}
 
-		if (bC == BiomeCategory.SWAMP) {
+		if (bC == Utility.SWAMP) {
 			slipperyBiterSpawnChance += 7;
 			slipperyBiterCap += 3;
 			Utility.debugMsg(2, pos, "Swamp Slippery Biter Spawn Attempt.");
@@ -457,11 +456,9 @@ public class SlipperyBiter extends WaterAnimal implements NeutralMob, Enemy {
 
 			// 1 to ~500
 			int distanceSq = (int) entity.distanceToSqr(this.parentEntity);
-			Biome biome = w.getBiome(this.parentEntity.blockPosition());
-			BiomeCategory bC = biome.getBiomeCategory();
-
+			String bC = Utility.getBiomeCategory(w.getBiome(this.parentEntity.blockPosition()));
 			// a little less aggressive in swamps
-			if ((bC == BiomeCategory.SWAMP) && (distanceSq > 255)) {
+			if ((bC == Utility.SWAMP) && (distanceSq > 255)) {
 				if (aa % 3 == 0) {
 					w.playSound((Player) entity, entity.blockPosition(), ModSounds.SLIPPERY_BITER_AMBIENT,
 							SoundSource.HOSTILE, 1.0f, 1.0f);

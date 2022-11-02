@@ -11,6 +11,7 @@ import com.mactso.hostilewatermobs.sound.ModSounds;
 import com.mactso.hostilewatermobs.utility.Utility;
 
 import net.minecraft.core.BlockPos;
+import net.minecraft.core.Holder;
 import net.minecraft.core.Registry;
 import net.minecraft.nbt.CompoundTag;
 import net.minecraft.network.syncher.EntityDataAccessor;
@@ -82,10 +83,11 @@ public class RiverGuardian extends Guardian implements Enemy {
 		if (MyConfig.getDebugLevel() > 0) {
 			System.out.println ("riverguardian on intialspawn at " + pos.toString());
 		}
-		Biome biome = worldIn.getBiome(pos);
-		ResourceLocation biomeNameResourceKey = worldIn.registryAccess().registryOrThrow(Registry.BIOME_REGISTRY).getKey(biome);
-		String biomename = biomeNameResourceKey.toString();
-		ResourceKey<Biome> biomeKey = ResourceKey.create(Registry.BIOME_REGISTRY, biomeNameResourceKey);
+		Holder<Biome> biomeHolder = worldIn.getBiome(pos);
+		Biome biome = biomeHolder.value();
+//		ResourceLocation biomeNameResourceKey = worldIn.registryAccess().registryOrThrow(Registry.BIOME_REGISTRY).getKey(biome);
+//		String biomename = biomeNameResourceKey.toString();
+//		ResourceKey<Biome> biomeKey = ResourceKey.create(Registry.BIOME_REGISTRY, biomeNameResourceKey);
 		
 		int workingSubType = DEFAULT_RIVER_GUARDIAN;
 		if (MyConfig.getDebugLevel() > 0) {
@@ -100,10 +102,7 @@ public class RiverGuardian extends Guardian implements Enemy {
 //				|| biomename.contains("ice_spikes") || biomename.contains("snowy")
 //				|| biome.doesSnowGenerate(worldIn, pos) || BiomeDictionary.hasType(biomeKey, BiomeDictionary.Type.COLD);
 
-		if (BiomeDictionary.hasType(biomeKey, BiomeDictionary.Type.COLD)) {
-			if (MyConfig.getDebugLevel() > 0) {
-				System.out.println("cold");
-			}
+		if (biome.coldEnoughToSnow(pos)) {
 			workingSubType = COLD_RIVER_GUARDIAN;
 			if (pos.getY() < 29) {
 				if (MyConfig.getDebugLevel() > 0) {
@@ -117,7 +116,7 @@ public class RiverGuardian extends Guardian implements Enemy {
 //		isWarm = (biomename.contains("warm") && !(biomename.contains("lukewarm"))) || biomename.contains("swamp")
 //				|| biomename.contains("jungle") || biomename.contains("desert") || tC == TempCategory.WARM;
 
-		if (BiomeDictionary.hasType(biomeKey, BiomeDictionary.Type.HOT)) {
+		if (!biome.isHumid() && biome.warmEnoughToRain(pos)) {
 			workingSubType = WARM_RIVER_GUARDIAN;
 			if (MyConfig.getDebugLevel() > 0) {
 				System.out.println("warm");
@@ -164,14 +163,14 @@ public class RiverGuardian extends Guardian implements Enemy {
 				.add(Attributes.MAX_HEALTH, 11.0D);
 	}
 
-	public static boolean canSpawn(EntityType<? extends RiverGuardian> type, LevelAccessor world, MobSpawnType reason,
+	public static boolean canSpawn(EntityType<? extends RiverGuardian> type, LevelAccessor level, MobSpawnType reason,
 			BlockPos pos, Random randomIn) {
 
-		if (world.isClientSide()) {
+		if (level.isClientSide()) {
 			return false;
 		}
 
-		ServerLevel sl = (ServerLevel)world;
+		ServerLevel sl = (ServerLevel)level;
 		
 		if (sl.getDifficulty() == Difficulty.PEACEFUL)
 			return false;
@@ -188,7 +187,7 @@ public class RiverGuardian extends Guardian implements Enemy {
 		if (reason == MobSpawnType.SPAWNER)
 			return true;
 
-		boolean isDark = world.getMaxLocalRawBrightness(pos) < 9;
+		boolean isDark = level.getMaxLocalRawBrightness(pos) < 9;
 		boolean isDeep = pos.getY() < 30;
 		if (isDeep && !isDark) {
 			return false;
@@ -202,16 +201,17 @@ public class RiverGuardian extends Guardian implements Enemy {
 			riverGuardianCap += 6;
 		}
 
-		Biome biome = world.getBiome(pos);
-		BiomeCategory bC = biome.getBiomeCategory();
-		if ((bC == BiomeCategory.OCEAN) && (pos.getY() > 35) ) 
+		
+		String bC = Utility.getBiomeCategory(level.getBiome(pos));			
+
+		if ((bC == Utility.OCEAN) && (pos.getY() > 35) ) 
 			return false;
 
-		if (bC == BiomeCategory.SWAMP) {
+		if (bC == Utility.SWAMP) {
 			riverGuardianCap += 7;
 		}
 
-		if (bC == BiomeCategory.RIVER) {
+		if (bC == Utility.RIVER) {
 			riverGuardianCap += 9;
 		}
 
@@ -414,11 +414,12 @@ public class RiverGuardian extends Guardian implements Enemy {
 			huntingRange = huntingRange + ((10 - lightLevel) * 10);
 			// more aggressive in some biomes
 
-			BiomeCategory bC = entity.level.getBiome(entity.blockPosition()).getBiomeCategory();
-			if (bC == BiomeCategory.OCEAN) {
+			String bC = Utility.getBiomeCategory(entity.level.getBiome(entity.blockPosition()));			
+
+			if (bC == Utility.OCEAN) {
 				huntingRange += 49;
 			}
-			if (bC == BiomeCategory.SWAMP) {
+			if (bC == Utility.SWAMP) {
 				huntingRange += 49;
 			}
 			

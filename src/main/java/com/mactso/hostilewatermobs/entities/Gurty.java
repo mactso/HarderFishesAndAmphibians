@@ -70,8 +70,6 @@ import net.minecraft.world.level.Level;
 import net.minecraft.world.level.LevelAccessor;
 import net.minecraft.world.level.LevelReader;
 import net.minecraft.world.level.ServerLevelAccessor;
-import net.minecraft.world.level.biome.Biome;
-import net.minecraft.world.level.biome.Biome.BiomeCategory;
 import net.minecraft.world.level.block.Block;
 import net.minecraft.world.level.block.Blocks;
 import net.minecraft.world.level.block.state.BlockState;
@@ -496,12 +494,13 @@ public class Gurty extends PathfinderMob implements NeutralMob,Enemy {
 			return true;
 		}
 
-		Biome biome = w.getBiome(pos);
-		BiomeCategory bC = biome.getBiomeCategory();
-		if (bC == BiomeCategory.DESERT || bC == BiomeCategory.NETHER 
-				|| bC == BiomeCategory.MUSHROOM 
-				|| bC == BiomeCategory.THEEND
-				|| bC == BiomeCategory.SAVANNA) {
+		
+		String bC = Utility.getBiomeCategory(w.getBiome(pos));
+
+		if (bC == Utility.DESERT || bC == Utility.NETHER 
+				|| bC == Utility.MUSHROOM 
+				|| bC == Utility.THEEND
+				|| bC == Utility.SAVANNA) {
 			return false;
 		}
 
@@ -823,9 +822,8 @@ private void removeNest() {
 			}
 
 			// a little less aggressive in swamps
-			Biome biome = w.getBiome(gurtyEntity.blockPosition());
-			BiomeCategory bC = biome.getBiomeCategory();			
-			if ((bC == BiomeCategory.SWAMP)) {
+			String bC = Utility.getBiomeCategory(w.getBiome(gurtyEntity.blockPosition()));
+			if ((bC == Utility.SWAMP)) {
 				dstToEntitySq += 64;
 			}
 			
@@ -883,7 +881,7 @@ private void removeNest() {
 			this.move(MoverType.SELF, this.getDeltaMovement());
 			this.setDeltaMovement(this.getDeltaMovement().scale(0.9D));
 			if (this.getTarget() == null
-					&& (!this.isGoingNest() || !this.getNestPos().closerThan(this.position(), 20.0D))) {
+					&& (!this.isGoingNest() || !this.getNestPos().closerToCenterThan(this.position(), 20.0D))) {
 				this.setDeltaMovement(this.getDeltaMovement().add(0.0D, -0.005D, 0.0D));
 			}
 		} else {
@@ -905,7 +903,7 @@ private void removeNest() {
 		private void updateSpeed() {
 			if (gurty.isInWater()) {
 				gurty.setDeltaMovement(this.gurty.getDeltaMovement().add(0.0D, 0.005D, 0.0D));
-				if (!gurty.getNestPos().closerThan(gurty.position(), 16.0D)) {
+				if (!gurty.getNestPos().closerToCenterThan(gurty.position(), 16.0D)) {
 					gurty.setSpeed(Math.max(gurty.getSpeed() / 2.0F, 0.11F));
 				}
 			} else if (gurty.onGround) {
@@ -1042,7 +1040,7 @@ private void removeNest() {
 			if (gurty.isNestingTime()) {
 				return true;
 			}
-			if (!gurty.getNestPos().closerThan(gurty.position(), 64.0D)) {
+			if (!gurty.getNestPos().closerToCenterThan(gurty.position(), 64.0D)) {
 				return true;
 			}
 			return false;
@@ -1075,7 +1073,7 @@ private void removeNest() {
 			if (timer > 400) {
 				return false;
 			}
-			return !gurty.getNestPos().closerThan(gurty.position(), 5.0D);
+			return !gurty.getNestPos().closerToCenterThan(gurty.position(), 5.0D);
 		}
 
 		/**
@@ -1083,7 +1081,7 @@ private void removeNest() {
 		 */
 		public void tick() {
 			BlockPos blockpos = gurty.getNestPos();
-			boolean isNearNest = blockpos.closerThan(gurty.position(), 16.0D);
+			boolean isNearNest = blockpos.closerToCenterThan(gurty.position(), 16.0D);
 			if (isNearNest) {
 				++this.timer;
 			}

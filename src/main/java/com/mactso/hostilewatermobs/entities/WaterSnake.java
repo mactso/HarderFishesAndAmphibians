@@ -70,7 +70,6 @@ import net.minecraft.world.level.LevelAccessor;
 import net.minecraft.world.level.LevelReader;
 import net.minecraft.world.level.ServerLevelAccessor;
 import net.minecraft.world.level.biome.Biome;
-import net.minecraft.world.level.biome.Biome.BiomeCategory;
 import net.minecraft.world.level.block.Blocks;
 import net.minecraft.world.level.block.state.BlockState;
 import net.minecraft.world.level.pathfinder.AmphibiousNodeEvaluator;
@@ -151,7 +150,7 @@ public class WaterSnake extends WaterAnimal implements Enemy, RangedAttackMob {
 		 */
 		public void tick() {
 			BlockPos blockpos = watersnake.getNestPos();
-			boolean isNearNest = blockpos.closerThan(watersnake.position(), 16.0D);
+			boolean isNearNest = blockpos.closerToCenterThan(watersnake.position(), 16.0D);
 			if (isNearNest) {
 				++this.timer;
 			}
@@ -203,7 +202,7 @@ public class WaterSnake extends WaterAnimal implements Enemy, RangedAttackMob {
 			if (timer > 400) {
 				return false;
 			}
-			return !watersnake.getNestPos().closerThan(watersnake.position(), 5.0D);
+			return !watersnake.getNestPos().closerToCenterThan(watersnake.position(), 5.0D);
 		}
 
 		/**
@@ -214,7 +213,7 @@ public class WaterSnake extends WaterAnimal implements Enemy, RangedAttackMob {
 			if (watersnake.isNestingTime()) {
 				return true;
 			}
-			if (!watersnake.getNestPos().closerThan(watersnake.position(), 64.0D)) {
+			if (!watersnake.getNestPos().closerToCenterThan(watersnake.position(), 64.0D)) {
 				return true;
 			}
 			return false;
@@ -242,7 +241,7 @@ public class WaterSnake extends WaterAnimal implements Enemy, RangedAttackMob {
 		 */
 		public void tick() {
 			BlockPos blockpos = watersnake.getNestPos();
-			boolean isNearNest = blockpos.closerThan(watersnake.position(), 16.0D);
+			boolean isNearNest = blockpos.closerToCenterThan(watersnake.position(), 16.0D);
 
 			if (watersnake.getCommandSenderWorld().getGameTime() % 20 == 0) {
 				Utility.debugMsg(1, watersnake.blockPosition(), "Tick GoToNest at " + watersnake.getNestPos());
@@ -390,7 +389,7 @@ public class WaterSnake extends WaterAnimal implements Enemy, RangedAttackMob {
 		private void updateSpeed() {
 			if (watersnake.isInWater()) {
 				watersnake.setDeltaMovement(this.watersnake.getDeltaMovement().add(0.0D, 0.005D, 0.0D));
-				if (!watersnake.getNestPos().closerThan(watersnake.position(), 16.0D)) {
+				if (!watersnake.getNestPos().closerToCenterThan(watersnake.position(), 16.0D)) {
 					watersnake.setSpeed(Math.max(watersnake.getSpeed() / 2.0F, 0.11F));
 				}
 			} else if (watersnake.onGround) {
@@ -573,9 +572,8 @@ public class WaterSnake extends WaterAnimal implements Enemy, RangedAttackMob {
 			}
 
 			// a little less aggressive in swamps
-			Biome biome = w.getBiome(waterSnakeEntity.blockPosition());
-			BiomeCategory bC = biome.getBiomeCategory();
-			if ((bC == BiomeCategory.SWAMP)) {
+			String bC = Utility.getBiomeCategory(w.getBiome(waterSnakeEntity.blockPosition()));			
+			if ((bC == Utility.SWAMP)) {
 				dstToEntitySq += 64;
 			}
 
@@ -780,14 +778,14 @@ public class WaterSnake extends WaterAnimal implements Enemy, RangedAttackMob {
 		int watersnakeSpawnCap = MyConfig.getWatersnakeSpawnCap();
 		int watersnakeSpawnRoll = randomIn.nextInt(30);
 
-		Biome biome = w.getBiome(pos);
-		BiomeCategory bC = biome.getBiomeCategory();
-		if ((bC == BiomeCategory.OCEAN) || (bC == BiomeCategory.RIVER) || (bC == BiomeCategory.SWAMP)
-				|| (bC == BiomeCategory.BEACH)) {
+		String bC = Utility.getBiomeCategory(w.getBiome(pos));			
+
+		if ((bC == Utility.OCEAN) || (bC == Utility.RIVER) || (bC == Utility.SWAMP)
+				|| (bC == Utility.BEACH)) {
 			watersnakeSpawnChance += 7;
 		}
 
-		if ((bC == BiomeCategory.SWAMP) || (bC == BiomeCategory.BEACH)) {
+		if ((bC == Utility.SWAMP) || (bC == Utility.BEACH)) {
 			watersnakeSpawnCap += 7;
 		}
 
@@ -1377,7 +1375,7 @@ public class WaterSnake extends WaterAnimal implements Enemy, RangedAttackMob {
 			this.move(MoverType.SELF, this.getDeltaMovement());
 			this.setDeltaMovement(this.getDeltaMovement().scale(0.9D));
 			if (this.getTarget() == null
-					&& (!this.isGoingNest() || !this.getNestPos().closerThan(this.position(), 20.0D))) {
+					&& (!this.isGoingNest() || !this.getNestPos().closerToCenterThan(this.position(), 20.0D))) {
 				this.setDeltaMovement(this.getDeltaMovement().add(0.0D, -0.005D, 0.0D));
 			}
 		} else {
