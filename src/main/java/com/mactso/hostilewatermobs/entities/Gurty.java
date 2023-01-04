@@ -1,7 +1,6 @@
 package com.mactso.hostilewatermobs.entities;
 
 import java.util.List;
-import java.util.Random;
 import java.util.UUID;
 import java.util.function.Predicate;
 
@@ -26,6 +25,7 @@ import net.minecraft.sounds.SoundEvents;
 import net.minecraft.sounds.SoundSource;
 import net.minecraft.tags.FluidTags;
 import net.minecraft.util.Mth;
+import net.minecraft.util.RandomSource;
 import net.minecraft.util.TimeUtil;
 import net.minecraft.util.valueproviders.UniformInt;
 import net.minecraft.world.Difficulty;
@@ -405,11 +405,11 @@ public class Gurty extends PathfinderMob implements NeutralMob,Enemy {
 
 	@Override
 	public boolean canBeAffected(MobEffectInstance potioneffectIn) {
-		net.minecraftforge.event.entity.living.PotionEvent.PotionApplicableEvent event = new net.minecraftforge.event.entity.living.PotionEvent.PotionApplicableEvent(
-				this, potioneffectIn);
-		net.minecraftforge.common.MinecraftForge.EVENT_BUS.post(event);
-		if (event.getResult() != net.minecraftforge.eventbus.api.Event.Result.DEFAULT)
-			return event.getResult() == net.minecraftforge.eventbus.api.Event.Result.ALLOW;
+//		net.minecraftforge.event.entity.living.PotionEvent.PotionApplicableEvent event = new net.minecraftforge.event.entity.living.PotionEvent.PotionApplicableEvent(
+//				this, potioneffectIn);
+//		net.minecraftforge.common.MinecraftForge.EVENT_BUS.post(event);
+//		if (event.getResult() != net.minecraftforge.eventbus.api.Event.Result.DEFAULT)
+//			return event.getResult() == net.minecraftforge.eventbus.api.Event.Result.ALLOW;
 
 		MobEffect effect = potioneffectIn.getEffect();
 		if (effect == MobEffects.POISON) {
@@ -439,7 +439,7 @@ public class Gurty extends PathfinderMob implements NeutralMob,Enemy {
 	@Nullable
 	private static Vec3 findSolidBlock(EntityType<? extends Gurty> gurtyIn, LevelAccessor world, BlockPos blockPos,
 			int maxXZ, int maxY) {
-		Random rand = world.getRandom();
+		RandomSource rand = world.getRandom();
 		for (int i = 0; i < 12; ++i) {
 			int xD = rand.nextInt(maxXZ + maxXZ) - maxXZ;
 			int zD = rand.nextInt(maxXZ + maxXZ) - maxXZ;
@@ -454,8 +454,8 @@ public class Gurty extends PathfinderMob implements NeutralMob,Enemy {
 	}
 
 
-	public static boolean canSpawn(EntityType<? extends Gurty> gurtyIn, LevelAccessor worldIn, MobSpawnType reason,
-			BlockPos pos, Random randomIn) {
+	public static boolean checkMonsterSpawnRules(EntityType<? extends Gurty> gurtyIn, LevelAccessor worldIn, MobSpawnType reason,
+			BlockPos pos, RandomSource randomIn) {
 
 		if (worldIn.isClientSide()) 
 			return false;
@@ -782,7 +782,7 @@ private void removeNest() {
 				}
 			}
 
-			boolean validTarget = false;
+
 			// gurty's always take revenge on their attackers, regardless of any other condition
 			if (gurtyEntity.getTarget() != null) {
 				if (entity == this.gurtyEntity.getKillCredit()) {
@@ -1176,7 +1176,7 @@ private void removeNest() {
 		 * Execute a one shot task or start executing a continuous task
 		 */
 		public void start() {
-			Random random = gurty.random;
+			RandomSource random = gurty.random;
 			int k = random.nextInt(128) - 64;
 			int l = random.nextInt(9) - 4;
 			int i1 = random.nextInt(128) - 64;

@@ -1,7 +1,6 @@
 package com.mactso.hostilewatermobs.entities;
 
 import java.util.List;
-import java.util.Random;
 import java.util.UUID;
 import java.util.function.Predicate;
 
@@ -25,6 +24,7 @@ import net.minecraft.sounds.SoundEvents;
 import net.minecraft.sounds.SoundSource;
 import net.minecraft.tags.FluidTags;
 import net.minecraft.util.Mth;
+import net.minecraft.util.RandomSource;
 import net.minecraft.util.TimeUtil;
 import net.minecraft.util.valueproviders.UniformInt;
 import net.minecraft.world.Difficulty;
@@ -64,8 +64,6 @@ import net.minecraft.world.level.Level;
 import net.minecraft.world.level.LevelAccessor;
 import net.minecraft.world.level.LevelReader;
 import net.minecraft.world.level.ServerLevelAccessor;
-import net.minecraft.world.level.biome.Biome;
-import net.minecraft.world.level.biome.Biome.BiomeCategory;
 import net.minecraft.world.level.block.Blocks;
 import net.minecraft.world.level.pathfinder.BlockPathTypes;
 import net.minecraft.world.phys.AABB;
@@ -117,8 +115,8 @@ public class SlipperyBiter extends WaterAnimal implements NeutralMob, Enemy {
 		return world.getBlockState(pos).is(Blocks.BUBBLE_COLUMN);
 	}
 
-	public static boolean canSpawn(EntityType<? extends SlipperyBiter> type, LevelAccessor world, MobSpawnType reason,
-			BlockPos pos, Random randomIn) {
+	public static boolean checkMonsterSpawnRules(EntityType<? extends SlipperyBiter> type, LevelAccessor world, MobSpawnType reason,
+			BlockPos pos, RandomSource randomIn) {
 	
 		if (world.getDifficulty() == Difficulty.PEACEFUL)
 			return false;
@@ -161,6 +159,9 @@ public class SlipperyBiter extends WaterAnimal implements NeutralMob, Enemy {
 
 		String bC = Utility.getBiomeCategory(world.getBiome(pos));
 		if (bC == Utility.OCEAN) {
+			if (world.getRandom().nextInt(34) != 0) {
+				return false;
+			}
 			if (world.getMaxLocalRawBrightness(pos) > 13) {
 				return false;
 			}
@@ -182,7 +183,7 @@ public class SlipperyBiter extends WaterAnimal implements NeutralMob, Enemy {
 //		}
 
 		List<SlipperyBiter> listG = world.getEntitiesOfClass(SlipperyBiter.class,
-				new AABB(pos.north(16).west(16).above(8), pos.south(16).east(16).below(8)));
+				new AABB(pos.north(24).west(24).above(24), pos.south(24).east(24).below(8)));
 
 		int localcap = 1;
 		if (!(world.canSeeSkyFromBelowWater(pos))) {

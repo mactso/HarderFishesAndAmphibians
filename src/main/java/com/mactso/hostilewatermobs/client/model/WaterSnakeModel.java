@@ -61,15 +61,15 @@ public class WaterSnakeModel<T extends Entity> extends ListModel<T> {
 
 		PartDefinition neck = body.addOrReplaceChild("neck", CubeListBuilder.create(), PartPose.offsetAndRotation(0.0F, -0.5F, 5.5F, 0.0F, -0.1309F, 0.0F));
 
-		PartDefinition bodyfront = neck.addOrReplaceChild("bodyfront", CubeListBuilder.create().texOffs(19, 25).addBox(-1.5F, -1.5F, -11.0F, 3.0F, 3.0F, 12.0F, new CubeDeformation(0.0F)), PartPose.offsetAndRotation(-1.0F, -2.225F, -1.675F, -0.5236F, 0.0F, 0.0F));
+		neck.addOrReplaceChild("bodyfront", CubeListBuilder.create().texOffs(19, 25).addBox(-1.5F, -1.5F, -11.0F, 3.0F, 3.0F, 12.0F, new CubeDeformation(0.0F)), PartPose.offsetAndRotation(-1.0F, -2.225F, -1.675F, -0.5236F, 0.0F, 0.0F));
 
 		PartDefinition head = neck.addOrReplaceChild("head", CubeListBuilder.create().texOffs(26, 0).addBox(-3.5F, -7.6388F, -12.4474F, 6.0F, 2.0F, 9.0F, new CubeDeformation(0.0F))
 		.texOffs(5, 3).addBox(-3.0F, -8.3837F, -7.7723F, 1.0F, 1.0F, 1.0F, new CubeDeformation(0.0F))
 		.texOffs(5, 0).addBox(1.0F, -8.3837F, -7.7723F, 1.0F, 1.0F, 1.0F, new CubeDeformation(0.0F)), PartPose.offsetAndRotation(-0.5F, -2.9667F, -4.25F, 0.3491F, 0.0F, 0.0F));
 
-		PartDefinition rightcheek = head.addOrReplaceChild("rightcheek", CubeListBuilder.create().texOffs(38, 23).addBox(-2.4324F, -1.0F, -4.886F, 4.0F, 2.0F, 9.0F, new CubeDeformation(0.0F)), PartPose.offsetAndRotation(-2.5F, -6.5448F, -7.9816F, 0.0F, -0.3054F, 0.0F));
+		head.addOrReplaceChild("rightcheek", CubeListBuilder.create().texOffs(38, 23).addBox(-2.4324F, -1.0F, -4.886F, 4.0F, 2.0F, 9.0F, new CubeDeformation(0.0F)), PartPose.offsetAndRotation(-2.5F, -6.5448F, -7.9816F, 0.0F, -0.3054F, 0.0F));
 
-		PartDefinition leftcheek = head.addOrReplaceChild("leftcheek", CubeListBuilder.create().texOffs(27, 41).addBox(1.0537F, -7.6115F, -10.1809F, 4.0F, 2.0F, 9.0F, new CubeDeformation(0.0F)), PartPose.offsetAndRotation(0.5F, 0.0667F, -2.0F, 0.0F, 0.3054F, 0.0F));
+		head.addOrReplaceChild("leftcheek", CubeListBuilder.create().texOffs(27, 41).addBox(1.0537F, -7.6115F, -10.1809F, 4.0F, 2.0F, 9.0F, new CubeDeformation(0.0F)), PartPose.offsetAndRotation(0.5F, 0.0667F, -2.0F, 0.0F, 0.3054F, 0.0F));
 
 		PartDefinition jaw = head.addOrReplaceChild("jaw", CubeListBuilder.create().texOffs(32, 12).addBox(-3.0F, -1.5F, -7.5F, 6.0F, 1.0F, 9.0F, new CubeDeformation(0.0F)), PartPose.offsetAndRotation(-0.5F, -4.6992F, -4.9392F, 0.1745F, 0.0F, 0.0F));
 
@@ -78,11 +78,11 @@ public class WaterSnakeModel<T extends Entity> extends ListModel<T> {
 
 		PartDefinition tail = body.addOrReplaceChild("tail", CubeListBuilder.create(), PartPose.offsetAndRotation(0.5F, -1.5F, 18.25F, -0.0436F, -0.0873F, 0.0F));
 
-		PartDefinition tailbox = tail.addOrReplaceChild("tailbox", CubeListBuilder.create().texOffs(0, 21).addBox(-2.5F, -2.5F, -0.6F, 3.0F, 3.0F, 12.0F, new CubeDeformation(0.0F)), PartPose.offsetAndRotation(-0.5F, 0.0F, 0.0F, 0.48F, 0.0F, 0.0F));
+		tail.addOrReplaceChild("tailbox", CubeListBuilder.create().texOffs(0, 21).addBox(-2.5F, -2.5F, -0.6F, 3.0F, 3.0F, 12.0F, new CubeDeformation(0.0F)), PartPose.offsetAndRotation(-0.5F, 0.0F, 0.0F, 0.48F, 0.0F, 0.0F));
 
 		PartDefinition tailtip = tail.addOrReplaceChild("tailtip", CubeListBuilder.create(), PartPose.offset(-1.3459F, -5.6956F, 7.9451F));
 
-		PartDefinition tailtipbox = tailtip.addOrReplaceChild("tailtipbox", CubeListBuilder.create().texOffs(0, 37).addBox(-0.6673F, 0.0765F, 0.0767F, 1.0F, 1.0F, 12.0F, new CubeDeformation(0.0F)), PartPose.offsetAndRotation(0.0F, 0.0F, 0.0F, 0.6981F, 0.2182F, 0.0F));
+		tailtip.addOrReplaceChild("tailtipbox", CubeListBuilder.create().texOffs(0, 37).addBox(-0.6673F, 0.0765F, 0.0767F, 1.0F, 1.0F, 12.0F, new CubeDeformation(0.0F)), PartPose.offsetAndRotation(0.0F, 0.0F, 0.0F, 0.6981F, 0.2182F, 0.0F));
 
 		return LayerDefinition.create(meshdefinition, 64, 64);
 	}

@@ -9,9 +9,6 @@ import org.apache.logging.log4j.Logger;
 import com.mactso.hostilewatermobs.Main;
 import com.mactso.hostilewatermobs.utility.Utility;
 
-import net.minecraft.network.chat.TextColor;
-import net.minecraft.network.chat.TextComponent;
-import net.minecraft.world.entity.player.Player;
 import net.minecraftforge.common.ForgeConfigSpec;
 import net.minecraftforge.common.ForgeConfigSpec.BooleanValue;
 import net.minecraftforge.common.ForgeConfigSpec.IntValue;
@@ -406,23 +403,7 @@ public class MyConfig {
 			
 		}
 	}
-	
-	// support for any color chattext
-	public static void sendChat(Player p, String chatMessage, TextColor color) {
-		TextComponent component = new TextComponent (chatMessage);
-		component.getStyle().withColor(color);
-		p.sendMessage(component, p.getUUID());
-	}
-	
-	// support for any color, optionally bold text.
-	public static void sendBoldChat(Player p, String chatMessage, TextColor color) {
-		TextComponent component = new TextComponent (chatMessage);
 
-		component.getStyle().withBold(true);
-		component.getStyle().withColor(color);
-		
-		p.sendMessage(component, p.getUUID());
-	}
 	
 }
 

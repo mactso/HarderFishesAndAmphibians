@@ -23,7 +23,8 @@ import net.minecraft.resources.ResourceLocation;
 public class HostileWaterMobsRecipe extends ShapelessRecipe {
 	protected final String operation;
 	private final boolean copyDamage;
-	public static final Serializer CRAFTING_HOSTILEWATERMOBS = (Serializer) new Serializer().setRegistryName(Serializer.NAME);
+	public static final Serializer SERIALIZER = new Serializer();
+	public static final ResourceLocation NAME = new ResourceLocation(Main.MODID, "crafting_shapeless");
 
 	public HostileWaterMobsRecipe(ResourceLocation idIn, String groupIn, ItemStack recipeOutputIn,
 			NonNullList<Ingredient> recipeItemsIn, String operationIn) {
@@ -45,7 +46,7 @@ public class HostileWaterMobsRecipe extends ShapelessRecipe {
 
 	@Override
 	public RecipeSerializer<?> getSerializer() {
-		return CRAFTING_HOSTILEWATERMOBS;
+		return SERIALIZER;
 	}
 
 	@Override

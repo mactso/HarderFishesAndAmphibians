@@ -18,6 +18,7 @@
     "item.hostilewatermobs.slipperybiter_scales": "Slippery Biter Scales",
     "item.hostilewatermobs.slipperybiter_gland": "Slippery Biter Gland",
 	"item.hostilewatermobs.slipperybiter_spawn_egg": "Slippery Biter Spawn Egg",	
+	"entity.hostilewatermobs.watersnake" : "Water Snake",
     "subtitles.watersnake.hurt" : "Water Snake hurt",
 	"subtitles.watersnake.land_hurt" : "Water Snake hurt on land",
 	"subtitles.watersnake.death": "Water Snake dies",

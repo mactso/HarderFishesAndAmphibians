@@ -12,11 +12,11 @@ import net.minecraftforge.registries.IForgeRegistry;
 
 public class ModBlocks
 {
-	public static final Block NEST_BLOCK = new NestBlock(Properties.of(Material.GRASS).noCollission().instabreak().sound(SoundType.GRASS)).setRegistryName("nest_block");
+	public static final Block NEST_BLOCK = new NestBlock(Properties.of(Material.GRASS).noCollission().instabreak().sound(SoundType.GRASS));
 
 	public static void register(IForgeRegistry<Block> forgeRegistry	)
 	{
-		forgeRegistry.register(NEST_BLOCK);
+		forgeRegistry.register("nest_block",NEST_BLOCK);
 	}
 	
 	@OnlyIn(Dist.CLIENT)

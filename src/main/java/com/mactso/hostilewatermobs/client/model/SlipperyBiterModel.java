@@ -36,7 +36,7 @@ public class SlipperyBiterModel<T extends Entity> extends ListModel<T> {
 
 	private final ModelPart fin_left;
 	private final ModelPart fin_right;
-//	private final ModelPart tail;
+	private final ModelPart tail;
 	
 	public SlipperyBiterModel(ModelPart root) {
 
@@ -49,7 +49,7 @@ public class SlipperyBiterModel<T extends Entity> extends ListModel<T> {
 
 		body_rear = root.getChild("body_rear");
 		fin_back_2 = body_rear.getChild("fin_back_2");
-//		tail = body_rear.getChild("tail");
+		tail = body_rear.getChild("tail");
 		
 		
 	}
@@ -62,21 +62,21 @@ public class SlipperyBiterModel<T extends Entity> extends ListModel<T> {
 
 		PartDefinition body_front = partdefinition.addOrReplaceChild("body_front", CubeListBuilder.create().texOffs(0, 0).addBox(-1.5F, -2.5F, 0.0F, 3.0F, 5.0F, 8.0F, new CubeDeformation(0.0F)), PartPose.offset(0.0F, 18.0F, -4.0F));
 
-		PartDefinition fin_back_1 = body_front.addOrReplaceChild("fin_back_1", CubeListBuilder.create().texOffs(4, 2).addBox(0.0F, 0.0F, 1.0F, 0.0F, 2.0F, 2.0F, new CubeDeformation(0.0F)), PartPose.offset(0.0F, -4.5F, 5.0F));
+		body_front.addOrReplaceChild("fin_back_1", CubeListBuilder.create().texOffs(4, 2).addBox(0.0F, 0.0F, 1.0F, 0.0F, 2.0F, 2.0F, new CubeDeformation(0.0F)), PartPose.offset(0.0F, -4.5F, 5.0F));
 
 		PartDefinition fin_left = body_front.addOrReplaceChild("fin_left", CubeListBuilder.create(), PartPose.offsetAndRotation(-1.5F, 1.5F, 0.0F, -1.5708F, 0.0F, -0.7854F));
 
-		PartDefinition fin_left_r1 = fin_left.addOrReplaceChild("fin_left_r1", CubeListBuilder.create().texOffs(0, 0).addBox(-2.0F, -1.0F, 0.0F, 2.0F, 2.0F, 0.0F, new CubeDeformation(0.0F)), PartPose.offsetAndRotation(0.0F, -1.0F, 0.0F, 0.0F, -0.1309F, 0.0F));
+		fin_left.addOrReplaceChild("fin_left_r1", CubeListBuilder.create().texOffs(0, 0).addBox(-2.0F, -1.0F, 0.0F, 2.0F, 2.0F, 0.0F, new CubeDeformation(0.0F)), PartPose.offsetAndRotation(0.0F, -1.0F, 0.0F, 0.0F, -0.1309F, 0.0F));
 
 		PartDefinition fin_right = body_front.addOrReplaceChild("fin_right", CubeListBuilder.create(), PartPose.offsetAndRotation(1.5F, 1.5F, 0.0F, -1.5708F, 0.0F, 0.7854F));
 
-		PartDefinition fine_right_r1 = fin_right.addOrReplaceChild("fine_right_r1", CubeListBuilder.create().texOffs(4, 0).addBox(0.0F, -1.0F, 0.0F, 2.0F, 2.0F, 0.0F, new CubeDeformation(0.0F)), PartPose.offsetAndRotation(0.0F, -1.0F, 0.0F, 0.0F, -0.0436F, 0.0F));
+		fin_right.addOrReplaceChild("fine_right_r1", CubeListBuilder.create().texOffs(4, 0).addBox(0.0F, -1.0F, 0.0F, 2.0F, 2.0F, 0.0F, new CubeDeformation(0.0F)), PartPose.offsetAndRotation(0.0F, -1.0F, 0.0F, 0.0F, -0.0436F, 0.0F));
 
 		PartDefinition body_rear = partdefinition.addOrReplaceChild("body_rear", CubeListBuilder.create().texOffs(0, 13).addBox(-1.5F, -2.5F, 0.0F, 3.0F, 5.0F, 8.0F, new CubeDeformation(0.0F)), PartPose.offset(0.0F, 18.0F, 4.0F));
 
-		PartDefinition fin_back_2 = body_rear.addOrReplaceChild("fin_back_2", CubeListBuilder.create().texOffs(2, 3).addBox(0.0F, 0.0F, 1.0F, 0.0F, 2.0F, 3.0F, new CubeDeformation(0.0F)), PartPose.offsetAndRotation(0.0F, -4.5F, -1.0F, 0.0F, 0.0F, 0.0436F));
+		body_rear.addOrReplaceChild("fin_back_2", CubeListBuilder.create().texOffs(2, 3).addBox(0.0F, 0.0F, 1.0F, 0.0F, 2.0F, 3.0F, new CubeDeformation(0.0F)), PartPose.offsetAndRotation(0.0F, -4.5F, -1.0F, 0.0F, 0.0F, 0.0436F));
 
-		PartDefinition tail = body_rear.addOrReplaceChild("tail", CubeListBuilder.create().texOffs(20, 10).addBox(0.0F, -2.5F, 0.0F, 0.0F, 5.0F, 6.0F, new CubeDeformation(0.0F)), PartPose.offset(0.0F, 0.0F, 8.0F));
+		body_rear.addOrReplaceChild("tail", CubeListBuilder.create().texOffs(20, 10).addBox(0.0F, -2.5F, 0.0F, 0.0F, 5.0F, 6.0F, new CubeDeformation(0.0F)), PartPose.offset(0.0F, 0.0F, 8.0F));
 
 		return LayerDefinition.create(meshdefinition, 32, 32);
 	}
@@ -94,20 +94,25 @@ public class SlipperyBiterModel<T extends Entity> extends ListModel<T> {
 		}
 
 		this.body_rear.yRot = -1 * 0.25F * Mth.sin(1 * 0.2F * ageInTicks);
+
 				
-		float tailSwingMagnitude = 0.2f;
+		float tailSwingMagnitude = 0.1f;
 		if (((SlipperyBiter) entity).isMoving()) {
 			tailSwingMagnitude = 1.0f;
 		}
+		this.tail.yRot = 0;
+		this.tail.zRot = 0;
+		this.tail.xRot = 0;
+	
 		fin_back_1.zRot = 0.0f;
 		/* linear interpolation */
 		SlipperyBiter s = (SlipperyBiter) entity;
 		
 		final float lerpTailValue = Mth.lerp(age, s.getClientSideTailAnimationO(),
 				s.getClientSideTailAnimation());
-		this.body_rear.zRot = Mth.sin(lerpTailValue) * 3.1415927f * 0.05f * tailSwingMagnitude;
+		this.body_rear.zRot = Mth.sin(lerpTailValue* tailSwingMagnitude) * 3.1415927f * 0.1f * tailSwingMagnitude;
 		this.fin_back_2.zRot = Mth.sin(lerpTailValue) * 3.1415927f * 0.1f * tailSwingMagnitude;
-
+		this.tail.yRot = Mth.sin(lerpTailValue*8*tailSwingMagnitude ) * 3.1415927f * 0.6f * tailSwingMagnitude;
 	}
 
 	private void setRotationAngle(ModelPart modelRenderer, float x, float y, float z) {

@@ -33,38 +33,39 @@ public class ModSounds
 	public static final SoundEvent WATER_SNAKE_DEATH = create("watersnake.death");
 	public static final SoundEvent WATER_SNAKE_STEP = create("watersnake.step");
 	
-private static SoundEvent create(String key)
+	private static SoundEvent create(String key)
 	{
 		ResourceLocation res = new ResourceLocation(Main.MODID, key);
 		SoundEvent ret = new SoundEvent(res);
-		ret.setRegistryName(res);
 		return ret;
 	}
 
 	public static void register(IForgeRegistry<SoundEvent> registry)
 	{
-		registry.register(RIVER_GUARDIAN_HURT);
-		registry.register(RIVER_GUARDIAN_HURT_LAND);
-		registry.register(RIVER_GUARDIAN_DEATH);
-		registry.register(RIVER_GUARDIAN_DEATH_LAND);
-		registry.register(RIVER_GUARDIAN_AMBIENT);
-		registry.register(RIVER_GUARDIAN_FLOP);
+		registry.register(RIVER_GUARDIAN_HURT.getLocation(),RIVER_GUARDIAN_HURT);
+		registry.register(RIVER_GUARDIAN_HURT_LAND.getLocation(),RIVER_GUARDIAN_HURT_LAND);
+		registry.register(RIVER_GUARDIAN_DEATH.getLocation(),RIVER_GUARDIAN_DEATH);
+		registry.register(RIVER_GUARDIAN_DEATH_LAND.getLocation(),RIVER_GUARDIAN_DEATH_LAND);
+		registry.register(RIVER_GUARDIAN_AMBIENT.getLocation(),RIVER_GUARDIAN_AMBIENT);
+		registry.register(RIVER_GUARDIAN_FLOP.getLocation(),RIVER_GUARDIAN_FLOP);
 
-		registry.register(SLIPPERY_BITER_AMBIENT);
-		registry.register(SLIPPERY_BITER_FLOP);
-		registry.register(SLIPPERY_BITER_HURT);
-		registry.register(SLIPPERY_BITER_DEATH);
+		registry.register(SLIPPERY_BITER_AMBIENT.getLocation(),SLIPPERY_BITER_AMBIENT);
+		registry.register(SLIPPERY_BITER_FLOP.getLocation(),SLIPPERY_BITER_FLOP);
+		registry.register(SLIPPERY_BITER_HURT.getLocation(),SLIPPERY_BITER_HURT);
+		registry.register(SLIPPERY_BITER_DEATH.getLocation(),SLIPPERY_BITER_DEATH);
 
-		registry.register(GURTY_AMBIENT);
-		registry.register(GURTY_ANGRY);
-		registry.register(GURTY_HURT);
-		registry.register(GURTY_STEP);
-		registry.register(GURTY_DEATH);
+		registry.register(GURTY_AMBIENT.getLocation(),GURTY_AMBIENT);
+		registry.register(GURTY_ANGRY.getLocation(),GURTY_ANGRY);
+		registry.register(GURTY_HURT.getLocation(),GURTY_HURT);
+		registry.register(GURTY_STEP.getLocation(),GURTY_STEP);
+		registry.register(GURTY_DEATH.getLocation(),GURTY_DEATH);
 
-		registry.register(WATER_SNAKE_AMBIENT);
-		registry.register(WATER_SNAKE_ANGRY);
-		registry.register(WATER_SNAKE_HURT);
-		registry.register(WATER_SNAKE_STEP);
-		registry.register(WATER_SNAKE_DEATH);	
+		registry.register(WATER_SNAKE_AMBIENT.getLocation(),WATER_SNAKE_AMBIENT);
+		registry.register(WATER_SNAKE_ANGRY.getLocation(),WATER_SNAKE_ANGRY);
+		registry.register(WATER_SNAKE_HURT.getLocation(),WATER_SNAKE_HURT);
+		registry.register(WATER_SNAKE_STEP.getLocation(),WATER_SNAKE_STEP);
+		registry.register(WATER_SNAKE_DEATH.getLocation(),WATER_SNAKE_DEATH);	
 	}
+	
+
 }

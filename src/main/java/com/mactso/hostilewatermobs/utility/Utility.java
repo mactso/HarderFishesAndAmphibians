@@ -8,7 +8,8 @@ import com.mactso.hostilewatermobs.config.MyConfig;
 import net.minecraft.ChatFormatting;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.Holder;
-import net.minecraft.network.chat.TextComponent;
+import net.minecraft.network.chat.Component;
+import net.minecraft.network.chat.MutableComponent;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.server.level.ServerLevel;
 import net.minecraft.tags.BiomeTags;
@@ -70,28 +71,22 @@ public class Utility {
 		
 	}
 
-	
-	
-	
 	public static void sendBoldChat(Player p, String chatMessage, ChatFormatting textColor) {
-
-		TextComponent component = new TextComponent (chatMessage);
+		MutableComponent component = Component.literal(chatMessage);
 		component.setStyle(component.getStyle().withBold(true));
-		component.setStyle(component.getStyle().withColor(ChatFormatting.DARK_GREEN));
-		p.sendMessage(component, p.getUUID());
+		component.setStyle(component.getStyle().withColor(textColor));
+		p.sendSystemMessage(component);
 
-	}	
-	
+	}
 
 	public static void sendChat(Player p, String chatMessage, ChatFormatting textColor) {
 
-		TextComponent component = new TextComponent (chatMessage);
-		component.setStyle(component.getStyle().withColor(ChatFormatting.GREEN));
-		p.sendMessage(component, p.getUUID());
+		MutableComponent component = Component.literal(chatMessage);
+		component.setStyle(component.getStyle().withColor(textColor));
+		p.sendSystemMessage(component);
 
 	}
-	
-	
+
 	
 	
 	public static void updateEffect(LivingEntity e, int amplifier,  MobEffect mobEffect, int duration) {

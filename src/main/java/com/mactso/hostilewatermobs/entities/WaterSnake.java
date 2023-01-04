@@ -1,7 +1,6 @@
 package com.mactso.hostilewatermobs.entities;
 
 import java.util.List;
-import java.util.Random;
 import java.util.function.Predicate;
 
 import javax.annotation.Nullable;
@@ -24,6 +23,7 @@ import net.minecraft.sounds.SoundEvents;
 import net.minecraft.sounds.SoundSource;
 import net.minecraft.tags.FluidTags;
 import net.minecraft.util.Mth;
+import net.minecraft.util.RandomSource;
 import net.minecraft.util.TimeUtil;
 import net.minecraft.util.valueproviders.UniformInt;
 import net.minecraft.world.Difficulty;
@@ -69,7 +69,6 @@ import net.minecraft.world.level.Level;
 import net.minecraft.world.level.LevelAccessor;
 import net.minecraft.world.level.LevelReader;
 import net.minecraft.world.level.ServerLevelAccessor;
-import net.minecraft.world.level.biome.Biome;
 import net.minecraft.world.level.block.Blocks;
 import net.minecraft.world.level.block.state.BlockState;
 import net.minecraft.world.level.pathfinder.AmphibiousNodeEvaluator;
@@ -121,7 +120,7 @@ public class WaterSnake extends WaterAnimal implements Enemy, RangedAttackMob {
 		 */
 		public void start() {
 			Utility.debugMsg(1, watersnake.blockPosition(), "Start swimming to Land");
-			Random random = watersnake.random;
+			RandomSource random = watersnake.random;
 			int k = random.nextInt(128) - 64;
 			int l = random.nextInt(9) - 4;
 			int i1 = random.nextInt(128) - 64;
@@ -714,14 +713,9 @@ public class WaterSnake extends WaterAnimal implements Enemy, RangedAttackMob {
 	public static final float SIZE = EntityType.PIG.getWidth() * 0.45f;
 	private static final UniformInt rangedInteger = TimeUtil.rangeOfSeconds(20, 39);
 
-	public static boolean canSpawn(EntityType<? extends WaterSnake> watersnakeIn, LevelAccessor worldIn,
-			MobSpawnType reason, BlockPos pos, Random randomIn) {
+	public static boolean checkMonsterSpawnRules(EntityType<? extends WaterSnake> watersnakeIn, LevelAccessor worldIn,
+			MobSpawnType reason, BlockPos pos, RandomSource randomIn) {
 
-		// TODO: Temporary disable code.
-		boolean disableWatersnake = true;
-		if (disableWatersnake)
-			return false;
-		
 		if (worldIn.isClientSide()) {
 			return false;
 		}
@@ -776,26 +770,27 @@ public class WaterSnake extends WaterAnimal implements Enemy, RangedAttackMob {
 
 		int watersnakeSpawnChance = MyConfig.getWatersnakeSpawnChance();
 		int watersnakeSpawnCap = MyConfig.getWatersnakeSpawnCap();
-		int watersnakeSpawnRoll = randomIn.nextInt(30);
+//		int watersnakeSpawnRoll = randomIn.nextInt(30);
 
-		String bC = Utility.getBiomeCategory(w.getBiome(pos));			
+//		String bC = Utility.getBiomeCategory(w.getBiome(pos));			
+//
+//		if ((bC == Utility.OCEAN) || (bC == Utility.RIVER) || (bC == Utility.SWAMP)
+//				|| (bC == Utility.BEACH)) {
+//			watersnakeSpawnChance += 7;
+//		}
+//
+//		if ((bC == Utility.SWAMP) || (bC == Utility.BEACH)) {
+//			watersnakeSpawnCap += 7;
+//		}
+//
+//		if (watersnakeSpawnRoll > watersnakeSpawnChance)
+//			return false;
 
-		if ((bC == Utility.OCEAN) || (bC == Utility.RIVER) || (bC == Utility.SWAMP)
-				|| (bC == Utility.BEACH)) {
-			watersnakeSpawnChance += 7;
-		}
-
-		if ((bC == Utility.SWAMP) || (bC == Utility.BEACH)) {
-			watersnakeSpawnCap += 7;
-		}
-
-		if (watersnakeSpawnRoll > watersnakeSpawnChance)
-			return false;
-
-		List<Gurty> listG = worldIn.getEntitiesOfClass(Gurty.class,
+		List<WaterSnake> listG = worldIn.getEntitiesOfClass(WaterSnake.class,
 				new AABB(pos.north(16).west(16).above(8), pos.south(16).east(16).below(8)));
-
-		if (listG.size() > 5) {
+		// TODO waterspawncap and set it to 2.
+		watersnakeSpawnCap = 2;
+		if (listG.size() > watersnakeSpawnCap) {
 			return false;
 		}
 
@@ -807,7 +802,7 @@ public class WaterSnake extends WaterAnimal implements Enemy, RangedAttackMob {
 	@Nullable
 	private static Vec3 findSolidBlock(EntityType<? extends WaterSnake> snakeIn, LevelAccessor world,
 			BlockPos blockPos, int maxXZ, int maxY) {
-		Random rand = world.getRandom();
+		RandomSource rand = world.getRandom();
 		for (int i = 0; i < 12; ++i) {
 			int xD = rand.nextInt(maxXZ + maxXZ) - maxXZ;
 			int zD = rand.nextInt(maxXZ + maxXZ) - maxXZ;
@@ -932,11 +927,11 @@ public class WaterSnake extends WaterAnimal implements Enemy, RangedAttackMob {
 
 	@Override
 	public boolean canBeAffected(MobEffectInstance potioneffectIn) {
-		net.minecraftforge.event.entity.living.PotionEvent.PotionApplicableEvent event = new net.minecraftforge.event.entity.living.PotionEvent.PotionApplicableEvent(
-				this, potioneffectIn);
-		net.minecraftforge.common.MinecraftForge.EVENT_BUS.post(event);
-		if (event.getResult() != net.minecraftforge.eventbus.api.Event.Result.DEFAULT)
-			return event.getResult() == net.minecraftforge.eventbus.api.Event.Result.ALLOW;
+//		net.minecraftforge.event.entity.living.PotionEvent.PotionApplicableEvent event = new net.minecraftforge.event.entity.living.PotionEvent.PotionApplicableEvent(
+//				this, potioneffectIn);
+//		net.minecraftforge.common.MinecraftForge.EVENT_BUS.post(event);
+//		if (event.getResult() != net.minecraftforge.eventbus.api.Event.Result.DEFAULT)
+//			return event.getResult() == net.minecraftforge.eventbus.api.Event.Result.ALLOW;
 
 		MobEffect effect = potioneffectIn.getEffect();
 		if (effect == MobEffects.POISON) {

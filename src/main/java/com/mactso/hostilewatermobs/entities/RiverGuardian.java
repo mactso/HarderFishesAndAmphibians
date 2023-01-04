@@ -12,13 +12,10 @@ import com.mactso.hostilewatermobs.utility.Utility;
 
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.Holder;
-import net.minecraft.core.Registry;
 import net.minecraft.nbt.CompoundTag;
 import net.minecraft.network.syncher.EntityDataAccessor;
 import net.minecraft.network.syncher.EntityDataSerializers;
 import net.minecraft.network.syncher.SynchedEntityData;
-import net.minecraft.resources.ResourceKey;
-import net.minecraft.resources.ResourceLocation;
 import net.minecraft.server.level.ServerLevel;
 import net.minecraft.server.level.ServerPlayer;
 import net.minecraft.sounds.SoundEvent;
@@ -52,9 +49,8 @@ import net.minecraft.world.level.Level;
 import net.minecraft.world.level.LevelAccessor;
 import net.minecraft.world.level.ServerLevelAccessor;
 import net.minecraft.world.level.biome.Biome;
-import net.minecraft.world.level.biome.Biome.BiomeCategory;
 import net.minecraft.world.phys.AABB;
-import net.minecraftforge.common.BiomeDictionary;
+
 
 public class RiverGuardian extends Guardian implements Enemy {
 
@@ -163,7 +159,9 @@ public class RiverGuardian extends Guardian implements Enemy {
 				.add(Attributes.MAX_HEALTH, 11.0D);
 	}
 
-	public static boolean canSpawn(EntityType<? extends RiverGuardian> type, LevelAccessor level, MobSpawnType reason,
+
+	
+	public static boolean checkMonsterSpawnRules(EntityType<? extends RiverGuardian> type, LevelAccessor level, MobSpawnType reason,
 			BlockPos pos, Random randomIn) {
 
 		if (level.isClientSide()) {

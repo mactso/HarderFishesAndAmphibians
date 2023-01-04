@@ -32,7 +32,6 @@ public class GurtyModel<T extends Entity> extends QuadrupedModel<T> {
 	public static final ModelLayerLocation LAYER_LOCATION = new ModelLayerLocation(
 			new ResourceLocation(Main.MODID, "gurty"), "main");
 
-
 	private final ModelPart jaw;
 	private final ModelPart spines;
 	private final ModelPart tail;
@@ -48,17 +47,17 @@ public class GurtyModel<T extends Entity> extends QuadrupedModel<T> {
 	}
 
 	public static LayerDefinition createBodyLayer() {
-		
+
 		MeshDefinition meshdefinition = new MeshDefinition();
 		PartDefinition partdefinition = meshdefinition.getRoot();
 
-		PartDefinition legBackLeft = partdefinition.addOrReplaceChild("left_hind_leg",
+		partdefinition.addOrReplaceChild("left_hind_leg",
 				CubeListBuilder.create().texOffs(23, 0)
 						.addBox(-1.0F, 0.0F, 1.0F, 2.0F, 6.0F, 3.0F, new CubeDeformation(0.0F)).texOffs(24, 26)
 						.addBox(-1.0F, 6.0F, -1.0F, 2.0F, 1.0F, 4.0F, new CubeDeformation(0.0F)),
 				PartPose.offset(-3.0F, 17.0F, 5.5F));
 
-		PartDefinition legBackRight = partdefinition.addOrReplaceChild("right_hind_leg",
+		partdefinition.addOrReplaceChild("right_hind_leg",
 				CubeListBuilder.create().texOffs(0, 0)
 						.addBox(-1.0F, 0.0F, 1.0F, 2.0F, 6.0F, 3.0F, new CubeDeformation(0.0F)).texOffs(16, 25)
 						.addBox(-1.0F, 6.0F, -1.0F, 2.0F, 1.0F, 4.0F, new CubeDeformation(0.0F)),
@@ -68,7 +67,7 @@ public class GurtyModel<T extends Entity> extends QuadrupedModel<T> {
 				.addBox(-3.0F, -2.0F, -11.0F, 6.0F, 5.0F, 11.0F, new CubeDeformation(0.0F)),
 				PartPose.offset(0.0F, 15.0F, 9.0F));
 
-		PartDefinition spines = body.addOrReplaceChild("spines",
+		body.addOrReplaceChild("spines",
 				CubeListBuilder.create().texOffs(30, 12)
 						.addBox(-2.3333F, -0.4038F, -3.0F, 1.0F, 1.0F, 4.0F, new CubeDeformation(0.0F)).texOffs(12, 30)
 						.addBox(3.1667F, -0.4038F, -3.0F, 1.0F, 1.0F, 4.0F, new CubeDeformation(0.0F)).texOffs(29, 5)
@@ -78,17 +77,15 @@ public class GurtyModel<T extends Entity> extends QuadrupedModel<T> {
 		PartDefinition tail = body.addOrReplaceChild("tail", CubeListBuilder.create(),
 				PartPose.offset(0.0F, -0.75F, -1.0F));
 
-		PartDefinition tail_r1 = tail
-				.addOrReplaceChild("tail_r1",
-						CubeListBuilder.create().texOffs(30, 17).addBox(-0.5F, -0.5F, 0.0F, 1.0F, 1.0F, 4.0F,
-								new CubeDeformation(0.0F)),
-						PartPose.offsetAndRotation(0.0F, 0.0F, 1.0F, -0.2182F, 0.0F, 0.0F));
+		tail.addOrReplaceChild("tail_tip", CubeListBuilder.create().texOffs(30, 17).addBox(-0.5F, -0.5F, 0.0F, 1.0F,
+				1.0F, 4.0F, new CubeDeformation(0.0F)),
+				PartPose.offsetAndRotation(0.0F, 0.0F, 1.0F, -0.2182F, 0.0F, 0.0F));
 
-		PartDefinition legFrontLeft = partdefinition.addOrReplaceChild("left_front_leg", CubeListBuilder.create()
+		partdefinition.addOrReplaceChild("left_front_leg", CubeListBuilder.create()
 				.texOffs(8, 24).addBox(-0.5F, 0.0F, 0.0F, 2.0F, 7.0F, 2.0F, new CubeDeformation(0.0F)),
 				PartPose.offset(-3.0F, 17.0F, -1.0F));
 
-		PartDefinition legFrontRight = partdefinition.addOrReplaceChild("right_front_leg", CubeListBuilder.create()
+		partdefinition.addOrReplaceChild("right_front_leg", CubeListBuilder.create()
 				.texOffs(0, 24).addBox(-1.5F, 0.0F, 0.0F, 2.0F, 7.0F, 2.0F, new CubeDeformation(0.0F)),
 				PartPose.offset(3.0F, 17.0F, -1.0F));
 
@@ -101,7 +98,7 @@ public class GurtyModel<T extends Entity> extends QuadrupedModel<T> {
 						.addBox(-3.0F, -3.5F, -6.0F, 2.0F, 2.0F, 2.0F, new CubeDeformation(0.0F)),
 				PartPose.offset(0.0F, 16.0F, -1.0F));
 
-		PartDefinition jaw = head.addOrReplaceChild("jaw", CubeListBuilder.create().texOffs(15, 19).addBox(-2.5F, -1.0F,
+		head.addOrReplaceChild("jaw", CubeListBuilder.create().texOffs(15, 19).addBox(-2.5F, -1.0F,
 				-5.0F, 5.0F, 1.0F, 5.0F, new CubeDeformation(0.0F)), PartPose.offset(0.0F, 0.0F, 0.0F));
 
 		return LayerDefinition.create(meshdefinition, 64, 64);
