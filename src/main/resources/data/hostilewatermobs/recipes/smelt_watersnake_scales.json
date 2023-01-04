@@ -2,7 +2,7 @@
   "type": "minecraft:smelting",
   "ingredient": [
     {
-      "item": "hostilewatermobs:classicsnake_scales"
+      "item": "hostilewatermobs:watersnake_scales"
     }
   ],
   "result": "minecraft:green_dye",

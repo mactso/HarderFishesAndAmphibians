@@ -11,6 +11,7 @@ import net.minecraft.world.item.Item;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.item.Items;
 import net.minecraft.world.item.crafting.RecipeSerializer;
+import net.minecraft.world.item.crafting.CraftingBookCategory;
 import net.minecraft.world.item.crafting.Ingredient;
 import net.minecraft.world.item.crafting.ShapedRecipe;
 import net.minecraft.world.item.crafting.ShapelessRecipe;
@@ -26,9 +27,11 @@ public class HostileWaterMobsRecipe extends ShapelessRecipe {
 	public static final Serializer SERIALIZER = new Serializer();
 	public static final ResourceLocation NAME = new ResourceLocation(Main.MODID, "crafting_shapeless");
 
-	public HostileWaterMobsRecipe(ResourceLocation idIn, String groupIn, ItemStack recipeOutputIn,
+	public HostileWaterMobsRecipe(ResourceLocation resourceLocationIn, String groupIn, ItemStack recipeOutputIn,
 			NonNullList<Ingredient> recipeItemsIn, String operationIn) {
-		super(idIn, groupIn, recipeOutputIn, recipeItemsIn);
+		// public ShapelessRecipe(ResourceLocation p_251840_, String p_249640_, CraftingBookCategory p_249390_, ItemStack p_252071_, NonNullList<Ingredient> p_250689_) {
+		super(resourceLocationIn, groupIn, null, recipeOutputIn, recipeItemsIn);
+//		super(resourceLocationIn, groupIn, CraftingBookCategory.EQUIPMENT , recipeItemsIn);
 		operation = operationIn;
 		boolean copyDamage = false;
 		if (recipeOutputIn.isDamageableItem()) {

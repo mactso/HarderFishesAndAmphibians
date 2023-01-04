@@ -454,6 +454,7 @@ public class Gurty extends PathfinderMob implements NeutralMob,Enemy {
 	}
 
 
+	@SuppressWarnings("deprecation")
 	public static boolean checkMonsterSpawnRules(EntityType<? extends Gurty> gurtyIn, LevelAccessor worldIn, MobSpawnType reason,
 			BlockPos pos, RandomSource randomIn) {
 
@@ -467,6 +468,7 @@ public class Gurty extends PathfinderMob implements NeutralMob,Enemy {
 			return true;
 		
 		// this keeps gurty's from spawning too deep or too high.
+
 		if (pos.getY() < worldIn.getSeaLevel() - 5) 
 			return false;
 		if (pos.getY() > worldIn.getSeaLevel() + 32) 

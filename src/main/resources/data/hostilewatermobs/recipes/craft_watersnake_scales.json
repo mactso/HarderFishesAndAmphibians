@@ -2,7 +2,7 @@
   "type": "minecraft:crafting_shapeless",
   "ingredients": [
     {
-      "item": "hostilewatermobs:classicsnake_scales"
+      "item": "hostilewatermobs:watersnake_scales"
     }
   ],
   "result": {
