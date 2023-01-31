@@ -34,10 +34,6 @@ public class MyConfig {
 		return debugLevel;
 	}
 
-	public static int getBlockLightLevel() {
-		return blockLightLevel;
-	}
-
 	public static boolean getRiverGuardianPreysOnVillagerChildren() {
 		return riverGuardianPreysOnVillagerChildren;
 	}
