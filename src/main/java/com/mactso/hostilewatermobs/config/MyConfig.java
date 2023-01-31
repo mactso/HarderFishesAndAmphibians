@@ -34,6 +34,10 @@ public class MyConfig {
 		return debugLevel;
 	}
 
+	public static int getBlockLightLevel() {
+		return blockLightLevel;
+	}
+
 	public static boolean getRiverGuardianPreysOnVillagerChildren() {
 		return riverGuardianPreysOnVillagerChildren;
 	}
@@ -127,6 +131,8 @@ public class MyConfig {
 	
 	private static int      debugLevel;
 
+	private static int      blockLightLevel;
+
 	private static boolean  riverGuardianPreysOnVillagerChildren;
 	private static int 	    riverGuardianSpawnChance;
 	private static int 	    riverGuardianSpawnCap;
@@ -150,8 +156,6 @@ public class MyConfig {
 	private static int 	    salmonSpawnBoost;
 	private static int 	    squidSpawnBoost;
 	private static int 	    dolphinSpawnboost;
-	
-
 
 	private static int      zombifiedPiglinSpawnBoost;
 	private static int      ghastSpawnBoost;
@@ -177,6 +181,9 @@ public class MyConfig {
 		
 		COMMON.debugLevel.set(debugLevel);
 
+		COMMON.blockLightLevel.set(blockLightLevel);
+
+		
 		COMMON.riverGuardianPreysOnVillagerChildren.set(riverGuardianPreysOnVillagerChildren);
 		COMMON.riverGuardianSpawnChance.set(riverGuardianSpawnChance);
 		COMMON.riverGuardianSoundRange.set(riverGuardianSoundRange);
@@ -208,6 +215,8 @@ public class MyConfig {
 
 		debugLevel = COMMON.debugLevel.get();
 
+		blockLightLevel = COMMON.blockLightLevel.get();
+		
 		riverGuardianSpawnChance = COMMON.riverGuardianSpawnChance.get();
 		riverGuardianSpawnCap = COMMON.riverGuardianSpawnCap.get();
 		riverGuardianSoundRange = COMMON.riverGuardianSoundRange.get();
@@ -241,6 +250,8 @@ public class MyConfig {
 		public final IntValue debugLevel;
 		public final BooleanValue riverGuardianPreysOnVillagerChildren;
 
+		public final IntValue blockLightLevel; 
+		
 		public final IntValue riverGuardianSpawnChance;
 		public final IntValue riverGuardianSpawnCap;
 		public final IntValue riverGuardianSoundRange;
@@ -276,6 +287,11 @@ public class MyConfig {
 					.comment("Debug Level: 0 = Off, 1 = Log, 2 = Chat+Log")
 					.translation(Main.MODID + ".config." + "debugLevel")
 					.defineInRange("debugLevel", () -> 0, 0, 2);
+
+			blockLightLevel = builder
+					.comment("blockLightLevel from light emitting blocks that prevents spawn")
+					.translation(Main.MODID + ".config." + "blockLightLevel")
+					.defineInRange("blockLightLevel", () -> 7, 1, 15);
 
 			builder.pop();
 			builder.push("Hostile Water Mobs - River Guardian");

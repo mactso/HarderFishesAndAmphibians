@@ -47,6 +47,7 @@ import net.minecraft.world.entity.npc.Villager;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.level.Level;
 import net.minecraft.world.level.LevelAccessor;
+import net.minecraft.world.level.LightLayer;
 import net.minecraft.world.level.ServerLevelAccessor;
 import net.minecraft.world.level.biome.Biome;
 import net.minecraft.world.phys.AABB;
@@ -187,13 +188,16 @@ public class RiverGuardian extends Guardian implements Enemy {
 
 		boolean isDark = level.getMaxLocalRawBrightness(pos) < 9;
 		boolean isDeep = pos.getY() < 30;
+
 		if (isDeep && !isDark) {
 			return false;
 		}
 
+        if (level.getBrightness(LightLayer.BLOCK, pos) > MyConfig.getBlockLightLevel()) {
+            return false;
+        }
 
-		int riverGuardianCap = MyConfig.getRiverGuardianSpawnCap();
-
+        int riverGuardianCap = MyConfig.getRiverGuardianSpawnCap();
 
 		if (isDeep) {
 			riverGuardianCap += 6;
@@ -202,6 +206,8 @@ public class RiverGuardian extends Guardian implements Enemy {
 		
 		String bC = Utility.getBiomeCategory(level.getBiome(pos));			
 
+		
+		
 		if ((bC == Utility.OCEAN) && (pos.getY() > 35) ) 
 			return false;
 
