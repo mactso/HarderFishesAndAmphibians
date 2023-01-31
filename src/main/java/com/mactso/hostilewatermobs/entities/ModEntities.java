@@ -39,10 +39,10 @@ public class ModEntities {
 
 		String key = Main.MODID + ":" + name;
 		EntityType<T> type = builder.build(key);
-		
+
 		return type;
 	}
-	
+
 //	private static SoundEvent create(String key)
 //	{
 //		ResourceLocation res = new ResourceLocation(Main.MODID, key);
@@ -58,16 +58,16 @@ public class ModEntities {
 		forgeRegistry.register("watersnake", WATER_SNAKE);
 
 		SpawnPlacements.register(RIVER_GUARDIAN, SpawnPlacements.Type.IN_WATER,
-				Heightmap.Types.MOTION_BLOCKING_NO_LEAVES, RiverGuardian::checkMonsterSpawnRules);
+				Heightmap.Types.MOTION_BLOCKING_NO_LEAVES, RiverGuardian:: checkSpawnRules);
 
 		SpawnPlacements.register(GURTY, SpawnPlacements.Type.ON_GROUND, Heightmap.Types.MOTION_BLOCKING_NO_LEAVES,
-				Gurty::checkMonsterSpawnRules);
+				Gurty::checkSpawnRules);
 
 		SpawnPlacements.register(SLIPPERY_BITER, SpawnPlacements.Type.IN_WATER,
-				Heightmap.Types.MOTION_BLOCKING_NO_LEAVES, SlipperyBiter::checkMonsterSpawnRules);
+				Heightmap.Types.MOTION_BLOCKING_NO_LEAVES, SlipperyBiter::checkSpawnRules);
 
 		SpawnPlacements.register(WATER_SNAKE, SpawnPlacements.Type.ON_GROUND, Heightmap.Types.MOTION_BLOCKING_NO_LEAVES,
-				WaterSnake::checkMonsterSpawnRules);
+				WaterSnake::checkSpawnRules);
 	}
 
 	public static void onAttribute(final EntityAttributeCreationEvent event) {
@@ -89,6 +89,4 @@ public class ModEntities {
 
 	}
 
-
 }
-

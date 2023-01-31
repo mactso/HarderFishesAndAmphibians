@@ -713,7 +713,7 @@ public class WaterSnake extends WaterAnimal implements Enemy, RangedAttackMob {
 	public static final float SIZE = EntityType.PIG.getWidth() * 0.45f;
 	private static final UniformInt rangedInteger = TimeUtil.rangeOfSeconds(20, 39);
 
-	public static boolean checkMonsterSpawnRules(EntityType<? extends WaterSnake> watersnakeIn, LevelAccessor worldIn,
+	public static boolean checkSpawnRules(EntityType<? extends WaterSnake> watersnakeIn, LevelAccessor worldIn,
 			MobSpawnType reason, BlockPos pos, RandomSource randomIn) {
 
 		if (worldIn.isClientSide()) {

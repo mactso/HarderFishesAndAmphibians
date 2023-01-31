@@ -1,6 +1,7 @@
 {
   "parent": "minecraft:block/cross",
   "textures": {
-    "cross": "hostilewatermobs:block/nest_block"
+    "cross": "hostilewatermobs:block/nest_block",
+ 	"particle": "block/orange_stained_glass"
   }
 }

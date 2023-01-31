@@ -16,7 +16,7 @@ public class handleTabSetup {
 
 	// TODO - rename this to HandleTabSetup next time in here.
 	@SubscribeEvent
-	public static void handleTabSetup (CreativeModeTabEvent.BuildContents event)
+	public static void HandleTabSetup (CreativeModeTabEvent.BuildContents event)
     {
 		
 		if (event.getTab() == CreativeModeTabs.INGREDIENTS) {

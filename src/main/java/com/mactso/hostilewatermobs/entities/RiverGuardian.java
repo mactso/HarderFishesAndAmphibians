@@ -1,7 +1,6 @@
 package com.mactso.hostilewatermobs.entities;
 
 import java.util.List;
-import java.util.Random;
 import java.util.function.Predicate;
 
 import javax.annotation.Nullable;
@@ -20,6 +19,7 @@ import net.minecraft.server.level.ServerLevel;
 import net.minecraft.server.level.ServerPlayer;
 import net.minecraft.sounds.SoundEvent;
 import net.minecraft.tags.FluidTags;
+import net.minecraft.util.RandomSource;
 import net.minecraft.world.Difficulty;
 import net.minecraft.world.DifficultyInstance;
 import net.minecraft.world.damagesource.DamageSource;
@@ -47,6 +47,7 @@ import net.minecraft.world.entity.npc.Villager;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.level.Level;
 import net.minecraft.world.level.LevelAccessor;
+import net.minecraft.world.level.LightLayer;
 import net.minecraft.world.level.ServerLevelAccessor;
 import net.minecraft.world.level.biome.Biome;
 import net.minecraft.world.phys.AABB;
@@ -152,7 +153,7 @@ public class RiverGuardian extends Guardian implements Enemy {
 		super.handleEntityEvent(id);
 	}
 	
-	public static AttributeSupplier.Builder registerAttributes() {
+	public static AttributeSupplier.Builder createAttributes() {
 		return Guardian.createAttributes().add(Attributes.MOVEMENT_SPEED, (double) 0.65F)
 				.add(Attributes.FOLLOW_RANGE, 24.0D)
 				.add(Attributes.ATTACK_DAMAGE, 2.0D)
@@ -161,8 +162,8 @@ public class RiverGuardian extends Guardian implements Enemy {
 
 
 	
-	public static boolean checkMonsterSpawnRules(EntityType<? extends RiverGuardian> type, LevelAccessor level, MobSpawnType reason,
-			BlockPos pos, Random randomIn) {
+	public static boolean checkSpawnRules(EntityType<? extends RiverGuardian> type, LevelAccessor level, MobSpawnType reason,
+			BlockPos pos, RandomSource randomIn) {
 
 		if (level.isClientSide()) {
 			return false;
@@ -187,13 +188,16 @@ public class RiverGuardian extends Guardian implements Enemy {
 
 		boolean isDark = level.getMaxLocalRawBrightness(pos) < 9;
 		boolean isDeep = pos.getY() < 30;
+
 		if (isDeep && !isDark) {
 			return false;
 		}
 
+        if (level.getBrightness(LightLayer.BLOCK, pos) > MyConfig.getBlockLightLevel()) {
+            return false;
+        }
 
-		int riverGuardianCap = MyConfig.getRiverGuardianSpawnCap();
-
+        int riverGuardianCap = MyConfig.getRiverGuardianSpawnCap();
 
 		if (isDeep) {
 			riverGuardianCap += 6;
@@ -202,6 +206,8 @@ public class RiverGuardian extends Guardian implements Enemy {
 		
 		String bC = Utility.getBiomeCategory(level.getBiome(pos));			
 
+		
+		
 		if ((bC == Utility.OCEAN) && (pos.getY() > 35) ) 
 			return false;
 

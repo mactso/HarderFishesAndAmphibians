@@ -63,6 +63,7 @@ import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.level.Level;
 import net.minecraft.world.level.LevelAccessor;
 import net.minecraft.world.level.LevelReader;
+import net.minecraft.world.level.LightLayer;
 import net.minecraft.world.level.ServerLevelAccessor;
 import net.minecraft.world.level.block.Blocks;
 import net.minecraft.world.level.pathfinder.BlockPathTypes;
@@ -115,7 +116,7 @@ public class SlipperyBiter extends WaterAnimal implements NeutralMob, Enemy {
 		return world.getBlockState(pos).is(Blocks.BUBBLE_COLUMN);
 	}
 
-	public static boolean checkMonsterSpawnRules(EntityType<? extends SlipperyBiter> type, LevelAccessor world, MobSpawnType reason,
+	public static boolean checkSpawnRules(EntityType<? extends SlipperyBiter> type, LevelAccessor world, MobSpawnType reason,
 			BlockPos pos, RandomSource randomIn) {
 	
 		if (world.getDifficulty() == Difficulty.PEACEFUL)
@@ -147,6 +148,10 @@ public class SlipperyBiter extends WaterAnimal implements NeutralMob, Enemy {
 			return false;
 		}
 
+        if (world.getBrightness(LightLayer.BLOCK, pos) > MyConfig.getBlockLightLevel()) {
+            return false;
+        }
+		
 		int slipperyBiterSpawnChance = MyConfig.getSlipperyBiterSpawnChance();
 		int slipperyBiterCap = MyConfig.getSlipperyBiterSpawnCap();
 		int slipperyBiterSpawnRoll = randomIn.nextInt(30);
