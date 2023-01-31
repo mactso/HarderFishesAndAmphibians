@@ -92,7 +92,7 @@
   },  
   "watersnake.death": {
     "subtitle": "subtitles.watersnake.death",
-    "sounds": [{"name":"mob/ghast/death", "pitch": 0.3, "type": "event" }]
+    "sounds": [{"name":"entity.ghast.death", "pitch": 0.3, "type": "event" }]
   },
   "watersnake.hurt": {
     "subtitle": "subtitles.watersnake.hurt",

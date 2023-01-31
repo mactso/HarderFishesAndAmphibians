@@ -116,7 +116,7 @@ public class SlipperyBiter extends WaterAnimal implements NeutralMob, Enemy {
 		return world.getBlockState(pos).is(Blocks.BUBBLE_COLUMN);
 	}
 
-	public static boolean checkMonsterSpawnRules(EntityType<? extends SlipperyBiter> type, LevelAccessor world, MobSpawnType reason,
+	public static boolean checkSpawnRules(EntityType<? extends SlipperyBiter> type, LevelAccessor world, MobSpawnType reason,
 			BlockPos pos, RandomSource randomIn) {
 	
 		if (world.getDifficulty() == Difficulty.PEACEFUL)

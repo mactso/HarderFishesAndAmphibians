@@ -1,7 +1,6 @@
 package com.mactso.hostilewatermobs.entities;
 
 import java.util.List;
-import java.util.Random;
 import java.util.function.Predicate;
 
 import javax.annotation.Nullable;
@@ -20,6 +19,7 @@ import net.minecraft.server.level.ServerLevel;
 import net.minecraft.server.level.ServerPlayer;
 import net.minecraft.sounds.SoundEvent;
 import net.minecraft.tags.FluidTags;
+import net.minecraft.util.RandomSource;
 import net.minecraft.world.Difficulty;
 import net.minecraft.world.DifficultyInstance;
 import net.minecraft.world.damagesource.DamageSource;
@@ -162,8 +162,8 @@ public class RiverGuardian extends Guardian implements Enemy {
 
 
 	
-	public static boolean checkMonsterSpawnRules(EntityType<? extends RiverGuardian> type, LevelAccessor level, MobSpawnType reason,
-			BlockPos pos, Random randomIn) {
+	public static boolean checkSpawnRules(EntityType<? extends RiverGuardian> type, LevelAccessor level, MobSpawnType reason,
+			BlockPos pos, RandomSource randomIn) {
 
 		if (level.isClientSide()) {
 			return false;

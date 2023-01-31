@@ -454,7 +454,7 @@ public class Gurty extends PathfinderMob implements NeutralMob,Enemy {
 	}
 
 
-	public static boolean checkMonsterSpawnRules(EntityType<? extends Gurty> gurtyIn, LevelAccessor worldIn, MobSpawnType reason,
+	public static boolean checkSpawnRules(EntityType<? extends Gurty> gurtyIn, LevelAccessor worldIn, MobSpawnType reason,
 			BlockPos pos, RandomSource randomIn) {
 
 		if (worldIn.isClientSide()) 

@@ -22,7 +22,9 @@
       "conditions": {
         "items": [
           {
-            "item": "hostilewatermobs:gurty_guts"
+            "items": [
+                "hostilewatermobs:gurty_guts"
+            ]
           }
         ]
       }
