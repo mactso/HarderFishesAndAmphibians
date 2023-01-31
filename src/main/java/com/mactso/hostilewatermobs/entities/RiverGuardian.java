@@ -152,7 +152,7 @@ public class RiverGuardian extends Guardian implements Enemy {
 		super.handleEntityEvent(id);
 	}
 	
-	public static AttributeSupplier.Builder registerAttributes() {
+	public static AttributeSupplier.Builder createAttributes() {
 		return Guardian.createAttributes().add(Attributes.MOVEMENT_SPEED, (double) 0.65F)
 				.add(Attributes.FOLLOW_RANGE, 24.0D)
 				.add(Attributes.ATTACK_DAMAGE, 2.0D)
