@@ -1,6 +1,5 @@
 package com.mactso.hostilewatermobs.entities;
 
-import java.util.List;
 import java.util.Random;
 import java.util.UUID;
 import java.util.function.Predicate;
@@ -12,6 +11,7 @@ import com.mactso.hostilewatermobs.sound.ModSounds;
 import com.mactso.hostilewatermobs.utility.Utility;
 
 import net.minecraft.core.BlockPos;
+import net.minecraft.core.Registry;
 import net.minecraft.core.Vec3i;
 import net.minecraft.core.particles.ParticleOptions;
 import net.minecraft.core.particles.ParticleTypes;
@@ -19,6 +19,8 @@ import net.minecraft.nbt.CompoundTag;
 import net.minecraft.network.syncher.EntityDataAccessor;
 import net.minecraft.network.syncher.EntityDataSerializers;
 import net.minecraft.network.syncher.SynchedEntityData;
+import net.minecraft.resources.ResourceKey;
+import net.minecraft.resources.ResourceLocation;
 import net.minecraft.server.level.ServerLevel;
 import net.minecraft.sounds.SoundEvent;
 import net.minecraft.sounds.SoundEvents;
@@ -63,13 +65,14 @@ import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.level.Level;
 import net.minecraft.world.level.LevelAccessor;
 import net.minecraft.world.level.LevelReader;
+import net.minecraft.world.level.LightLayer;
 import net.minecraft.world.level.ServerLevelAccessor;
 import net.minecraft.world.level.biome.Biome;
-import net.minecraft.world.level.biome.Biome.BiomeCategory;
 import net.minecraft.world.level.block.Blocks;
 import net.minecraft.world.level.pathfinder.BlockPathTypes;
 import net.minecraft.world.phys.AABB;
 import net.minecraft.world.phys.Vec3;
+import net.minecraftforge.common.BiomeDictionary;
 
 public class SlipperyBiter extends WaterAnimal implements NeutralMob, Enemy {
 
@@ -117,87 +120,169 @@ public class SlipperyBiter extends WaterAnimal implements NeutralMob, Enemy {
 		return world.getBlockState(pos).is(Blocks.BUBBLE_COLUMN);
 	}
 
-	public static boolean canSpawn(EntityType<? extends SlipperyBiter> type, LevelAccessor world, MobSpawnType reason,
+	// needed for water creatures because so many valid spawn blocks.
+	private static boolean isSpawnRateThrottled(LevelAccessor level) {
+		if (level.getRandom().nextInt(5) != 0) {
+			return true;
+		}
+		return false;
+	}
+
+	public static boolean canSpawn(EntityType<? extends SlipperyBiter> type, LevelAccessor level, MobSpawnType reason,
 			BlockPos pos, Random randomIn) {
-	
-		if (world.getDifficulty() == Difficulty.PEACEFUL)
+
+		Utility.debugMsg(1, pos, "canSpawn slipperyBiter?");
+		// SpawnPlacements.Type.IN_WATER
+
+		if (isSpawnRateThrottled(level)) {
+			return false;
+		}
+
+		if (isInBubbleColumn(level, pos)) {
+			return false;
+		}
+
+		if (level.getDifficulty() == Difficulty.PEACEFUL)
+			return false;
+
+		if (isWellLit(level, pos))
 			return false;
 
 		if (reason == MobSpawnType.SPAWN_EGG)
 			return true;
 
-//		this might block glass and half slabs... or it might block water too.  test later.
-//		if !(canSpawnOn(type, world, reason, pos, randomIn))
-
-		boolean inWater = world.getFluidState(pos).is(FluidTags.WATER)
-				|| world.getFluidState(pos.above()).is(FluidTags.WATER);
-
-		if (!inWater) {
-			return false;
-		}
-
-		if (isInBubbleColumn(world, pos)) {
-			return false;
-		}
-
 		if (reason == MobSpawnType.SPAWNER)
 			return true;
 
-		boolean isDark = world.getMaxLocalRawBrightness(pos) < 9;
-		boolean isDeep = pos.getY() < 30;
-		if (isDeep && !isDark) {
+		if (isBadAltitude(level, pos))
 			return false;
-		}
 
-		int slipperyBiterSpawnChance = MyConfig.getSlipperyBiterSpawnChance();
-		int slipperyBiterCap = MyConfig.getSlipperyBiterSpawnCap();
-		int slipperyBiterSpawnRoll = randomIn.nextInt(30);
+		if (isFailBiomeLimits(level, pos))
+			return false;
 
-		if (isDeep) {
-			slipperyBiterCap += 6;
-			slipperyBiterSpawnChance += 9;
-			Utility.debugMsg(2, pos, "spawn deep slipperyBiter +9");
-		}
+		// prevent local overcrowding
+		if (isOverCrowded(level, SlipperyBiter.class, pos))
+			return false;
 
-		Biome biome = world.getBiome(pos);
-		BiomeCategory bC = biome.getBiomeCategory();
-		if (bC == BiomeCategory.OCEAN) {
-			if (world.getMaxLocalRawBrightness(pos) > 13) {
-				return false;
-			}
-		}
-
-		if (bC == BiomeCategory.SWAMP) {
-			slipperyBiterSpawnChance += 7;
-			slipperyBiterCap += 3;
-			Utility.debugMsg(2, pos, "Swamp Slippery Biter Spawn Attempt.");
-		}
-
-//		if (world instanceof ServerLevel) {
-//			int slipperyBiterCount = ((ServerLevel) world).getEntities(ModEntities.SLIPPERY_BITER, (entity) -> true)
-//					.size();
-//			if (slipperyBiterCount > slipperyBiterCap) {
-//				Utility.debugMsg(2,pos,"SlipperyBiter Spawn canceled by Global cap (" + slipperyBiterCap +").");
-//				return false;
-//			}
-//		}
-
-		List<SlipperyBiter> listG = world.getEntitiesOfClass(SlipperyBiter.class,
-				new AABB(pos.north(16).west(16).above(8), pos.south(16).east(16).below(8)));
-
-		int localcap = 1;
-		if (!(world.canSeeSkyFromBelowWater(pos))) {
-			localcap = 3;
-		}
-
-		if (listG.size() > localcap) {
-			Utility.debugMsg(2, pos, "SlipperyBiter Spawn canceled by local cap (" + localcap + ").");
+		int mobCount = ((ServerLevel) level).getEntities(ModEntities.SLIPPERY_BITER, (entity) -> true).size();
+		if (mobCount >= calcNetMobCap(level, pos)) {
 			return false;
 		}
 
 		Utility.debugMsg(2, pos, "Slippery Biter spawned.");
 
 		return true;
+	}
+
+	private static boolean isFailBiomeLimits(LevelAccessor level, BlockPos pos) {
+
+		String bC = Utility.getBiomeCategory(level.getBiome(pos));
+		if ( bC == Utility.MUSHROOM || bC == Utility.THEEND	) {
+			return true;
+		}
+		
+		if (isDeep(pos))
+			return false;
+
+		if (!level.canSeeSkyFromBelowWater(pos))
+			return false;
+
+		if (isOcean(level, pos)) {
+			return true;
+		}
+
+		return false;
+	}
+
+	private static boolean isOcean(LevelAccessor level, BlockPos pos) {
+
+		String bC = Utility.getBiomeCategory(level.getBiome(pos));
+		if (bC == Utility.OCEAN) {
+			return true;
+		}
+
+		ResourceKey<Biome> biomeKey = getBiomeKey(level,pos);
+		if (BiomeDictionary.hasType(biomeKey, BiomeDictionary.Type.OCEAN)) {
+			return true;
+		}
+
+		return false;
+
+	}
+	
+	private static ResourceKey<Biome> getBiomeKey(LevelAccessor level, BlockPos pos) {
+		ResourceLocation biomeNameResourceKey = level.registryAccess().registryOrThrow(Registry.BIOME_REGISTRY)
+				.getKey(level.getBiome(pos));
+		return ResourceKey.create(Registry.BIOME_REGISTRY, biomeNameResourceKey);
+	}
+
+	private static boolean isBadAltitude(LevelAccessor level, BlockPos pos) {
+
+		if (pos.getY() > 128)
+			return true;
+		if (pos.getY() < -60)
+			return true;
+
+		return false;
+	}
+
+	private static int calcNetMobCap(LevelAccessor level, BlockPos pos) {
+
+		int mobCap = MyConfig.getSlipperyBiterSpawnCap() +
+				level.getServer().getPlayerCount();
+
+		if (isDeep(pos)) {
+			return mobCap + 7;
+		}
+
+		String bC = Utility.getBiomeCategory(level.getBiome(pos));
+		if (bC == Utility.SWAMP) {
+			return mobCap + 5;
+		}
+
+		// support for unknown modded wet biomes.
+		Biome biome = level.getBiome(pos);
+		ResourceLocation biomeNameResourceKey = level.registryAccess().registryOrThrow(Registry.BIOME_REGISTRY)
+				.getKey(biome);
+		String biomename = biomeNameResourceKey.toString();
+		ResourceKey<Biome> biomeKey = ResourceKey.create(Registry.BIOME_REGISTRY, biomeNameResourceKey);
+		if (BiomeDictionary.hasType(biomeKey, BiomeDictionary.Type.WATER))
+			return mobCap + 3;
+		if (BiomeDictionary.hasType(biomeKey, BiomeDictionary.Type.WET))
+			return mobCap + 3;
+
+		return mobCap;
+	}
+
+	private static boolean isOverCrowded(LevelAccessor level, Class<SlipperyBiter> entityClass, BlockPos pos) {
+		if (level.getEntitiesOfClass(entityClass,
+				new AABB(pos.north(20).west(20).above(6), pos.south(20).east(20).below(6))).size() > 5)
+			return true;
+		return false;
+	}
+
+	private static boolean isDeep(BlockPos pos) {
+		return (pos.getY() < 30);
+	}
+
+	private static boolean isWellLit(LevelAccessor level, BlockPos pos) {
+
+		if (isDeep(pos)) {
+			if (level.getMaxLocalRawBrightness(pos) > 11) {
+				return true;
+			}
+		}
+
+		if (level.getMaxLocalRawBrightness(pos) > 12) {
+			return true; // combined skylight and blocklight
+		}
+
+		if (level.getBrightness(LightLayer.BLOCK, pos) > MyConfig.getBlockLightLevel()) {
+			return true;
+		}
+
+		return false;
+
 	}
 
 	@Override
@@ -236,12 +321,11 @@ public class SlipperyBiter extends WaterAnimal implements NeutralMob, Enemy {
 		return super.finalizeSpawn(worldIn, difficultyIn, reason, spawnDataIn, dataTag);
 	}
 
-
 	@Override
 	protected boolean shouldDespawnInPeaceful() {
 		return true;
 	}
-	
+
 	public static EntityDimensions getSize() {
 		float width = 0.7f;
 		float height = 0.17f;
@@ -385,7 +469,6 @@ public class SlipperyBiter extends WaterAnimal implements NeutralMob, Enemy {
 		this.entityData.set((EntityDataAccessor<Boolean>) SlipperyBiter.MOVING, movingStatus);
 	}
 
-	
 	private void setTargetedEntity(final int targetEntityId) {
 		this.entityData.set((EntityDataAccessor<Integer>) SlipperyBiter.TARGET_ENTITY, targetEntityId);
 	}
@@ -397,11 +480,11 @@ public class SlipperyBiter extends WaterAnimal implements NeutralMob, Enemy {
 	}
 
 	static class TargetPredicate implements Predicate<LivingEntity> {
-		private final SlipperyBiter parentEntity;
+		private final SlipperyBiter slipperyBiterEntity;
 		private static int aa = 0;
 
 		public TargetPredicate(SlipperyBiter biter) {
-			this.parentEntity = biter;
+			this.slipperyBiterEntity = biter;
 		}
 
 		public boolean test(@Nullable LivingEntity entity) {
@@ -418,8 +501,8 @@ public class SlipperyBiter extends WaterAnimal implements NeutralMob, Enemy {
 				return false;
 			}
 
-			if (this.parentEntity.getTarget() != null) {
-				if (entity == this.parentEntity.getKillCredit()) {
+			if (this.slipperyBiterEntity.getTarget() != null) {
+				if (entity == this.slipperyBiterEntity.getKillCredit()) {
 					return true;
 				} else {
 					return false;
@@ -441,27 +524,28 @@ public class SlipperyBiter extends WaterAnimal implements NeutralMob, Enemy {
 			aa++;
 
 			if (!targetInWater) {
-				this.parentEntity.setPersistentAngerTarget(null);
-				this.parentEntity.setTarget(null);
-				this.parentEntity.setTargetedEntity(0);
+				this.slipperyBiterEntity.setPersistentAngerTarget(null);
+				this.slipperyBiterEntity.setTarget(null);
+				this.slipperyBiterEntity.setTargetedEntity(0);
 				return false;
 			}
 
 			// this may be redundant. TargetPredicate may only be called for entities in
 			// range.
-			AttributeInstance followDistance = parentEntity.getAttribute(Attributes.FOLLOW_RANGE);
+			AttributeInstance followDistance = slipperyBiterEntity.getAttribute(Attributes.FOLLOW_RANGE);
 			int fRSq = (int) (followDistance.getValue() * followDistance.getValue());
-			if (((int) entity.distanceToSqr(this.parentEntity) > fRSq)) {
+			if (((int) entity.distanceToSqr(this.slipperyBiterEntity) > fRSq)) {
 				return false;
 			}
 
 			// 1 to ~500
-			int distanceSq = (int) entity.distanceToSqr(this.parentEntity);
-			Biome biome = w.getBiome(this.parentEntity.blockPosition());
-			BiomeCategory bC = biome.getBiomeCategory();
+			int distanceSq = (int) entity.distanceToSqr(this.slipperyBiterEntity);
+
+			String bC = Utility.getBiomeCategory(
+					this.slipperyBiterEntity.level.getBiome(this.slipperyBiterEntity.blockPosition()));
 
 			// a little less aggressive in swamps
-			if ((bC == BiomeCategory.SWAMP) && (distanceSq > 255)) {
+			if ((bC == Utility.SWAMP) && (distanceSq > 255)) {
 				if (aa % 3 == 0) {
 					w.playSound((Player) entity, entity.blockPosition(), ModSounds.SLIPPERY_BITER_AMBIENT,
 							SoundSource.HOSTILE, 1.0f, 1.0f);
@@ -470,7 +554,7 @@ public class SlipperyBiter extends WaterAnimal implements NeutralMob, Enemy {
 			}
 
 			// less aggressive in light, more aggressive in the dark
-			int lightLevel = w.getMaxLocalRawBrightness(this.parentEntity.blockPosition());
+			int lightLevel = w.getMaxLocalRawBrightness(this.slipperyBiterEntity.blockPosition());
 			if ((lightLevel > 13) && (distanceSq > 255)) {
 				if (aa % 3 == 0) {
 					w.playSound((Player) entity, entity.blockPosition(), ModSounds.SLIPPERY_BITER_AMBIENT,
@@ -487,8 +571,8 @@ public class SlipperyBiter extends WaterAnimal implements NeutralMob, Enemy {
 				return false;
 			}
 
-			this.parentEntity.setTarget(entity);
-			this.parentEntity.setTargetedEntity(entity.getId());
+			this.slipperyBiterEntity.setTarget(entity);
+			this.slipperyBiterEntity.setTargetedEntity(entity.getId());
 			w.playSound((Player) null, entity.blockPosition(), ModSounds.SLIPPERY_BITER_AMBIENT, SoundSource.HOSTILE,
 					1.0f, 1.0f);
 			return true;
@@ -523,9 +607,9 @@ public class SlipperyBiter extends WaterAnimal implements NeutralMob, Enemy {
 		if (this.isAlive()) {
 
 			if (!this.level.isClientSide) {
-		        this.updatePersistentAnger((ServerLevel)this.level, false);
-		    }
-		    
+				this.updatePersistentAnger((ServerLevel) this.level, false);
+			}
+
 			if (this.level.isClientSide) {
 
 				this.clientSideTailAnimationO = this.clientSideTailAnimation;
@@ -564,10 +648,8 @@ public class SlipperyBiter extends WaterAnimal implements NeutralMob, Enemy {
 						this.getLookControl().tick();
 					}
 				}
-			} 
+			}
 
-
-			
 			if (this.isInWaterOrBubble()) {
 				this.setAirSupply(300);
 			} else if (this.onGround) {
@@ -584,12 +666,9 @@ public class SlipperyBiter extends WaterAnimal implements NeutralMob, Enemy {
 
 			}
 
-
 		}
 		super.aiStep();
 	}
-
-	
 
 	public static class MySmoothSwimmingMoveControl extends MoveControl {
 		private final int maxTurnX;
@@ -659,7 +738,7 @@ public class SlipperyBiter extends WaterAnimal implements NeutralMob, Enemy {
 			lvt_2_1_ = lvt_2_1_.yRot(-this.workSlipperyBiterEntity.yBodyRotO * 0.017453292f);
 			return lvt_2_1_;
 		}
-		
+
 		public void trySlipperyDartingMove() {
 			if (workSlipperyBiterEntity.slipperyTimer > workSlipperyBiterEntity.level.getGameTime()) {
 				return;
@@ -686,7 +765,8 @@ public class SlipperyBiter extends WaterAnimal implements NeutralMob, Enemy {
 								this.workSlipperyBiterEntity.getX(), this.workSlipperyBiterEntity.getY(),
 								this.workSlipperyBiterEntity.getZ());
 						for (int i = 0; i < 15; ++i) {
-							final Vec3 randXZVec = this.rotateVector(new Vec3(this.workSlipperyBiterEntity.random.nextFloat() * 0.6 - 0.3,
+							final Vec3 randXZVec = this
+									.rotateVector(new Vec3(this.workSlipperyBiterEntity.random.nextFloat() * 0.6 - 0.3,
 											-1.0, w.random.nextFloat() * 0.6 - 0.3));
 							final Vec3 randSpreadVec = randXZVec
 									.scale(0.3 + this.workSlipperyBiterEntity.random.nextFloat() * 2.0f);
@@ -694,14 +774,14 @@ public class SlipperyBiter extends WaterAnimal implements NeutralMob, Enemy {
 							((ServerLevel) w).sendParticles((ParticleOptions) ParticleTypes.SOUL_FIRE_FLAME,
 									backwardsVector.x, backwardsVector.y + 1.0, backwardsVector.z, 0, randSpreadVec.x,
 									randSpreadVec.y, randSpreadVec.z, -0.10000000149011612);
-							
+
 							((ServerLevel) w).sendParticles((ParticleOptions) ParticleTypes.SOUL_FIRE_FLAME,
 									backwardsVector.x, backwardsVector.y + 1.0, backwardsVector.z, 0, randSpreadVec.x,
 									randSpreadVec.y, randSpreadVec.z, -0.10000000149011612);
-							
-							((ServerLevel) w).sendParticles((ParticleOptions) ParticleTypes.GLOW,
-									backwardsVector.x, backwardsVector.y + 1.0, backwardsVector.z, 0, randSpreadVec.x,
-									randSpreadVec.y, randSpreadVec.z, -0.10000000149011612);
+
+							((ServerLevel) w).sendParticles((ParticleOptions) ParticleTypes.GLOW, backwardsVector.x,
+									backwardsVector.y + 1.0, backwardsVector.z, 0, randSpreadVec.x, randSpreadVec.y,
+									randSpreadVec.z, -0.10000000149011612);
 
 						}
 						this.workSlipperyBiterEntity.teleportTo(tempPos.getX(), tempPos.getY() + .02f, tempPos.getZ());

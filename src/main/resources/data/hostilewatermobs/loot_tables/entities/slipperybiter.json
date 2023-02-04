@@ -32,7 +32,7 @@
 					]
 				},
 				{
-					"weight": 1,
+					"weight": 10,
 					"type": "minecraft:item",
 					"functions": [
 						{
@@ -47,8 +47,9 @@
 					"name": "hostilewatermobs:slipperybiter_scales"
 				},				
 				{
-					"weight": 15,
+					"weight": 40,
 					"type": "minecraft:item",
+					"name": "hostilewatermobs:slipperybiter_gland",
 					"functions": [
 						{
 							"function": "minecraft:set_count",
@@ -58,6 +59,16 @@
 								"type": "minecraft:uniform"
 							}
 						},
+												{
+							"function": "minecraft:set_lore",
+							"lore": [
+								{
+									"text": "Teleports you randomly nearby",
+									"color": "aqua",
+									"italic": "false"
+								}
+							]
+						},
 						{
 							"function": "minecraft:looting_enchant",
 							"count": {
@@ -66,7 +77,6 @@
 							}
 						}
 					],
-					"name": "hostilewatermobs:slipperybiter_gland",
 					"conditions": [
 						{
 							"condition": "minecraft:killed_by_player"
@@ -102,12 +112,13 @@
 					"name": "minecraft:salmon"
 				},
 				{
-					"weight": 10,
+					"weight": 15,
 					"type": "minecraft:loot_table",
 					"name": "minecraft:gameplay/fishing/junk"
 				},
 				{
 					"type": "minecraft:item",
+					"name": "hostilewatermobs:slipperybiter_scales",
 					"weight": 10,
 					"functions": [
 						{
@@ -117,11 +128,10 @@
 								"max": 1.0
 							}
 						}
-					],
-					"name": "hostilewatermobs:slipperybiter_scales"
+					]
 				},
 				{
-					"weight": 3,
+					"weight": 10,
 					"type": "minecraft:loot_table",
 					"name": "minecraft:gameplay/fishing/treasure",
 					"conditions": [
@@ -131,7 +141,7 @@
 					]
 				},
 				{
-					"weight": 27,
+					"weight": 21,
 					"type": "minecraft:empty"
 				}
 			]
@@ -142,6 +152,7 @@
 				{
 					"weight": 30,
 					"type": "minecraft:item",
+					"name": "hostilewatermobs:slipperybiter_gland",
 					"functions": [
 						{
 							"function": "minecraft:set_count",
@@ -157,12 +168,21 @@
 								"min": 0.0,
 								"max": 1.0
 							}
+						},
+						{
+							"function": "minecraft:set_lore",
+							"lore": [
+								{
+									"text": "Teleports you randomly nearby",
+									"color": "aqua",
+									"italic": "false"
+								}
+							]
 						}
-					],
-					"name": "hostilewatermobs:slipperybiter_gland"
+					]
 				},
 				{
-					"weight": 62,
+					"weight": 31,
 					"type": "minecraft:empty"
 				},			
 				{

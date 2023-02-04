@@ -17,8 +17,7 @@ import net.minecraftforge.api.distmarker.OnlyIn;
 public class SlipperyBiterRenderer extends MobRenderer<SlipperyBiter, SlipperyBiterModel<SlipperyBiter>> {
 
 //		BiomeMaker b;
-	// public static final ResourceLocation ALBINO_RIVER_GUARDIAN_TEXTURE = new
-	// ResourceLocation(Main.MODID , "textures/entity/albino_river_guardian.png");
+
 	private static final ResourceLocation SlIPPERY_BITER_TEXTURES = new ResourceLocation(Main.MODID,
 			"textures/entity/slipperybiter.png");
 	private static final ResourceLocation SlIPPERY_BITER_GLOWING_LAYER = new ResourceLocation(Main.MODID,"textures/entity/slipperybiter_eyes.png");

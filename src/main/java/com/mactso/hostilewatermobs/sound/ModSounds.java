@@ -9,12 +9,12 @@ import net.minecraftforge.registries.IForgeRegistry;
 public class ModSounds
 {
 	
-	public static final SoundEvent RIVER_GUARDIAN_HURT = create("river_guardian.hurt");
-	public static final SoundEvent RIVER_GUARDIAN_HURT_LAND = create("river_guardian.hurt_land");
-	public static final SoundEvent RIVER_GUARDIAN_DEATH = create("river_guardian.death");
-	public static final SoundEvent RIVER_GUARDIAN_DEATH_LAND = create("river_guardian.death_land");
-	public static final SoundEvent RIVER_GUARDIAN_AMBIENT = create("river_guardian.ambient");
-	public static final SoundEvent RIVER_GUARDIAN_FLOP= create("river_guardian.flop");
+	public static final SoundEvent RIVER_GUARDIAN_HURT = create("riverguardian.hurt");
+	public static final SoundEvent RIVER_GUARDIAN_HURT_LAND = create("riverguardian.hurt_land");
+	public static final SoundEvent RIVER_GUARDIAN_DEATH = create("riverguardian.death");
+	public static final SoundEvent RIVER_GUARDIAN_DEATH_LAND = create("riverguardian.death_land");
+	public static final SoundEvent RIVER_GUARDIAN_AMBIENT = create("riverguardian.ambient");
+	public static final SoundEvent RIVER_GUARDIAN_FLOP= create("riverguardian.flop");
 
 	public static final SoundEvent SLIPPERY_BITER_HURT = create("slipperybiter.hurt");
 	public static final SoundEvent SLIPPERY_BITER_DEATH = create("slipperybiter.death");

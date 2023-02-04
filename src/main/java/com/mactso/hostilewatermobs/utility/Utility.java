@@ -19,6 +19,8 @@ import net.minecraft.world.entity.MobSpawnType;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.item.Item;
 import net.minecraft.world.item.Items;
+import net.minecraft.world.level.biome.Biome;
+import net.minecraft.world.level.biome.Biome.BiomeCategory;
 import net.minecraft.world.level.levelgen.Heightmap.Types;
 import net.minecraftforge.registries.ForgeRegistries;
 
@@ -26,6 +28,30 @@ public class Utility {
 	
 	final static int TWO_SECONDS = 40;
 	private static final Logger LOGGER = LogManager.getLogger();
+	
+	public static String NONE = BiomeCategory.NONE.getName();
+	public static String BEACH = BiomeCategory.BEACH.getName();
+	public static String BADLANDS = BiomeCategory.MESA.getName();
+	public static String DESERT = BiomeCategory.DESERT.getName();
+	public static String EXTREME_HILLS = BiomeCategory.EXTREME_HILLS.getName();
+	public static String ICY = BiomeCategory.ICY.getName();
+	public static String JUNGLE = BiomeCategory.JUNGLE.getName();
+	public static String THEEND = BiomeCategory.THEEND.getName();
+	public static String FOREST = BiomeCategory.FOREST.getName();
+	public static String MESA = BiomeCategory.MESA.getName();
+	public static String MUSHROOM = BiomeCategory.MUSHROOM.getName();
+	public static String MOUNTAIN = BiomeCategory.MOUNTAIN.getName();
+	public static String NETHER = BiomeCategory.NETHER.getName();
+	public static String OCEAN = BiomeCategory.OCEAN.getName();
+	public static String PLAINS = BiomeCategory.PLAINS.getName();
+	public static String RIVER = BiomeCategory.RIVER.getName();
+	public static String SAVANNA = BiomeCategory.SAVANNA.getName();
+	public static String SWAMP = BiomeCategory.SWAMP.getName();
+	public static String TAIGA = BiomeCategory.TAIGA.getName();
+	public static String UNDERGROUND = BiomeCategory.UNDERGROUND.getName();
+	
+	
+	
 	
 	public static void debugMsg (int level, String dMsg) {
 
@@ -43,6 +69,9 @@ public class Utility {
 		
 	}
 
+	
+	
+	
 	public static void sendBoldChat(Player p, String chatMessage, ChatFormatting textColor) {
 
 		TextComponent component = new TextComponent (chatMessage);
@@ -60,6 +89,8 @@ public class Utility {
 		p.sendMessage(component, p.getUUID());
 
 	}
+	
+	
 	
 	public static void updateEffect(LivingEntity e, int amplifier,  MobEffect mobEffect, int duration) {
 		MobEffectInstance ei = e.getEffect(mobEffect);
@@ -121,6 +152,15 @@ public class Utility {
 	public static boolean isOutside(BlockPos pos, ServerLevel serverLevel) {
 		return serverLevel.getHeightmapPos(Types.MOTION_BLOCKING_NO_LEAVES, pos) == pos;
 	}
+
+	
+	public static String getBiomeCategory(Biome testBiome) {
+
+		return testBiome.getBiomeCategory().getName();
+
+}
+	
+	
 	
 	public static Item getItemFromString (String name)
 	{

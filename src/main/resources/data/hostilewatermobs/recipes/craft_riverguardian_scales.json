@@ -2,10 +2,10 @@
   "type": "minecraft:crafting_shapeless",
   "ingredients": [
     {
-      "item": "hostilewatermobs:classicsnake_scales"
+      "item": "hostilewatermobs:riverguardian_scales"
     }
   ],
   "result": {
-    "item": "minecraft:rabbit_hide"
+    "item": "minecraft:prismarine_crystals"
   }
 }

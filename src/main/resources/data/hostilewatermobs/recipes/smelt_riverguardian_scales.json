@@ -2,7 +2,7 @@
   "type": "minecraft:smelting",
   "ingredient": [
     {
-      "item": "hostilewatermobs:river_guardian_scales"
+      "item": "hostilewatermobs:riverguardian_scales"
     }
   ],
   "result": "minecraft:purple_dye",
