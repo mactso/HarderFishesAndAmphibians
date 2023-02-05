@@ -21,11 +21,11 @@ public class SlipperyBiterGland extends Item {
 	public ItemStack finishUsingItem(final ItemStack stack, final Level worldIn, final LivingEntity livingEntityIn) {
 
 		ItemStack returnStack = super.finishUsingItem(stack, worldIn, livingEntityIn);
-		returnStack.setCount(returnStack.getCount()-1);
+
 		if (worldIn.isClientSide) {
 			return returnStack;
 		}
-
+		returnStack.setCount(returnStack.getCount()-1);
 		final double leX = livingEntityIn.getX();
 		final double leY = livingEntityIn.getY();
 		final double leZ = livingEntityIn.getZ();
