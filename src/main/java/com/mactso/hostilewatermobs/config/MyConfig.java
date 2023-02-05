@@ -316,7 +316,7 @@ public class MyConfig {
 			riverGuardianSoundRange = builder
 					.comment("riverGuardian attack SoundRange in meters.  default is 7 meters. 0 turns off attack sound unless the river guardian is attacking the player.")
 					.translation(Main.MODID + ".config." + "riverGuardianSoundRange")
-					.defineInRange("riverGuardianSoundRange", () -> 19, 0, 24);
+					.defineInRange("riverGuardianSoundRange", () -> 19, 0, 32);
 
 			builder.pop();
 			builder.push("Hostile Water Mobs - Slippery Biter");

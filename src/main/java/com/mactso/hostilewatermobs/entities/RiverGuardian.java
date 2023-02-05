@@ -115,14 +115,13 @@ public class RiverGuardian extends Guardian implements Enemy {
 			parentEntity.setSilent(true);
 			
 			int range = MyConfig.getRiverGuardianSoundRange();
-			range = 17;
+
 			range *= range;
 			if (range > 0) {
 				Player p = w.getNearestPlayer(parentEntity, range); // note: range not squared.
 				if (p != null) {
 					int actualRange = (int) p.distanceToSqr(parentEntity);
 					if (actualRange <= range) {
-						System.out.println("player "+p.getDisplayName().getString()+" near RiverGuardian #"+ parentEntity.getId() + " at range^2 = (" + actualRange+").");
 						parentEntity.setSilent(false);
 					}
 				}
@@ -132,7 +131,7 @@ public class RiverGuardian extends Guardian implements Enemy {
 			if (entity instanceof ServerPlayer) {
 				ServerPlayer s = (ServerPlayer) entity;
 				if (s.isCreative()) {
-//					return false;
+					return false;
 				} else {
 					playerIsTarget = true;
 				}
@@ -149,8 +148,11 @@ public class RiverGuardian extends Guardian implements Enemy {
 				return true;
 			}
 
-
-
+			if (hunttimer++ <40) {
+				return false;
+			}
+			hunttimer = 0;
+			
 			// Ignore other River Guardians while it is Raining.
 			boolean isRiverGuardianEntity = entity instanceof RiverGuardian;
 			if (w.isRaining() && isRiverGuardianEntity) {
@@ -475,13 +477,8 @@ public class RiverGuardian extends Guardian implements Enemy {
 
 		if (BiomeDictionary.hasType(biomeKey, BiomeDictionary.Type.HOT)) {
 			workingSubType = WARM_RIVER_GUARDIAN;
-			if (MyConfig.getDebugLevel() > 0) {
-				System.out.println("warm");
-			}
+
 			if (pos.getY() < 29) {
-				if (MyConfig.getDebugLevel() > 0) {
-					System.out.println("warm albino");
-				}
 				workingSubType = ALBINO_RIVER_GUARDIAN;
 			}
 		}
