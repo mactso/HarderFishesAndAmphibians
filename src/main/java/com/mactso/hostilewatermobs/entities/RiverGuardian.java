@@ -36,6 +36,7 @@ import net.minecraft.world.entity.ai.goal.target.NearestAttackableTargetGoal;
 import net.minecraft.world.entity.ambient.Bat;
 import net.minecraft.world.entity.animal.Chicken;
 import net.minecraft.world.entity.animal.Cod;
+import net.minecraft.world.entity.animal.Fox;
 import net.minecraft.world.entity.animal.Parrot;
 import net.minecraft.world.entity.animal.Pig;
 import net.minecraft.world.entity.animal.Rabbit;
@@ -57,6 +58,7 @@ import net.minecraftforge.common.BiomeDictionary;
 
 public class RiverGuardian extends Guardian implements Enemy {
 
+	
 	static class TargetPredicate implements Predicate<LivingEntity> {
 		private static int timer = 0;
 		private static int hunttimer = 0;
@@ -108,16 +110,32 @@ public class RiverGuardian extends Guardian implements Enemy {
 
 		public boolean test(@Nullable LivingEntity entity) {
 
-			// silence river guardian attack unless attacking a player or an entity close to
-			// a player.
 
+			Level w = entity.getCommandSenderWorld();
+			parentEntity.setSilent(true);
+			
+			int range = MyConfig.getRiverGuardianSoundRange();
+			range = 17;
+			range *= range;
+			if (range > 0) {
+				Player p = w.getNearestPlayer(parentEntity, range); // note: range not squared.
+				if (p != null) {
+					int actualRange = (int) p.distanceToSqr(parentEntity);
+					if (actualRange <= range) {
+						System.out.println("player "+p.getDisplayName().getString()+" near RiverGuardian #"+ parentEntity.getId() + " at range^2 = (" + actualRange+").");
+						parentEntity.setSilent(false);
+					}
+				}
+			}
+			
 			boolean playerIsTarget = false;
 			if (entity instanceof ServerPlayer) {
 				ServerPlayer s = (ServerPlayer) entity;
 				if (s.isCreative()) {
-					return false;
+//					return false;
+				} else {
+					playerIsTarget = true;
 				}
-				playerIsTarget = true;
 			}
 
 			int distanceSq = (int) entity.distanceToSqr(this.parentEntity);
@@ -131,36 +149,20 @@ public class RiverGuardian extends Guardian implements Enemy {
 				return true;
 			}
 
-			if (hunttimer++ <40) {
-				return false;
-			}
-			hunttimer = 0;
-			
-			Level w = entity.getCommandSenderWorld();
-			int range = MyConfig.getRiverGuardianSoundRange();
-			parentEntity.setSilent(true);
-			if (range > 0) {
-				Player p = null;
-				p = w.getNearestPlayer(entity, range); // note: range not squared.
-				if (p != null) {
-					int actualRange = (int) p.distanceToSqr(entity);
-//					System.out.println("player "+p.getDisplayName().getString()+" near "+ entity.getName().getString() + " target:" + range + " (" + actualRange);
-					parentEntity.setSilent(false);
-				}
-				p = w.getNearestPlayer(parentEntity, range); // note: range not squared.
-				if (p != null) {
-					int actualRange = (int) p.distanceToSqr(parentEntity);
-//					System.out.println("player "+p.getDisplayName().getString()+" near attacker:" + range + " (" + actualRange);
-					parentEntity.setSilent(false);
-				}
 
-			}
 
 			// Ignore other River Guardians while it is Raining.
 			boolean isRiverGuardianEntity = entity instanceof RiverGuardian;
 			if (w.isRaining() && isRiverGuardianEntity) {
 				return false;
 			}
+			
+			if (hunttimer++ <80) {
+				return false;
+			}
+			hunttimer = 0;
+			
+
 
 			// ignore monsters
 			boolean isMonster = entity instanceof Monster;
@@ -176,6 +178,10 @@ public class RiverGuardian extends Guardian implements Enemy {
 				return false;
 			}
 
+			if (entity instanceof Fox) {
+				return false;
+			}
+			
 			if (entity instanceof Turtle) {
 				return false;
 			}
