@@ -738,7 +738,7 @@ public class WaterSnake extends WaterAnimal implements Enemy, RangedAttackMob {
 		}
 
 		Utility.debugMsg(1, "spawn watersnake true at " + pos.getX() + " " + pos.getY() + " " + pos.getZ());
-		MyConfig.setaDebugLevel(0);
+
 		return true;
 	}
 	

@@ -265,7 +265,6 @@ public class RiverGuardian extends Guardian implements Enemy {
 	public static boolean canSpawn(EntityType<? extends RiverGuardian> type, LevelAccessor level, MobSpawnType reason,
 			BlockPos pos, Random randomIn) {
 
-		MyConfig.setaDebugLevel(1);
 		Utility.debugMsg(1, pos, "canSpawn riverGuardian?");
 		// SpawnPlacements.Type.IN_WATER
 
