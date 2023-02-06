@@ -1,149 +1,202 @@
 {
-  "pools": [
-    {
-      "rolls": 1,
-      "entries": [
-        {
-          "type": "minecraft:loot_table",
-          "weight": 1,
-          "name": "minecraft:gameplay/fishing/treasure",
-          "functions": [
-            {
-              "function": "minecraft:set_count",
-              "count": 1
-            }
-          ],
-          "conditions": [
-            {
-              "condition": "minecraft:killed_by_player"
-            }
-          ]
-        },
-        {
-          "type": "minecraft:item",
-          "weight": 15,
-          "name": "minecraft:leather",
-          "functions": [
-            {
-              "function": "minecraft:set_count",
-              "count": 1
-            }
-          ]
-        },
-        {
-          "type": "minecraft:item",
-          "weight": 8,
-          "name": "hostilewatermobs:gurty_gland",
-          "functions": [
-            {
-              "function": "minecraft:set_count",
-              "count": 1
-            },
-            {
-              "function": "minecraft:looting_enchant",
-              "count": {
-                "min": 0,
-                "max": 1
-              }
-            }
-          ],
-          "conditions": [
-            {
-              "condition": "minecraft:killed_by_player",
-              "inverse": true
-            }
-          ]
-        },
-        {
-          "type": "minecraft:item",
-          "weight": 3,
-          "name": "hostilewatermobs:gurty_guts",
-          "functions": [
-            {
-              "function": "minecraft:set_count",
-              "count": 1
-            },
-            {
-              "function": "minecraft:looting_enchant",
-              "count": {
-                "min": 1,
-                "max": 1.5
-              },
-              "conditions": [
-                {
-                  "condition": "minecraft:killed_by_player"
-                }
-              ]
-            }
-          ]
-        },
-        {
-          "type": "minecraft:item",
-          "weight": 15,
-          "name": "minecraft:rotten_flesh",
-          "functions": [
-            {
-              "function": "minecraft:set_count",
-              "count": {
-                "min": 1,
-                "max": 2
-              },
-              "conditions": [
-                {
-                  "condition": "minecraft:damage_source_properties",
-                  "predicate": {
-                    "is_fire": false
-                  }
-                }
-              ]
-            },
-            {
-              "function": "minecraft:looting_enchant",
-              "count": {
-                "min": 1,
-                "max": 1.5
-              },
-              "conditions": [
-                {
-                  "condition": "minecraft:damage_source_properties",
-                  "predicate": {
-                    "is_fire": false
-                  }
-                }
-              ]
-            }
-          ]
-        },
-        {
-          "type": "minecraft:item",
-          "weight": 15,
-          "name": "minecraft:cooked_porkchop",
-          "functions": [
-            {
-              "function": "minecraft:set_count",
-              "count": {
-                "min": 1,
-                "max": 1.5
-              }
-            },
-            {
-              "function": "minecraft:looting_enchant",
-              "count": {
-                "min": 1,
-                "max": 1.5
-              }
-            }
-          ],
-          "conditions": [
-            {
-              "condition": "minecraft:damage_source_properties",
-              "predicate": {
-                "is_fire": true
-              }
-            }
-          ]
-        }
-      ]
-    }
-  ]
+	"pools": [
+		{
+			"rolls": 1,
+			"entries": [
+				{
+					"weight": 10,
+					"type": "minecraft:empty"
+				},
+				{
+					"type": "minecraft:item",
+					"weight": 40,
+					"name": "hostilewatermobs:gurty_gland",
+					"functions": [
+						{
+							"function": "minecraft:set_count",
+							"count": 1
+						},
+						{
+							"function": "minecraft:looting_enchant",
+							"count": {
+								"min": 0,
+								"max": 1
+							}
+						},
+						{
+							"function": "minecraft:set_lore",
+							"lore": [
+								{
+									"text": "Grants you Water Breathing",
+									"color": "aqua",
+									"italic": "false"
+								}
+							]
+						}
+					],
+					"conditions": [
+						{
+							"condition": "minecraft:killed_by_player",
+							"inverse": true
+						}
+					]
+				}
+			]
+		},
+		{
+			"rolls": 2,
+			"entries": [
+				{
+					"type": "minecraft:loot_table",
+					"weight": 10,
+					"name": "minecraft:gameplay/fishing/treasure",
+					"functions": [
+						{
+							"function": "minecraft:set_count",
+							"count": 1
+						}
+					],
+					"conditions": [
+						{
+							"condition": "minecraft:killed_by_player"
+						}
+					]
+				},
+				{
+					"type": "minecraft:item",
+					"weight": 40,
+					"name": "hostilewatermobs:gurty_gland",
+					"functions": [
+						{
+							"function": "minecraft:set_count",
+							"count": 1
+						},
+						{
+							"function": "minecraft:looting_enchant",
+							"count": {
+								"min": 0,
+								"max": 1
+							}
+						},
+						{
+							"function": "minecraft:set_lore",
+							"lore": [
+								{
+									"text": "Grants you Water Breathing",
+									"color": "aqua",
+									"italic": "false"
+								}
+							]
+						}
+					],
+					"conditions": [
+						{
+							"condition": "minecraft:killed_by_player",
+							"inverse": true
+						}
+					]
+				},
+				{
+					"type": "minecraft:item",
+					"weight": 10,
+					"name": "minecraft:leather",
+					"functions": [
+						{
+							"function": "minecraft:set_count",
+							"count": 1
+						}
+					]
+				},
+				{
+					"type": "minecraft:item",
+					"weight": 30,
+					"name": "hostilewatermobs:gurty_guts",
+					"functions": [
+						{
+							"function": "minecraft:set_count",
+							"count": 1
+						},
+						{
+							"function": "minecraft:looting_enchant",
+							"count": {
+								"min": 1,
+								"max": 1.5
+							},
+							"conditions": [
+								{
+									"condition": "minecraft:killed_by_player"
+								}
+							]
+						}
+					]
+				},
+				{
+					"type": "minecraft:item",
+					"weight": 10,
+					"name": "minecraft:rotten_flesh",
+					"functions": [
+						{
+							"function": "minecraft:set_count",
+							"count": {
+								"min": 1,
+								"max": 2
+							},
+							"conditions": [
+								{
+									"condition": "minecraft:damage_source_properties",
+									"predicate": {
+										"is_fire": false
+									}
+								}
+							]
+						},
+						{
+							"function": "minecraft:looting_enchant",
+							"count": {
+								"min": 1,
+								"max": 1.5
+							},
+							"conditions": [
+								{
+									"condition": "minecraft:damage_source_properties",
+									"predicate": {
+										"is_fire": false
+									}
+								}
+							]
+						}
+					]
+				},
+				{
+					"type": "minecraft:item",
+					"weight": 10,
+					"name": "minecraft:cooked_porkchop",
+					"functions": [
+						{
+							"function": "minecraft:set_count",
+							"count": {
+								"min": 1,
+								"max": 1.5
+							}
+						},
+						{
+							"function": "minecraft:looting_enchant",
+							"count": {
+								"min": 1,
+								"max": 1.5
+							}
+						}
+					],
+					"conditions": [
+						{
+							"condition": "minecraft:damage_source_properties",
+							"predicate": {
+								"is_fire": true
+							}
+						}
+					]
+				}
+			]
+		}
+	]
 }

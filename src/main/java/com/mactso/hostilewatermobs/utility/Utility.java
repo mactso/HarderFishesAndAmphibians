@@ -93,7 +93,6 @@ public class Utility {
 	
 	
 	
-	
 	public static void updateEffect(LivingEntity e, int amplifier,  MobEffect mobEffect, int duration) {
 		MobEffectInstance ei = e.getEffect(mobEffect);
 		if (amplifier == 10) {

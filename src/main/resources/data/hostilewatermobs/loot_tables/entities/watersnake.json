@@ -1,0 +1,132 @@
+{
+	"type": "minecraft:entity",
+	"pools": [
+		{
+			"rolls": 1,
+			"entries": [
+				{
+					"weight": 10,
+					"type": "minecraft:empty"
+				},
+				{
+					"type": "minecraft:item",
+					"weight": 40,
+					"name": "hostilewatermobs:watersnake_gland",
+					"functions": [
+						{
+							"function": "minecraft:set_count",
+							"count": 1
+						},
+						{
+							"function": "minecraft:looting_enchant",
+							"count": {
+								"min": 0,
+								"max": 1
+							}
+						},
+						{
+							"function": "minecraft:set_lore",
+							"lore": [
+								{
+									"text": "Grants you Dolphin Grace",
+									"color": "aqua",
+									"italic": "false"
+								}
+							]
+						}
+					],
+					"conditions": [
+						{
+							"condition": "minecraft:killed_by_player",
+							"inverse": true
+						}
+					]
+				},
+				{
+					"type": "minecraft:item",
+					"weight": 10,
+					"name": "hostilewatermobs:watersnake_scales",
+					"functions": [
+						{
+							"function": "minecraft:set_count",
+							"count": {
+								"min": 1.0,
+								"max": 2.0,
+								"type": "minecraft:uniform"
+							}
+						}
+					]
+				},
+				{
+					"weight": 15,
+					"type": "minecraft:item",
+					"name": "hostilewatermobs:watersnake_scales",
+					"functions": [
+						{
+							"function": "minecraft:set_count",
+							"count": {
+								"min": 1.0,
+								"max": 1.0,
+								"type": "minecraft:uniform"
+							}
+						},
+						{
+							"function": "minecraft:looting_enchant",
+							"count": {
+								"min": 0.0,
+								"max": 1.0
+							}
+						}
+					]
+				}
+			]
+		},
+		{
+			"rolls": 1,
+			"entries": [
+				{
+					"weight": 10,
+					"type": "minecraft:empty"
+				},
+				{
+					"weight": 50,
+					"type": "minecraft:item",
+					"name": "hostilewatermobs:watersnake_scales",
+					"functions": [
+						{
+							"function": "minecraft:set_count",
+							"count": {
+								"min": 1.0,
+								"max": 2.0,
+								"type": "minecraft:uniform"
+							}
+						},
+						{
+							"function": "minecraft:looting_enchant",
+							"count": {
+								"min": 0.0,
+								"max": 1.0
+							}
+						}
+					]
+
+				},
+				{
+					"weight": 8,
+					"type": "minecraft:loot_table",
+					"name": "minecraft:gameplay/fishing/fish"
+				}
+			],
+			"conditions": [
+				{
+					"condition": "minecraft:killed_by_player"
+				},
+				{
+					"condition": "minecraft:random_chance_with_looting",
+					"chance": 0.025,
+					"looting_multiplier": 0.01
+				}
+			]
+		}
+	]
+}

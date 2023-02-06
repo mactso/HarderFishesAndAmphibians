@@ -5,68 +5,126 @@
 			"rolls": 1,
 			"entries": [
 				{
-					"weight": 15,
-					"type": "minecraft:item",
-					"functions": [
-						{
-							"function": "minecraft:set_count",
-							"count": {
-								"min": 1.0,
-								"max": 2.0,
-								"type": "minecraft:uniform"
-							}
-						},
-						{
-							"function": "minecraft:looting_enchant",
-							"count": {
-								"min": 0.0,
-								"max": 1.0
-							}
-						}
-					],
-					"name": "hostilewatermobs:slipperybiter_scales",
-					"conditions": [
-						{
-							"condition": "minecraft:killed_by_player"
-						}
-					]
+					"weight": 10,
+					"type": "minecraft:empty"
 				},
 				{
-					"weight": 1,
 					"type": "minecraft:item",
-					"functions": [
-						{
-							"function": "minecraft:set_count",
-							"count": {
-								"min": 1.0,
-								"max": 2.0,
-								"type": "minecraft:uniform"
-							}
-						}
-					],
-					"name": "hostilewatermobs:slipperybiter_scales"
-				},				
-				{
-					"weight": 15,
-					"type": "minecraft:item",
-					"functions": [
-						{
-							"function": "minecraft:set_count",
-							"count": {
-								"min": 1.0,
-								"max": 1.0,
-								"type": "minecraft:uniform"
-							}
-						},
-						{
-							"function": "minecraft:looting_enchant",
-							"count": {
-								"min": 0.0,
-								"max": 1.0
-							}
-						}
-					],
+					"weight": 40,
 					"name": "hostilewatermobs:slipperybiter_gland",
+					"functions": [
+						{
+							"function": "minecraft:set_count",
+							"count": 1
+						},
+						{
+							"function": "minecraft:looting_enchant",
+							"count": {
+								"min": 0.0,
+								"max": 1.0
+							}
+						},
+						{
+							"function": "minecraft:set_lore",
+							"lore": [
+								{
+									"text": "Teleports you randomly nearby",
+									"color": "aqua",
+									"italic": "false"
+								}
+							]
+						}
+					],
+					"conditions": [
+						{
+							"condition": "minecraft:killed_by_player",
+							"inverse": true
+						}
+					]
+				},
+				{
+					"weight": 10,
+					"type": "minecraft:item",
+					"name": "hostilewatermobs:slipperybiter_scales",
+					"functions": [
+						{
+							"function": "minecraft:set_count",
+							"count": {
+								"min": 1.0,
+								"max": 2.0,
+								"type": "minecraft:uniform"
+							}
+						},
+						{
+							"function": "minecraft:looting_enchant",
+							"count": {
+								"min": 0.0,
+								"max": 1.0
+							}
+						}
+					]
+				}
+			]
+		},
+		{
+			"rolls": 1,
+			"entries": [
+				{
+					"weight": 10,
+					"type": "minecraft:empty"
+				},
+				{
+					"weight": 50,
+					"type": "minecraft:item",
+					"name": "hostilewatermobs:slipperybiter_scales",
+					"functions": [
+						{
+							"function": "minecraft:set_count",
+							"count": {
+								"min": 1.0,
+								"max": 2.0,
+								"type": "minecraft:uniform"
+							}
+						},
+						{
+							"function": "minecraft:looting_enchant",
+							"count": {
+								"min": 0.0,
+								"max": 1.0
+							}
+						}
+					]
+				}
+			]
+		},
+		{
+			"rolls": 1,
+			"entries": [
+				{
+					"weight": 10,
+					"type": "minecraft:empty"
+				},
+				{
+					"weight": 15,
+					"type": "minecraft:item",
+					"name": "hostilewatermobs:slipperybiter_scales",
+					"functions": [
+						{
+							"function": "minecraft:set_count",
+							"count": {
+								"min": 1.0,
+								"max": 2.0,
+								"type": "minecraft:uniform"
+							}
+						},
+						{
+							"function": "minecraft:looting_enchant",
+							"count": {
+								"min": 0.0,
+								"max": 1.0
+							}
+						}
+					],
 					"conditions": [
 						{
 							"condition": "minecraft:killed_by_player"
@@ -74,9 +132,18 @@
 					]
 				},
 				{
+					"weight": 10,
 					"type": "minecraft:item",
-					"weight": 20,
+					"name": "minecraft:salmon",
 					"functions": [
+						{
+							"function": "minecraft:set_count",
+							"count": {
+								"min": 1.0,
+								"max": 2.0,
+								"type": "minecraft:uniform"
+							}
+						},
 						{
 							"function": "minecraft:looting_enchant",
 							"count": {
@@ -98,30 +165,15 @@
 								}
 							]
 						}
-					],
-					"name": "minecraft:salmon"
+					]
 				},
 				{
-					"weight": 10,
+					"weight": 15,
 					"type": "minecraft:loot_table",
 					"name": "minecraft:gameplay/fishing/junk"
 				},
 				{
-					"type": "minecraft:item",
 					"weight": 10,
-					"functions": [
-						{
-							"function": "minecraft:looting_enchant",
-							"count": {
-								"min": 0.0,
-								"max": 1.0
-							}
-						}
-					],
-					"name": "hostilewatermobs:slipperybiter_scales"
-				},
-				{
-					"weight": 3,
 					"type": "minecraft:loot_table",
 					"name": "minecraft:gameplay/fishing/treasure",
 					"conditions": [
@@ -129,56 +181,6 @@
 							"condition": "minecraft:killed_by_player"
 						}
 					]
-				},
-				{
-					"weight": 27,
-					"type": "minecraft:empty"
-				}
-			]
-		},
-		{
-			"rolls": 1,
-			"entries": [
-				{
-					"weight": 30,
-					"type": "minecraft:item",
-					"functions": [
-						{
-							"function": "minecraft:set_count",
-							"count": {
-								"min": 1.0,
-								"max": 1.0,
-								"type": "minecraft:uniform"
-							}
-						},
-						{
-							"function": "minecraft:looting_enchant",
-							"count": {
-								"min": 0.0,
-								"max": 1.0
-							}
-						}
-					],
-					"name": "hostilewatermobs:slipperybiter_gland"
-				},
-				{
-					"weight": 62,
-					"type": "minecraft:empty"
-				},			
-				{
-					"weight": 8,
-					"type": "minecraft:loot_table",
-					"name": "minecraft:gameplay/fishing/fish"
-				}
-			],
-			"conditions": [
-				{
-					"condition": "minecraft:killed_by_player"
-				},
-				{
-					"condition": "minecraft:random_chance_with_looting",
-					"chance": 0.025,
-					"looting_multiplier": 0.01
 				}
 			]
 		}

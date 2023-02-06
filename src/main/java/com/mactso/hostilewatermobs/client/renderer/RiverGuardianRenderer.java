@@ -15,18 +15,11 @@ import net.minecraftforge.api.distmarker.OnlyIn;
 @OnlyIn(Dist.CLIENT)
 public class RiverGuardianRenderer extends GuardianRenderer {
 
-//   public static final ResourceLocation ALBINO_RIVER_GUARDIAN_TEXTURE = new ResourceLocation(Main.MODID , "textures/entity/albino_river_guardian.png");
-//   public static final ResourceLocation RIVER_GUARDIAN_TEXTURE = new ResourceLocation(Main.MODID , "textures/entity/river_guardian.png");
-//   public static final ResourceLocation COLD_RIVER_GUARDIAN_TEXTURE = new ResourceLocation(Main.MODID , "textures/entity/cold_river_guardian.png");
-//   public static final ResourceLocation WARM_RIVER_GUARDIAN_TEXTURE = new ResourceLocation(Main.MODID , "textures/entity/warm_river_guardian.png");
 	private static final ResourceLocation[] TEXTURES = {
-			new ResourceLocation(Main.MODID, "textures/entity/river_guardian.png"),
-			new ResourceLocation(Main.MODID, "textures/entity/cold_river_guardian.png"),
-			new ResourceLocation(Main.MODID, "textures/entity/warm_river_guardian.png"),
-			new ResourceLocation(Main.MODID, "textures/entity/albino_river_guardian.png") };
-	// private static final ResourceLocation RIVER_GUARDIAN_BEAM_TEXTURE = new
-	// ResourceLocation(Main.MODID , "textures/entity/river_guardian_beam.png");
-//   private static final RenderType BEAM_RENDER_TYPE = RenderType.getEntityCutoutNoCull(RIVER_GUARDIAN_BEAM_TEXTURE);
+			new ResourceLocation(Main.MODID, "textures/entity/riverguardian.png"),
+			new ResourceLocation(Main.MODID, "textures/entity/cold_riverguardian.png"),
+			new ResourceLocation(Main.MODID, "textures/entity/warm_riverguardian.png"),
+			new ResourceLocation(Main.MODID, "textures/entity/albino_riverguardian.png") };
 
 	public RiverGuardianRenderer(EntityRendererProvider.Context renderManagerIn) {
 		super(renderManagerIn);
@@ -41,7 +34,6 @@ public class RiverGuardianRenderer extends GuardianRenderer {
 	@Override
 	public void render(Guardian entityIn, float entityYaw, float partialTicks, PoseStack matrixStackIn,
 			MultiBufferSource bufferIn, int packedLightIn) {
-		// TODO Auto-generated method stub
 		super.render((Guardian) entityIn, entityYaw, partialTicks, matrixStackIn, bufferIn, packedLightIn);
 	}
 
