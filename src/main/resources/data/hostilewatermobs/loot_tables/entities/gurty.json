@@ -1,11 +1,54 @@
 {
 	"pools": [
 		{
+			"rolls": 1,
+			"entries": [
+				{
+					"weight": 10,
+					"type": "minecraft:empty"
+				},
+				{
+					"type": "minecraft:item",
+					"weight": 40,
+					"name": "hostilewatermobs:gurty_gland",
+					"functions": [
+						{
+							"function": "minecraft:set_count",
+							"count": 1
+						},
+						{
+							"function": "minecraft:looting_enchant",
+							"count": {
+								"min": 0,
+								"max": 1
+							}
+						},
+						{
+							"function": "minecraft:set_lore",
+							"lore": [
+								{
+									"text": "Grants you Water Breathing",
+									"color": "aqua",
+									"italic": "false"
+								}
+							]
+						}
+					],
+					"conditions": [
+						{
+							"condition": "minecraft:killed_by_player",
+							"inverse": true
+						}
+					]
+				}
+			]
+		},
+		{
 			"rolls": 2,
 			"entries": [
 				{
 					"type": "minecraft:loot_table",
-					"weight": 20,
+					"weight": 10,
 					"name": "minecraft:gameplay/fishing/treasure",
 					"functions": [
 						{
@@ -82,6 +125,16 @@
 							"conditions": [
 								{
 									"condition": "minecraft:killed_by_player"
+								}
+							]
+						},
+						{
+							"function": "minecraft:set_lore",
+							"lore": [
+								{
+									"text": "You can't eat just one!  It's craftable!",
+									"color": "cyan",
+									"italic": "false"
 								}
 							]
 						}

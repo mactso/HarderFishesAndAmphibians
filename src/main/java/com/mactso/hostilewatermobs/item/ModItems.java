@@ -22,7 +22,7 @@ public class ModItems {
 	public static final Item SLIPPERY_BITER_SCALES = new Item((new Item.Properties()).tab(CreativeModeTab.TAB_MATERIALS)).setRegistryName("slipperybiter_scales");
 	
 	public static final Item GURTY_SPAWN_EGG = new SpawnEggItem(ModEntities.GURTY, 0x1FD41B, 0x791A2A,  new Properties().tab(CreativeModeTab.TAB_MISC)).setRegistryName("gurty_spawn_egg");
-	public static final Item GURTY_GUTS = new Item((new Item.Properties()).tab(CreativeModeTab.TAB_MATERIALS)).setRegistryName("gurty_guts");
+	public static final Item GURTY_GUTS = new Item((new Item.Properties().food(new FoodProperties.Builder().nutrition(5).saturationMod(1.0F).fast().alwaysEat().build())).tab(CreativeModeTab.TAB_MATERIALS)).setRegistryName("gurty_guts");
 	public static final Item GURTY_GLAND = new GurtyGland ((new Item.Properties().food(new FoodProperties.Builder().nutrition(5).saturationMod(1.0F).fast().alwaysEat().build())).tab(CreativeModeTab.TAB_FOOD).stacksTo(16)).setRegistryName("gurty_gland");
 
 	public static final Item WATERSNAKE_SPAWN_EGG = new SpawnEggItem(ModEntities.WATER_SNAKE, 0x49AA3A, 0xBF442B, new Properties().tab(CreativeModeTab.TAB_MISC)).setRegistryName("watersnake_spawn_egg");

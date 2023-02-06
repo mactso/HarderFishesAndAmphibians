@@ -5,116 +5,34 @@
 			"rolls": 1,
 			"entries": [
 				{
-					"weight": 15,
-					"type": "minecraft:item",
-					"name": "minecraft:prismarine_shard",
-					"functions": [
-						{
-							"function": "minecraft:set_count",
-							"count": {
-								"min": 0.0,
-								"max": 2.0,
-								"type": "minecraft:uniform"
-							}
-						},
-						{
-							"function": "minecraft:looting_enchant",
-							"count": {
-								"min": 0.0,
-								"max": 1.0
-							}
-						}
-					],
-					"conditions": [
-						{
-							"condition": "minecraft:killed_by_player"
-						}
-					]
-				},
-				{
-					"weight": 20,
-					"type": "minecraft:item",
-					"name": "hostilewatermobs:riverguardian_scales",
-					"functions": [
-						{
-							"function": "minecraft:set_count",
-							"count": {
-								"min": 0.0,
-								"max": 2.0,
-								"type": "minecraft:uniform"
-							}
-						},
-						{
-							"function": "minecraft:looting_enchant",
-							"count": {
-								"min": 0.0,
-								"max": 1.0
-							}
-						}
-					],
-					"conditions": [
-						{
-							"condition": "minecraft:killed_by_player"
-						}
-					]
-				},
-				{
 					"weight": 10,
 					"type": "minecraft:empty"
-				}
-			]
-		},
-		{
-			"rolls": 1,
-			"entries": [
-				{
-					"weight": 20,
-					"type": "minecraft:item",
-					"name": "hostilewatermobs:riverguardian_scales",
-					"functions": [
-						{
-							"function": "minecraft:set_count",
-							"count": {
-								"min": 0.0,
-								"max": 2.0,
-								"type": "minecraft:uniform"
-							}
-						},
-						{
-							"function": "minecraft:looting_enchant",
-							"count": {
-								"min": 0.0,
-								"max": 1.0
-							}
-						}
-					],
-					"conditions": [
-						{
-							"condition": "minecraft:killed_by_player"
-						}
-					]
 				},
 				{
-					"type": "minecraft:item",
 					"weight": 40,
+					"type": "minecraft:item",
 					"name": "hostilewatermobs:riverguardian_gland",
 					"functions": [
 						{
 							"function": "minecraft:set_count",
-							"count": 1
+							"count": {
+								"min": 0.0,
+								"max": 2.0,
+								"type": "minecraft:uniform"
+							}
 						},
 						{
 							"function": "minecraft:looting_enchant",
 							"count": {
-								"min": 0,
-								"max": 1
+								"min": 0.0,
+								"max": 1.0
 							}
 						},
 						{
 							"function": "minecraft:set_lore",
 							"lore": [
 								{
-									"text": "Eat to gain Guardian Vision",
+									"text": "Grants Night Vision",
 									"color": "aqua",
 									"italic": "false"
 								}
@@ -123,8 +41,80 @@
 					],
 					"conditions": [
 						{
-							"condition": "minecraft:killed_by_player",
-							"inverse": true
+							"condition": "minecraft:killed_by_player"
+						}
+					]
+				},
+				{
+					"weight": 15,
+					"type": "minecraft:item",
+					"name": "hostilewatermobs:riverguardian_scales",
+					"functions": [
+						{
+							"function": "minecraft:set_count",
+							"count": {
+								"min": 0.0,
+								"max": 2.0,
+								"type": "minecraft:uniform"
+							}
+						},
+						{
+							"function": "minecraft:looting_enchant",
+							"count": {
+								"min": 0.0,
+								"max": 1.0
+							}
+						},
+						{
+							"function": "minecraft:set_lore",
+							"lore": [
+								{
+									"text": "This can be crafted or smelted",
+									"color": "cyan",
+									"italic": "false"
+								}
+							]
+						}
+					]
+				}
+			]
+		},
+		{
+			"rolls": 1,
+			"entries": [
+				{
+					"weight": 10,
+					"type": "minecraft:empty"
+				},
+				{
+					"weight": 20,
+					"type": "minecraft:item",
+					"name": "hostilewatermobs:riverguardian_scales",
+					"functions": [
+						{
+							"function": "minecraft:set_count",
+							"count": {
+								"min": 1.0,
+								"max": 2.0,
+								"type": "minecraft:uniform"
+							}
+						},
+						{
+							"function": "minecraft:looting_enchant",
+							"count": {
+								"min": 0.0,
+								"max": 1.0
+							}
+						},
+						{
+							"function": "minecraft:set_lore",
+							"lore": [
+								{
+									"text": "This can be crafted or smelted",
+									"color": "cyan",
+									"italic": "false"
+								}
+							]
 						}
 					]
 				},
@@ -169,6 +159,7 @@
 				{
 					"type": "minecraft:item",
 					"weight": 20,
+					"name": "hostilewatermobs:riverguardian_scales",
 					"functions": [
 						{
 							"function": "minecraft:looting_enchant",
@@ -176,9 +167,18 @@
 								"min": 0.0,
 								"max": 1.0
 							}
+						},
+						{
+							"function": "minecraft:set_lore",
+							"lore": [
+								{
+									"text": "This can be crafted or smelted",
+									"color": "cyan",
+									"italic": "false"
+								}
+							]
 						}
-					],
-					"name": "hostilewatermobs:riverguardian_scales"
+					]
 				},
 				{
 					"weight": 15,
@@ -189,10 +189,6 @@
 							"condition": "minecraft:killed_by_player"
 						}
 					]
-				},
-				{
-					"weight": 20,
-					"type": "minecraft:empty"
 				}
 			]
 		},
