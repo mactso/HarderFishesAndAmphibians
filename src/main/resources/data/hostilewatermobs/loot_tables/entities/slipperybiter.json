@@ -61,6 +61,16 @@
 								"min": 0.0,
 								"max": 1.0
 							}
+						},
+						{
+							"function": "minecraft:set_lore",
+							"lore": [
+								{
+									"text": "This can be crafted or smelted",
+									"color": "cyan",
+									"italic": "false"
+								}
+							]
 						}
 					]
 				}
@@ -92,6 +102,16 @@
 								"min": 0.0,
 								"max": 1.0
 							}
+						},
+						{
+							"function": "minecraft:set_lore",
+							"lore": [
+								{
+									"text": "This can be crafted or smelted",
+									"color": "cyan",
+									"italic": "false"
+								}
+							]
 						}
 					]
 				}
@@ -123,6 +143,16 @@
 								"min": 0.0,
 								"max": 1.0
 							}
+						},
+						{
+							"function": "minecraft:set_lore",
+							"lore": [
+								{
+									"text": "This can be crafted or smelted",
+									"color": "cyan",
+									"italic": "false"
+								}
+							]
 						}
 					],
 					"conditions": [

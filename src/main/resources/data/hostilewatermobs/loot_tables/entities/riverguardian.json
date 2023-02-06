@@ -64,6 +64,16 @@
 								"min": 0.0,
 								"max": 1.0
 							}
+						},
+						{
+							"function": "minecraft:set_lore",
+							"lore": [
+								{
+									"text": "This can be crafted or smelted",
+									"color": "cyan",
+									"italic": "false"
+								}
+							]
 						}
 					]
 				}
@@ -95,6 +105,16 @@
 								"min": 0.0,
 								"max": 1.0
 							}
+						},
+						{
+							"function": "minecraft:set_lore",
+							"lore": [
+								{
+									"text": "This can be crafted or smelted",
+									"color": "cyan",
+									"italic": "false"
+								}
+							]
 						}
 					]
 				},
@@ -139,6 +159,7 @@
 				{
 					"type": "minecraft:item",
 					"weight": 20,
+					"name": "hostilewatermobs:riverguardian_scales",
 					"functions": [
 						{
 							"function": "minecraft:looting_enchant",
@@ -146,9 +167,18 @@
 								"min": 0.0,
 								"max": 1.0
 							}
+						},
+						{
+							"function": "minecraft:set_lore",
+							"lore": [
+								{
+									"text": "This can be crafted or smelted",
+									"color": "cyan",
+									"italic": "false"
+								}
+							]
 						}
-					],
-					"name": "hostilewatermobs:riverguardian_scales"
+					]
 				},
 				{
 					"weight": 15,
