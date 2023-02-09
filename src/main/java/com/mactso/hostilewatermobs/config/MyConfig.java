@@ -244,7 +244,8 @@ public class MyConfig {
 		zombifiedPiglinSpawnBoost = COMMON.zombifiedPiglinSpawnBoost.get();
 		ghastSpawnBoost = COMMON.ghastSpawnBoost.get();		
 		
-		Utility.debugMsg(1,"Harder Farther Debug Level: " + debugLevel );
+		Utility.debugMsg(1,"Hostile Water Mobs Debug Level: " + debugLevel );
+		
 	}
 	
 	public static class Common {
@@ -311,12 +312,12 @@ public class MyConfig {
 			riverGuardianSpawnCap = builder
 					.comment("riverGuardianSpawnCap")
 					.translation(Main.MODID + ".config." + "riverGuardianSpawnCap")
-					.defineInRange("riverGuardianSpawnCap", () -> 31, 1, 100);
+					.defineInRange("riverGuardianSpawnCap", () -> 21, 1, 100);
 
 			riverGuardianSoundRange = builder
 					.comment("riverGuardian attack SoundRange in meters.  default is 7 meters. 0 turns off attack sound unless the river guardian is attacking the player.")
 					.translation(Main.MODID + ".config." + "riverGuardianSoundRange")
-					.defineInRange("riverGuardianSoundRange", () -> 19, 0, 32);
+					.defineInRange("riverGuardianSoundRange", () -> 17, 0, 24);
 
 			builder.pop();
 			builder.push("Hostile Water Mobs - Slippery Biter");
@@ -324,7 +325,7 @@ public class MyConfig {
 			slipperyBiterSpawnWeight = builder
 					.comment("slipperyBiterSpawnWeight")
 					.translation(Main.MODID + ".config." + "slipperyBiterSpawnWeight")
-					.defineInRange("slipperyBiterSpawnWeight", () -> 30, 0, 500);
+					.defineInRange("slipperyBiterSpawnWeight", () -> 80, 0, 500);
 
 			slipperyBiterSpawnCap = builder
 					.comment("slipperyBiterSpawnCap")
@@ -337,7 +338,7 @@ public class MyConfig {
 			gurtySpawnWeight = builder
 					.comment("gurtySpawnWeight")
 					.translation(Main.MODID + ".config." + "gurtySpawnWeight")
-					.defineInRange("gurtySpawnWeight", () -> 40, 0, 500);
+					.defineInRange("gurtySpawnWeight", () -> 80, 0, 500);
 
 			gurtySpawnCap = builder
 					.comment("gurtySpawnCap")
@@ -366,7 +367,7 @@ public class MyConfig {
 			watersnakeSpawnWeight = builder
 					.comment("watersnakeSpawnWeight")
 					.translation(Main.MODID + ".config." + "watersnakeSpawnWeight")
-					.defineInRange("watersnakeSpawnWeight", () -> 30, 0, 500);
+					.defineInRange("watersnakeSpawnWeight", () -> 80, 0, 500);
 
 			watersnakeSpawnCap = builder
 					.comment("watersnakeSpawnCap")

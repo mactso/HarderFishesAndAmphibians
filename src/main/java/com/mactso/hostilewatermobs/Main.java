@@ -39,6 +39,7 @@ public class Main {
 	    
 	    public Main()
 	    {
+	    	
 	    	System.out.println(MODID + ": Registering Mod.");
 	  		FMLJavaModLoadingContext.get().getModEventBus().register(this);
  	        ModLoadingContext.get().registerConfig(ModConfig.Type.COMMON,MyConfig.COMMON_SPEC );

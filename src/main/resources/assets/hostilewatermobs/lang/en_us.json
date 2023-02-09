@@ -1,5 +1,5 @@
 {
-	"entity.hostilewatermobs.river_guardian" : "River Guardian",
+	"entity.hostilewatermobs.riverguardian" : "River Guardian",
     "subtitles.riverguardian.hurt" : "River guardian hurt",
 	"subtitles.riverguardian.land_hurt" : "River guardian hurt on land",
 	"subtitles.riverguardian.death": "River guardian dies",

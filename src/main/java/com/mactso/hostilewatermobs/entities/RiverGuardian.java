@@ -110,6 +110,8 @@ public class RiverGuardian extends Guardian implements Enemy {
 
 		public boolean test(@Nullable LivingEntity entity) {
 
+			// silence river guardian attack unless attacking a player or an entity close to
+			// a player.
 
 			Level w = entity.getCommandSenderWorld();
 			parentEntity.setSilent(true);
@@ -148,23 +150,18 @@ public class RiverGuardian extends Guardian implements Enemy {
 				return true;
 			}
 
-			if (hunttimer++ <40) {
-				return false;
-			}
-			hunttimer = 0;
-			
-			// Ignore other River Guardians while it is Raining.
-			boolean isRiverGuardianEntity = entity instanceof RiverGuardian;
-			if (w.isRaining() && isRiverGuardianEntity) {
-				return false;
-			}
-			
 			if (hunttimer++ <80) {
 				return false;
 			}
 			hunttimer = 0;
 			
 
+			// Ignore other River Guardians while it is Raining.
+			boolean isRiverGuardianEntity = entity instanceof RiverGuardian;
+			if (w.isRaining() && isRiverGuardianEntity) {
+				return false;
+			}
+			
 
 			// ignore monsters
 			boolean isMonster = entity instanceof Monster;
@@ -172,7 +169,7 @@ public class RiverGuardian extends Guardian implements Enemy {
 				isMonster = true;
 			}
 
-			if (isMonster && !isRiverGuardianEntity && !entity.isBaby()) {
+			if (isMonster && !isRiverGuardianEntity) {
 				return false;
 			}
 
@@ -190,7 +187,7 @@ public class RiverGuardian extends Guardian implements Enemy {
 
 			// attack nearby prey animals
 			boolean preyAnimal = entity instanceof Cod || entity instanceof Pig || entity instanceof Chicken
-					|| entity instanceof Rabbit || entity.isBaby() || entity instanceof RiverGuardian;
+					|| entity instanceof Rabbit || entity instanceof RiverGuardian;
 
 			int huntingRange = calcBaseHuntingRange(entity);
 
@@ -290,7 +287,7 @@ public class RiverGuardian extends Guardian implements Enemy {
 		if (reason == MobSpawnType.SPAWN_EGG)
 			return true;
 
-		if (isWellLit(level, pos))
+		if (isTooBright(level, pos))
 			return false;
 
 		if (reason == MobSpawnType.SPAWNER)
@@ -398,7 +395,7 @@ public class RiverGuardian extends Guardian implements Enemy {
 
 	
 	
-	private static boolean isWellLit(LevelAccessor level, BlockPos pos) {
+	private static boolean isTooBright(LevelAccessor level, BlockPos pos) {
 
 		if (isDeep(pos)) {
 			if (level.getMaxLocalRawBrightness(pos) > 9) {
@@ -423,7 +420,7 @@ public class RiverGuardian extends Guardian implements Enemy {
 	public static AttributeSupplier.Builder registerAttributes() {
 		return Guardian.createAttributes().add(Attributes.MOVEMENT_SPEED, (double) 0.65F)
 				.add(Attributes.FOLLOW_RANGE, 24.0D).add(Attributes.ATTACK_DAMAGE, 2.0D)
-				.add(Attributes.MAX_HEALTH, 11.0D);
+				.add(Attributes.MAX_HEALTH, 18.5D);
 	}
 
 	

@@ -103,7 +103,7 @@ public class WaterSnakeModel<T extends Entity> extends ListModel<T> {
 	    boolean isAttacking = false;
 	    boolean isAngry = ((WaterSnake) entity).isAngry();
 	    boolean hasTargetedEntity = ((WaterSnake) entity).hasTargetedEntity();
-	    Utility.debugMsg(2, "is: " + isAngry + "has: " +hasTargetedEntity);
+	    Utility.debugMsg(2, "isAngry: " + isAngry + " has Target: " +hasTargetedEntity);
 	    if (isAngry && hasTargetedEntity) {
 	    	isAttacking = true;
 	    	swaySpeed = 0.4f;

@@ -237,6 +237,7 @@ public class WaterSnake extends WaterAnimal implements Enemy, RangedAttackMob {
 			watersnake.setGoingNest(false);
 		}
 
+
 		/**
 		 * Keep ticking a continuous task that has already been started
 		 */
@@ -244,6 +245,8 @@ public class WaterSnake extends WaterAnimal implements Enemy, RangedAttackMob {
 			BlockPos blockpos = watersnake.getNestPos();
 			boolean isNearNest = blockpos.closerThan(watersnake.position(), 16.0D);
 
+			
+			
 			if (watersnake.getCommandSenderWorld().getGameTime() % 20 == 0) {
 				Utility.debugMsg(2, watersnake.blockPosition(), "Tick GoToNest at " + watersnake.getNestPos());
 			}
@@ -356,7 +359,7 @@ public class WaterSnake extends WaterAnimal implements Enemy, RangedAttackMob {
 		public void tick() {
 
 			this.updateSpeed();
-
+			
 			if (watersnake.isAngry()) {
 				watersnake.setTailHeight(0.77f);
 			} else {
@@ -490,6 +493,8 @@ public class WaterSnake extends WaterAnimal implements Enemy, RangedAttackMob {
 		}
 	}
 
+
+	
 	static class TargetPredicate implements Predicate<LivingEntity> {
 		private final WaterSnake waterSnakeEntity;
 
@@ -640,7 +645,6 @@ public class WaterSnake extends WaterAnimal implements Enemy, RangedAttackMob {
 			Utility.debugMsg(1, "Stop Melee Attack");
 			this.snake.setAggressive(false);
 		}
-
 	}
 
 	//
@@ -699,49 +703,7 @@ public class WaterSnake extends WaterAnimal implements Enemy, RangedAttackMob {
 	public static final float SIZE = EntityType.PIG.getWidth() * 0.45f;
 	private static final UniformInt rangedInteger = TimeUtil.rangeOfSeconds(20, 39);
 
-	public static boolean canSpawn(EntityType<? extends WaterSnake> watersnakeIn, LevelAccessor level,
-			MobSpawnType reason, BlockPos pos, Random randomIn) {
 
-		Utility.debugMsg(1, pos, "canSpawn waterSnake?");
-		// SpawnPlacements.Type.ON_GROUND
-		
-		if (isSpawnRateThrottled(level, pos)) {
-			return false;
-		}
-		
-		if (level.getDifficulty() == Difficulty.PEACEFUL)
-			return false;
-		
-		if (reason == MobSpawnType.SPAWN_EGG)
-			return true;
-
-		if (isWellLit(level, pos))
-			return false;
-		
-		if (reason == MobSpawnType.SPAWNER) {
-			return true;
-		}
-
-		if (isBadAltitude(level, pos))
-			return false;
-
-		if (isFailBiomeLimits(level, pos))
-			return false;
-	
-		// prevent local overcrowding
-		if (isOverCrowded(level, WaterSnake.class, pos))
-			return false;
-		
-		int mobCount = ((ServerLevel) level).getEntities(ModEntities.WATER_SNAKE, (entity) -> true).size();
-		if (mobCount >= calcNetMobCap(level, pos)) {
-			return false;
-		}
-
-		Utility.debugMsg(1, "spawn watersnake true at " + pos.getX() + " " + pos.getY() + " " + pos.getZ());
-
-		return true;
-	}
-	
 	private static int calcNetMobCap(LevelAccessor level, BlockPos pos) {
 
 		int mobCap = MyConfig.getWatersnakeSpawnCap() +
@@ -770,13 +732,59 @@ public class WaterSnake extends WaterAnimal implements Enemy, RangedAttackMob {
 	}
 
 	
-    private static <T extends Entity> boolean isOverCrowded(LevelAccessor level, Class<T> entityClass, BlockPos pos) {
-        if (level.getEntitiesOfClass(entityClass,
-                new AABB(pos.north(20).west(20).above(6), pos.south(20).east(20).below(6))).size() > 3)
-            return true;
-        return false;
-    }
-    
+	
+	public static boolean canSpawn(EntityType<? extends WaterSnake> watersnakeIn, LevelAccessor level,
+			MobSpawnType reason, BlockPos pos, Random randomIn) {
+
+		Utility.debugMsg(1, pos, "canSpawn waterSnake?");
+		// SpawnPlacements.Type.ON_GROUND
+		
+		if (Utility.isSpawnRateThrottled(level, 0)) {
+			return false;
+		}
+		
+		if (level.getDifficulty() == Difficulty.PEACEFUL)
+			return false;
+		
+		if (reason == MobSpawnType.SPAWN_EGG)
+			return true;
+
+		if (isTooBright(level, pos))
+			return false;
+		
+		if (reason == MobSpawnType.SPAWNER) {
+			return true;
+		}
+
+		if (isBadAltitude(level, pos))
+			return false;
+
+		if (isFailBiomeLimits(level, pos))
+			return false;
+	
+		// prevent local overcrowding
+		if (Utility.isOverCrowded(level, WaterSnake.class, pos, 5))
+			return false;
+		
+		int mobCount = ((ServerLevel) level).getEntities(ModEntities.WATER_SNAKE, (entity) -> true).size();
+		if (mobCount >= calcNetMobCap(level, pos)) {
+			return false;
+		}
+
+		Utility.debugMsg(1, "spawn watersnake true at " + pos.getX() + " " + pos.getY() + " " + pos.getZ());
+
+		return true;
+	}
+	
+	public static AttributeSupplier.Builder createAttributes() {
+
+		return Monster.createMonsterAttributes().add(Attributes.MOVEMENT_SPEED, (double) 0.26F)
+				.add(Attributes.FOLLOW_RANGE, 20.0D).add(Attributes.ATTACK_DAMAGE, 2.5D)
+				.add(Attributes.MAX_HEALTH, 18.5D);
+	}
+	
+
+	
 	private static boolean isFailBiomeLimits(LevelAccessor level, BlockPos pos) {
 
 		String bC = Utility.getBiomeCategory(level.getBiome(pos));
@@ -796,6 +804,7 @@ public class WaterSnake extends WaterAnimal implements Enemy, RangedAttackMob {
 
 		return false;
 	}
+	    
 	
 	private static boolean isBadAltitude(LevelAccessor level, BlockPos pos) {
 
@@ -808,30 +817,11 @@ public class WaterSnake extends WaterAnimal implements Enemy, RangedAttackMob {
 	}
 
 	
-	private static boolean isWellLit(LevelAccessor level, BlockPos pos) {
-
-		if (isDeep(pos)) {
-			if (level.getMaxLocalRawBrightness(pos) > 9) {
-				return true;
-			}
-		}
-
-		if (level.getMaxLocalRawBrightness(pos) > 13) {
-			return true; // combined skylight and blocklight
-		}
-
-		if (level.getBrightness(LightLayer.BLOCK, pos) > MyConfig.getBlockLightLevel()) {
-			return true;
-		}
-
-		return false;
-
-	}
-	
 	private static boolean isDeep(BlockPos pos) {
 		return (pos.getY() < 48);
 	}
-	
+
+
 	// needed for water creatures because so many valid spawn blocks.
 	private static boolean isSpawnRateThrottled(LevelAccessor level, BlockPos pos) {
 
@@ -862,39 +852,45 @@ public class WaterSnake extends WaterAnimal implements Enemy, RangedAttackMob {
 		return false;
 	}
 
-	private static boolean exceedsSpawnCap(LevelAccessor level, BlockPos pos, String bC, int waterBonus, int watersnakeCount) {
-		int watersnakeSpawnCap = MyConfig.getWatersnakeSpawnCap();
 
-		if ((bC == Utility.OCEAN) || (bC == Utility.RIVER) || (bC == Utility.SWAMP) || (bC == Utility.BEACH)) {
-			watersnakeSpawnCap += 1 + (waterBonus/2);
-		}
-		List<Gurty> list = level.getEntitiesOfClass(Gurty.class,
-				new AABB(pos.north(16).west(16).above(8), pos.south(16).east(16).below(8)));
-		
-		if (list.size() > 5) {
-			Utility.debugMsg(2, pos, "WaterSnake Spawn canceled by Local cap (" + watersnakeSpawnCap + ").");
-			return true;
+	private static boolean isTooBright(LevelAccessor level, BlockPos pos) {
+
+		if (isDeep(pos)) {
+			if (level.getMaxLocalRawBrightness(pos) > 9) {
+				return true;
+			}
 		}
 
+		if (level.getMaxLocalRawBrightness(pos) > 13) {
+			return true; // combined skylight and blocklight
+		}
 
-		if (watersnakeCount >= watersnakeSpawnCap) {
-			Utility.debugMsg(2, pos, "WaterSnake Spawn canceled by Server Global cap (" + watersnakeSpawnCap + ").");
+		if (level.getBrightness(LightLayer.BLOCK, pos) > MyConfig.getBlockLightLevel()) {
 			return true;
 		}
 
 		return false;
+
 	}
 
+	private static boolean isWellLit(LevelAccessor level, BlockPos pos) {
 
-	public static boolean isBubbleColumn(LevelAccessor world, BlockPos pos) {
-		return world.getBlockState(pos).is(Blocks.BUBBLE_COLUMN);
-	}
+		if (isDeep(pos)) {
+			if (level.getMaxLocalRawBrightness(pos) > 9) {
+				return true;
+			}
+		}
 
-	public static AttributeSupplier.Builder createAttributes() {
+		if (level.getMaxLocalRawBrightness(pos) > 13) {
+			return true; // combined skylight and blocklight
+		}
 
-		return Monster.createMonsterAttributes().add(Attributes.MOVEMENT_SPEED, (double) 0.26F)
-				.add(Attributes.FOLLOW_RANGE, 20.0D).add(Attributes.ATTACK_DAMAGE, 2.5D)
-				.add(Attributes.MAX_HEALTH, 5.0D);
+		if (level.getBrightness(LightLayer.BLOCK, pos) > MyConfig.getBlockLightLevel()) {
+			return true;
+		}
+
+		return false;
+
 	}
 
 	private boolean hasNest;

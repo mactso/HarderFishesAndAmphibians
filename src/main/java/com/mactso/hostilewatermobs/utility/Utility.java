@@ -7,11 +7,14 @@ import com.mactso.hostilewatermobs.config.MyConfig;
 
 import net.minecraft.ChatFormatting;
 import net.minecraft.core.BlockPos;
+import net.minecraft.core.Registry;
 import net.minecraft.network.chat.TextComponent;
+import net.minecraft.resources.ResourceKey;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.server.level.ServerLevel;
 import net.minecraft.world.effect.MobEffect;
 import net.minecraft.world.effect.MobEffectInstance;
+import net.minecraft.world.entity.Entity;
 import net.minecraft.world.entity.EntityType;
 import net.minecraft.world.entity.LivingEntity;
 import net.minecraft.world.entity.Mob;
@@ -19,13 +22,16 @@ import net.minecraft.world.entity.MobSpawnType;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.item.Item;
 import net.minecraft.world.item.Items;
+import net.minecraft.world.level.LevelAccessor;
 import net.minecraft.world.level.biome.Biome;
 import net.minecraft.world.level.biome.Biome.BiomeCategory;
+import net.minecraft.world.level.block.Blocks;
 import net.minecraft.world.level.levelgen.Heightmap.Types;
+import net.minecraft.world.phys.AABB;
+import net.minecraftforge.common.BiomeDictionary;
 import net.minecraftforge.registries.ForgeRegistries;
 
 public class Utility {
-	
 	final static int TWO_SECONDS = 40;
 	private static final Logger LOGGER = LogManager.getLogger();
 	
@@ -51,16 +57,6 @@ public class Utility {
 	public static String UNDERGROUND = BiomeCategory.UNDERGROUND.getName();
 	
 	
-	
-	
-	public static void debugMsg (int level, String dMsg) {
-
-		if (MyConfig.getDebugLevel() > level-1) {
-			LOGGER.info("L"+level + ":" + dMsg);
-		}
-		
-	}
-
 	public static void debugMsg (int level, BlockPos pos, String dMsg) {
 
 		if (MyConfig.getDebugLevel() > level-1) {
@@ -69,8 +65,61 @@ public class Utility {
 		
 	}
 
+	public static void debugMsg (int level, String dMsg) {
+
+		if (MyConfig.getDebugLevel() > level-1) {
+			LOGGER.info("L"+level + ":" + dMsg);
+		}
+		
+	}
+	
+	public static String getBiomeCategory(Biome testBiome) {
+
+		return testBiome.getBiomeCategory().getName();
+
+	}
+	
+	private static ResourceKey<Biome> getBiomeKey(LevelAccessor level, BlockPos pos) {
+	ResourceLocation biomeNameResourceKey = level.registryAccess().registryOrThrow(Registry.BIOME_REGISTRY)
+			.getKey(level.getBiome(pos));
+	return ResourceKey.create(Registry.BIOME_REGISTRY, biomeNameResourceKey);
+}
+	
+	public static boolean isInBubbleColumn(LevelAccessor level, BlockPos pos) {
+		return level.getBlockState(pos).is(Blocks.BUBBLE_COLUMN);
+	}
+	
+	public static boolean isOcean(LevelAccessor level, BlockPos pos) {
+
+		String bC = Utility.getBiomeCategory(level.getBiome(pos));
+		if (bC == Utility.OCEAN) {
+			return true;
+		}
+
+		ResourceKey<Biome> biomeKey = getBiomeKey(level,pos);
+		if (BiomeDictionary.hasType(biomeKey, BiomeDictionary.Type.OCEAN)) {
+			return true;
+		}
+
+		return false;
+
+	}
+
+	
+	public static <T extends Entity> boolean isOverCrowded(LevelAccessor level, Class<T> entityClass, BlockPos pos, int crowdValue) {
+        if (level.getEntitiesOfClass(entityClass,
+                new AABB(pos.north(20).west(20).above(6), pos.south(20).east(20).below(6))).size() > crowdValue)
+            return true;
+        return false;
+    }
 	
 	
+	public static boolean isSpawnRateThrottled(LevelAccessor level, int throttleChance) {
+		if (level.getRandom().nextInt(100) < throttleChance) {
+			return true;
+		}
+		return false;
+	}
 	
 	public static void sendBoldChat(Player p, String chatMessage, ChatFormatting textColor) {
 
@@ -80,8 +129,7 @@ public class Utility {
 		p.sendMessage(component, p.getUUID());
 
 	}	
-	
-
+    
 	public static void sendChat(Player p, String chatMessage, ChatFormatting textColor) {
 
 		TextComponent component = new TextComponent (chatMessage);
@@ -90,9 +138,7 @@ public class Utility {
 
 	}
 	
-	
-	
-	public static void updateEffect(LivingEntity e, int amplifier,  MobEffect mobEffect, int duration) {
+	public static boolean updateEffect(LivingEntity e, int amplifier,  MobEffect mobEffect, int duration) {
 		MobEffectInstance ei = e.getEffect(mobEffect);
 		if (amplifier == 10) {
 			amplifier = 20;  // player "plaid" speed.
@@ -102,15 +148,15 @@ public class Utility {
 				e.removeEffect(mobEffect);
 			} 
 			if (amplifier == ei.getAmplifier() && ei.getDuration() > 10) {
-				return;
+				return false;
 			}
 			if (ei.getDuration() > 10) {
-				return;
+				return false;
 			}
 			e.removeEffect(mobEffect);			
 		}
 		e.addEffect(new MobEffectInstance(mobEffect, duration, amplifier, true, true));
-		return;
+		return true;
 	}
 	
 	public static boolean populateEntityType(EntityType<?> et, ServerLevel level, BlockPos savePos, int range,
@@ -153,15 +199,6 @@ public class Utility {
 		return serverLevel.getHeightmapPos(Types.MOTION_BLOCKING_NO_LEAVES, pos) == pos;
 	}
 
-	
-	public static String getBiomeCategory(Biome testBiome) {
-
-		return testBiome.getBiomeCategory().getName();
-
-}
-	
-	
-	
 	public static Item getItemFromString (String name)
 	{
 		Item ret = Items.PAPER;
