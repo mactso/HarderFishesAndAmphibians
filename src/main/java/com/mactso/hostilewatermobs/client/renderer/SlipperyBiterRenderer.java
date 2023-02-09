@@ -3,7 +3,7 @@ package com.mactso.hostilewatermobs.client.renderer;
 import com.mactso.hostilewatermobs.Main;
 import com.mactso.hostilewatermobs.client.model.SlipperyBiterModel;
 import com.mactso.hostilewatermobs.client.renderer.layers.SlipperyBiterEyesLayer;
-import com.mactso.hostilewatermobs.entities.SlipperyBiterEntity;
+import com.mactso.hostilewatermobs.entities.SlipperyBiter;
 import com.mojang.blaze3d.matrix.MatrixStack;
 
 import net.minecraft.client.renderer.IRenderTypeBuffer;
@@ -14,11 +14,8 @@ import net.minecraftforge.api.distmarker.Dist;
 import net.minecraftforge.api.distmarker.OnlyIn;
 
 @OnlyIn(Dist.CLIENT)
-public class SlipperyBiterRenderer extends MobRenderer<SlipperyBiterEntity, SlipperyBiterModel<SlipperyBiterEntity>> {
+public class SlipperyBiterRenderer extends MobRenderer<SlipperyBiter, SlipperyBiterModel<SlipperyBiter>> {
 
-//		BiomeMaker b;
-	// public static final ResourceLocation ALBINO_RIVER_GUARDIAN_TEXTURE = new
-	// ResourceLocation(Main.MODID , "textures/entity/albino_river_guardian.png");
 	private static final ResourceLocation SlIPPERY_BITER_TEXTURES = new ResourceLocation(Main.MODID,
 			"textures/entity/slipperybiter.png");
 
@@ -28,29 +25,27 @@ public class SlipperyBiterRenderer extends MobRenderer<SlipperyBiterEntity, Slip
         addLayer(new SlipperyBiterEyesLayer<>(this));
 	}
 
-	protected void scale(SlipperyBiterEntity entityIn, MatrixStack matrixStackIn,
+	protected void scale(SlipperyBiter entityIn, MatrixStack matrixStackIn,
 			float partialTickTime) {
-		  int subtype = ((SlipperyBiterEntity) entityIn).getSubType();
-		  int eSize = (((SlipperyBiterEntity) entityIn).getId()%16)-8;
+		  int subtype = ((SlipperyBiter) entityIn).getSubType();
+		  int eSize = (((SlipperyBiter) entityIn).getId()%16)-8;
 		  float uniqueSize = (float)eSize/48;
 		  subtype = (2 + subtype) %2;
-		  if (subtype == SlipperyBiterEntity.LARGE_SLIPPERY_BITER) {
-//			  System.out.println ("Large ("+SlipperyBiterEntity.LARGE_SIZE+") + "+uniqueSize);
-				matrixStackIn.scale(SlipperyBiterEntity.LARGE_SIZE+uniqueSize+0.4f, SlipperyBiterEntity.LARGE_SIZE+uniqueSize+0.35f, SlipperyBiterEntity.LARGE_SIZE+uniqueSize+0.4f);
+		  if (subtype == SlipperyBiter.LARGE_SLIPPERY_BITER) {
+				matrixStackIn.scale(SlipperyBiter.LARGE_SIZE+uniqueSize+0.4f, SlipperyBiter.LARGE_SIZE+uniqueSize+0.35f, SlipperyBiter.LARGE_SIZE+uniqueSize+0.4f);
 		  } else {
-//			  System.out.println ("Normal ("+SlipperyBiterEntity.SIZE+") + " + uniqueSize);
-				matrixStackIn.scale(SlipperyBiterEntity.SIZE+uniqueSize, SlipperyBiterEntity.SIZE+uniqueSize, SlipperyBiterEntity.SIZE+uniqueSize);
+				matrixStackIn.scale(SlipperyBiter.SIZE+uniqueSize, SlipperyBiter.SIZE+uniqueSize, SlipperyBiter.SIZE+uniqueSize);
 			  
 		  }
 	}
 
-	public void render(SlipperyBiterEntity entityIn, float entityYaw, float partialTicks, MatrixStack matrixStackIn,
+	public void render(SlipperyBiter entityIn, float entityYaw, float partialTicks, MatrixStack matrixStackIn,
 			IRenderTypeBuffer bufferIn, int packedLightIn) {
-		super.render((SlipperyBiterEntity) entityIn, entityYaw, partialTicks, matrixStackIn, bufferIn, packedLightIn);
+		super.render((SlipperyBiter) entityIn, entityYaw, partialTicks, matrixStackIn, bufferIn, packedLightIn);
 	}
 
 	@Override
-	public ResourceLocation getTextureLocation(SlipperyBiterEntity entity) {
+	public ResourceLocation getTextureLocation(SlipperyBiter entity) {
 		return SlIPPERY_BITER_TEXTURES;
 	}
 }

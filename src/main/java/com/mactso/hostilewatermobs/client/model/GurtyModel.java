@@ -1,7 +1,7 @@
 package com.mactso.hostilewatermobs.client.model;
 
 import com.google.common.collect.ImmutableList;
-import com.mactso.hostilewatermobs.entities.GurtyEntity;
+import com.mactso.hostilewatermobs.entities.Gurty;
 import com.mojang.blaze3d.matrix.MatrixStack;
 import com.mojang.blaze3d.vertex.IVertexBuilder;
 
@@ -113,7 +113,7 @@ public class GurtyModel<T extends Entity> extends QuadrupedModel<T> {
 	public void setupAnim(final T entityIn, final float limbSwingAngle, final float limbSwingSpeedFactor,
 			final float ageInTicks, final float headYaw, final float headPitch) {
 		
-		GurtyEntity gurtyEntity = (GurtyEntity) entityIn;
+		Gurty gurtyEntity = (Gurty) entityIn;
 		this.headModel.xRot = headPitch * 0.017453292f;
 		this.headModel.yRot = (headYaw /1.75F) * 0.017453292f;
 		this.body.xRot = (3.14159265f / 4.0f) * 0.0f; // make body horizontal
@@ -128,7 +128,6 @@ public class GurtyModel<T extends Entity> extends QuadrupedModel<T> {
 		if (gurtyEntity.isAngry()) {
 			if (this.tail.xRot < 0.771f) {
 				this.tail.xRot += 0.025f;
-//				System.out.print(this.tail.rotateAngleX);
 			}
 			this.tail.yRot = -0.1F * MathHelper.cos(ageInTicks * 0.4F);
 			//			this.tail.rotateAngleX = 0.7707964f; // make tail stick out and up
@@ -138,7 +137,6 @@ public class GurtyModel<T extends Entity> extends QuadrupedModel<T> {
 		} else {
 			if (this.tail.xRot > -0.271f) {
 				this.tail.xRot -= 0.009f;
-//				System.out.print(this.tail.rotateAngleX);
 			}
 		}
 	}

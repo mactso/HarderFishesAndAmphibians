@@ -3,11 +3,12 @@ package com.mactso.hostilewatermobs.entities;
 import java.util.List;
 
 import com.mactso.hostilewatermobs.Main;
-import com.mactso.hostilewatermobs.client.renderer.WaterSnakeRenderer;
 import com.mactso.hostilewatermobs.client.renderer.GurtyRenderer;
 import com.mactso.hostilewatermobs.client.renderer.RiverGuardianRenderer;
 import com.mactso.hostilewatermobs.client.renderer.SlipperyBiterRenderer;
+import com.mactso.hostilewatermobs.client.renderer.WaterSnakeRenderer;
 import com.mactso.hostilewatermobs.config.MyConfig;
+import com.mactso.hostilewatermobs.utility.Utility;
 
 import net.minecraft.client.renderer.entity.EntityRendererManager;
 import net.minecraft.entity.Entity;
@@ -15,8 +16,6 @@ import net.minecraft.entity.EntityClassification;
 import net.minecraft.entity.EntitySpawnPlacementRegistry;
 import net.minecraft.entity.EntityType;
 import net.minecraft.entity.ai.attributes.GlobalEntityTypeAttributes;
-import net.minecraft.world.biome.Biome;
-import net.minecraft.world.biome.Biome.Category;
 import net.minecraft.world.biome.MobSpawnInfo.Spawners;
 import net.minecraft.world.gen.Heightmap;
 import net.minecraft.world.gen.feature.structure.Structure;
@@ -28,14 +27,14 @@ import net.minecraftforge.registries.IForgeRegistry;
 
 public class ModEntities {
 
-	public static final EntityType<RiverGuardianEntity> RIVER_GUARDIAN = register("river_guardian", EntityType.Builder
-			.of(RiverGuardianEntity::new, EntityClassification.MONSTER).sized(0.85F, 0.85F).clientTrackingRange(5));
-	public static final EntityType<SlipperyBiterEntity> SLIPPERY_BITER = register("slipperybiter", EntityType.Builder
-			.of(SlipperyBiterEntity::new, EntityClassification.MONSTER).sized(0.9F, 0.7F).clientTrackingRange(21));
-	public static final EntityType<GurtyEntity> GURTY = register("gurty", EntityType.Builder
-			.of(GurtyEntity::new, EntityClassification.MONSTER).sized(1.1F, 1.0F).clientTrackingRange(21));
-	public static final EntityType<WaterSnakeEntity> WATER_SNAKE = register("watersnake", EntityType.Builder
-			.of(WaterSnakeEntity::new, EntityClassification.MONSTER).sized(0.6F, 0.6F).clientTrackingRange(21));
+	public static final EntityType<RiverGuardian> RIVER_GUARDIAN = register("riverguardian", EntityType.Builder
+			.of(RiverGuardian::new, EntityClassification.MONSTER).sized(0.85F, 0.85F).clientTrackingRange(5));
+	public static final EntityType<SlipperyBiter> SLIPPERY_BITER = register("slipperybiter", EntityType.Builder
+			.of(SlipperyBiter::new, EntityClassification.MONSTER).sized(0.9F, 0.7F).clientTrackingRange(21));
+	public static final EntityType<Gurty> GURTY = register("gurty", EntityType.Builder
+			.of(Gurty::new, EntityClassification.MONSTER).sized(1.1F, 1.0F).clientTrackingRange(21));
+	public static final EntityType<WaterSnake> WATER_SNAKE = register("watersnake", EntityType.Builder
+			.of(WaterSnake::new, EntityClassification.MONSTER).sized(0.6F, 0.6F).clientTrackingRange(21));
 
 	
 	private static <T extends Entity> EntityType<T> register(String name, EntityType.Builder<T> builder) {
@@ -50,23 +49,23 @@ public class ModEntities {
 	public static void register(IForgeRegistry<EntityType<?>> forgeRegistry) {
 		forgeRegistry.registerAll(RIVER_GUARDIAN);
 		EntitySpawnPlacementRegistry.register(RIVER_GUARDIAN, EntitySpawnPlacementRegistry.PlacementType.IN_WATER,
-				Heightmap.Type.MOTION_BLOCKING_NO_LEAVES, RiverGuardianEntity::canSpawn);
-		GlobalEntityTypeAttributes.put(RIVER_GUARDIAN, RiverGuardianEntity.registerAttributes().build());
+				Heightmap.Type.MOTION_BLOCKING_NO_LEAVES, RiverGuardian::canSpawn);
+		GlobalEntityTypeAttributes.put(RIVER_GUARDIAN, RiverGuardian.registerAttributes().build());
 
 		forgeRegistry.registerAll(SLIPPERY_BITER);
 		EntitySpawnPlacementRegistry.register(SLIPPERY_BITER, EntitySpawnPlacementRegistry.PlacementType.IN_WATER,
-				Heightmap.Type.MOTION_BLOCKING_NO_LEAVES, SlipperyBiterEntity::canSpawn);
-		GlobalEntityTypeAttributes.put(SLIPPERY_BITER, SlipperyBiterEntity.registerAttributes().build());
+				Heightmap.Type.MOTION_BLOCKING_NO_LEAVES, SlipperyBiter::canSpawn);
+		GlobalEntityTypeAttributes.put(SLIPPERY_BITER, SlipperyBiter.registerAttributes().build());
 
 		forgeRegistry.registerAll(GURTY);
 		EntitySpawnPlacementRegistry.register(GURTY, EntitySpawnPlacementRegistry.PlacementType.ON_GROUND,
-				Heightmap.Type.MOTION_BLOCKING_NO_LEAVES, GurtyEntity::canSpawn);
-		GlobalEntityTypeAttributes.put(GURTY, GurtyEntity.registerAttributes().build());
+				Heightmap.Type.MOTION_BLOCKING_NO_LEAVES, Gurty::canSpawn);
+		GlobalEntityTypeAttributes.put(GURTY, Gurty.registerAttributes().build());
 
 		forgeRegistry.registerAll(WATER_SNAKE);
 		EntitySpawnPlacementRegistry.register(WATER_SNAKE, EntitySpawnPlacementRegistry.PlacementType.ON_GROUND,
-				Heightmap.Type.MOTION_BLOCKING_NO_LEAVES, WaterSnakeEntity::canSpawn);
-		GlobalEntityTypeAttributes.put(WATER_SNAKE, WaterSnakeEntity.registerAttributes().build());
+				Heightmap.Type.MOTION_BLOCKING_NO_LEAVES, WaterSnake::canSpawn);
+		GlobalEntityTypeAttributes.put(WATER_SNAKE, WaterSnake.registerAttributes().build());
 	}
 
 	@OnlyIn(Dist.CLIENT)
@@ -82,12 +81,12 @@ public class ModEntities {
 		int weight;
 		int min;
 		int max;
-		int rgSC = MyConfig.getRiverGuardianSpawnChance();
-		int gSC = MyConfig.getGurtySpawnChance();
-		int sbSC = MyConfig.getSlipperyBiterSpawnChance();
-		int wsSC = MyConfig.getWatersnakeSpawnChance();
+		int riverguardianSpawnweight = MyConfig.getRiverGuardianSpawnWeight();
+		int gurtySpawnweight = MyConfig.getGurtySpawnWeight();
+		int slipperybiterSpawnweight = MyConfig.getSlipperyBiterSpawnWeight();
+		int watersnakeSpawnweight = MyConfig.getWatersnakeSpawnWeight();
 
-		Category biomeCategory = event.getCategory();
+		String bC = event.getCategory().getName();
 		MobSpawnInfoBuilder builder = event.getSpawns();
 		
 		String threadname = Thread.currentThread().getName();
@@ -97,7 +96,7 @@ public class ModEntities {
 			min = 1;
 		}
 		
-		if (biomeCategory == Biome.Category.NETHER) {
+		if (bC == Utility.NETHER) {
 
 			List<Spawners> wlist = builder.getSpawner(EntityClassification.MONSTER);
 			
@@ -138,98 +137,106 @@ public class ModEntities {
 			
 			spawns.add(new Spawners(RIVER_GUARDIAN, weight = 5, min = 1, max = 3));
 
-		} else if (biomeCategory == Biome.Category.RIVER) {
-			if (rgSC > 0) 
-				spawns.add(new Spawners(RIVER_GUARDIAN, weight = rgSC+(rgSC/2)+1, min = 1, max = 1));
-			if (sbSC > 0)
-				spawns.add(new Spawners(SLIPPERY_BITER, weight = rgSC+(rgSC/3)+1, min = 1, max = 1));
-			if (wsSC > 0)
-				spawns.add(new Spawners(WATER_SNAKE, weight = wsSC+(wsSC/3)+1, min = 1, max = 1));
-			if (gSC > 0) 
-				spawns.add(new Spawners(GURTY, weight = gSC, min = 1, max = 1));
-			spawns.add(new Spawners(EntityType.COD, weight = MyConfig.getCodSpawnBoost()/3, min = 1, max = 2));
-			spawns.add(new Spawners(EntityType.SALMON, weight = MyConfig.getSalmonSpawnBoost()/5, min = 1, max = 2));
-			spawns.add(new Spawners(EntityType.SQUID, weight = MyConfig.getSquidSpawnBoost()/2, min = 1, max = 2));
-		} else if (biomeCategory == Biome.Category.SWAMP) {
+		} else if (bC == Utility.RIVER) {
+			if (riverguardianSpawnweight > 0)
+				spawns.add(new Spawners(RIVER_GUARDIAN, (int)(riverguardianSpawnweight*1.2), min = 1, max = 1));
+			if (slipperybiterSpawnweight > 0)
+				spawns.add(new Spawners(SLIPPERY_BITER, slipperybiterSpawnweight, min = 1, max = 1));
+			if (watersnakeSpawnweight > 0)
+				spawns.add(new Spawners(WATER_SNAKE, watersnakeSpawnweight, min = 1, max = 1));
+			if (gurtySpawnweight > 0)
+				spawns.add(new Spawners(GURTY, (int)(gurtySpawnweight*1.2), min = 1, max = 1));
+			spawns.add(new Spawners(EntityType.COD, weight = MyConfig.getCodSpawnBoost() / 3, min = 1, max = 2));
+			spawns.add(new Spawners(EntityType.SALMON, weight = MyConfig.getSalmonSpawnBoost() / 5, min = 1, max = 2));
+			spawns.add(new Spawners(EntityType.SQUID, weight = MyConfig.getSquidSpawnBoost() / 2, min = 1, max = 2));
+		} else if (bC == Utility.SWAMP) {
 			spawns.add(new Spawners(EntityType.COD, weight = MyConfig.getCodSpawnBoost()/2, min = 1, max = 2));
-			if (rgSC > 0) 
-				spawns.add(new Spawners(RIVER_GUARDIAN, weight = (rgSC*2/3)+1, min = 1, max = 1));
-			if (sbSC > 0) 
-				spawns.add(new Spawners(SLIPPERY_BITER, weight = (sbSC*2/3)+1, min = 1, max = 1));
-			if (gSC > 0) 
-				spawns.add(new Spawners(GURTY, weight = (gSC*110)/100, min = 1, max = 3));
-			if (wsSC > 0)
-				spawns.add(new Spawners(WATER_SNAKE, weight = wsSC+(wsSC/3)+1, min = 1, max = 1));
-		} else if (biomeCategory == Biome.Category.OCEAN) {
-			if (rgSC > 0) 
-				spawns.add(new Spawners(RIVER_GUARDIAN, weight = rgSC, min = 1, max = 1));
-			if (sbSC > 0) 
-				spawns.add(new Spawners(SLIPPERY_BITER, weight = sbSC, min = 1, max = 3));
-			if (gSC > 0) 
-				spawns.add(new Spawners(GURTY, weight = (gSC/2), min = 1, max = 1));
+			if (riverguardianSpawnweight > 0)
+				spawns.add(new Spawners(RIVER_GUARDIAN, (int)(riverguardianSpawnweight*1.2), min = 1, max = 1));
+			if (slipperybiterSpawnweight > 0)
+				spawns.add(new Spawners(SLIPPERY_BITER, slipperybiterSpawnweight/2, min = 1, max = 1));
+			if (watersnakeSpawnweight > 0)
+				spawns.add(new Spawners(WATER_SNAKE, watersnakeSpawnweight, min = 1, max = 1));
+			if (gurtySpawnweight > 0)
+				spawns.add(new Spawners(GURTY, (int)(gurtySpawnweight*1.2), min = 1, max = 1));
+		} else if (bC == Utility.OCEAN) {
+			if (riverguardianSpawnweight > 0)
+				spawns.add(new Spawners(RIVER_GUARDIAN, weight = riverguardianSpawnweight, min = 1, max = 1));
+			if (gurtySpawnweight > 0)
+				spawns.add(new Spawners(GURTY, gurtySpawnweight/2, min = 1, max = 1));
+			if (slipperybiterSpawnweight > 0)
+				spawns.add(new Spawners(SLIPPERY_BITER, slipperybiterSpawnweight, min = 1, max = 3));
+			if (watersnakeSpawnweight > 0)
+				spawns.add(new Spawners(WATER_SNAKE, watersnakeSpawnweight, min = 1, max = 1));
 			spawns.add(new Spawners(EntityType.COD, weight = MyConfig.getCodSpawnBoost(), min = 2, max = 4));
 			spawns.add(new Spawners(EntityType.SALMON, weight = MyConfig.getSalmonSpawnBoost(), min = 2, max = 4));
 			spawns.add(new Spawners(EntityType.SQUID, weight = MyConfig.getSquidSpawnBoost(), min = 1, max = 4));
 			spawns.add(new Spawners(EntityType.DOLPHIN, weight = MyConfig.getDolphinSpawnboost(), min = 1, max = 2));
-		} else if (biomeCategory == Biome.Category.BEACH) {
-			if (gSC > 0) 			
-				spawns.add(new Spawners(GURTY, weight = gSC, min = 1, max = 3));
-			if (wsSC > 0)
-				spawns.add(new Spawners(WATER_SNAKE, weight = wsSC+(wsSC/3)+1, min = 1, max = 1));
+		} else if (bC == Utility.BEACH) {
+			if (gurtySpawnweight > 0)
+				spawns.add(new Spawners(GURTY, gurtySpawnweight, min = 1, max = 3));
+			if (watersnakeSpawnweight > 0)
+				spawns.add(new Spawners(WATER_SNAKE, watersnakeSpawnweight, min = 1, max = 1));
 		} else {
-			if (rgSC > 0) 
-				spawns.add(new Spawners(RIVER_GUARDIAN, weight = (rgSC/8)+1, min = 1, max = 1));
-			if (sbSC > 0) 
-				spawns.add(new Spawners(SLIPPERY_BITER, weight = (sbSC/8)+1, min = 1, max = 2));
-			if (gSC > 0) 
-				spawns.add(new Spawners(GURTY, weight = (gSC/8), min = 1, max = 1));
-			if (wsSC > 0)
-				spawns.add(new Spawners(WATER_SNAKE, weight = 1, min = 1, max = 1));
+			if (riverguardianSpawnweight > 0)
+				spawns.add(new Spawners(RIVER_GUARDIAN, riverguardianSpawnweight, min = 1, max = 1));
+			if (gurtySpawnweight > 0)
+				spawns.add(new Spawners(GURTY, gurtySpawnweight, min = 1, max = 1));
+			if (slipperybiterSpawnweight > 0)
+				spawns.add(new Spawners(SLIPPERY_BITER, slipperybiterSpawnweight, min = 1, max = 2));
+			if (watersnakeSpawnweight > 0)
+				spawns.add(new Spawners(WATER_SNAKE, watersnakeSpawnweight/2, min = 1, max = 1));
 		}
 	}
 
 	public static void getFeatureSpawnData(List<Spawners> spawns, Structure<?> structure) {
+
 		int weight;
 		int min;
 		int max;
-		int rgSC = MyConfig.getRiverGuardianSpawnChance();
-		int gSC = MyConfig.getGurtySpawnChance();
-		int sbSC = MyConfig.getSlipperyBiterSpawnChance();
-		String nameSpace = structure.getRegistryName().getNamespace();
+		int riverguardianSpawnweight = MyConfig.getRiverGuardianSpawnWeight();
+		int gurtySpawnweight = MyConfig.getGurtySpawnWeight();
+		int slipperybiterSpawnweight = MyConfig.getSlipperyBiterSpawnWeight();
+		int watersnakeSpawnweight = MyConfig.getWatersnakeSpawnWeight();
 		
+		String nameSpace = structure.getRegistryName().getNamespace();
 				
 		if (nameSpace.equals("minecraft")) {
 			if (structure == Structure.OCEAN_RUIN) {
-				if (rgSC > 0) 
-					spawns.add(new Spawners(RIVER_GUARDIAN, weight = rgSC, min = 1, max = 1));
-				if (sbSC > 0) 
-					spawns.add(new Spawners(SLIPPERY_BITER, weight = (sbSC/3)+1, min = 1, max = 1));
+				if (riverguardianSpawnweight > 0) 
+					spawns.add(new Spawners(RIVER_GUARDIAN, weight = riverguardianSpawnweight, min = 1, max = 1));
+				if (slipperybiterSpawnweight > 0) 
+					spawns.add(new Spawners(SLIPPERY_BITER, weight = (slipperybiterSpawnweight/3)+1, min = 1, max = 1));
 			} else if (structure == Structure.SHIPWRECK) {
-				if (rgSC > 0) 
-					spawns.add(new Spawners(RIVER_GUARDIAN, weight = rgSC, min = 1, max = 1));
-				if (sbSC > 0) 
-					spawns.add(new Spawners(SLIPPERY_BITER, weight = (sbSC/3)+1, min = 1, max = 1));
+				if (riverguardianSpawnweight > 0) 
+					spawns.add(new Spawners(RIVER_GUARDIAN, weight = riverguardianSpawnweight, min = 1, max = 1));
+				if (slipperybiterSpawnweight > 0) 
+					spawns.add(new Spawners(SLIPPERY_BITER, weight = (slipperybiterSpawnweight/3)+1, min = 1, max = 1));
 			} else if (structure == Structure.BURIED_TREASURE) {
-				if (rgSC > 0) 
-					spawns.add(new Spawners(RIVER_GUARDIAN, weight = rgSC, min = 1, max = 1));
-				if (sbSC > 0) 
-					spawns.add(new Spawners(SLIPPERY_BITER, weight = (sbSC/3)+1, min = 1, max = 1));
-				if (gSC > 0) 
-					spawns.add(new Spawners(GURTY, (gSC/4)+1, min = 1, max = 3));
+				if (riverguardianSpawnweight > 0) 
+					spawns.add(new Spawners(RIVER_GUARDIAN, weight = riverguardianSpawnweight, min = 1, max = 1));
+				if (slipperybiterSpawnweight > 0) 
+					spawns.add(new Spawners(SLIPPERY_BITER, weight = (slipperybiterSpawnweight/3)+1, min = 1, max = 1));
+				if (gurtySpawnweight > 0) 
+					spawns.add(new Spawners(GURTY, (gurtySpawnweight/4)+1, min = 1, max = 3));
 			} else if (structure == Structure.SWAMP_HUT) {
-				if (rgSC > 0) 
-					spawns.add(new Spawners(RIVER_GUARDIAN, weight = (rgSC/10)+1, min = 1, max = 1));
-				if (sbSC > 0) 
-					spawns.add(new Spawners(SLIPPERY_BITER, (sbSC/10)+1, min = 1, max = 1));
-				if (gSC > 0) 
-					spawns.add(new Spawners(GURTY, weight = (gSC/10)+1, min = 1, max = 3));
+				if (riverguardianSpawnweight > 0) 
+					spawns.add(new Spawners(RIVER_GUARDIAN, weight = (riverguardianSpawnweight/10)+1, min = 1, max = 1));
+				if (slipperybiterSpawnweight > 0) 
+					spawns.add(new Spawners(SLIPPERY_BITER, (slipperybiterSpawnweight/10)+1, min = 1, max = 1));
+				if (gurtySpawnweight > 0) 
+					spawns.add(new Spawners(GURTY, weight = (gurtySpawnweight/10)+1, min = 1, max = 1));
+				if (watersnakeSpawnweight > 0) 
+					spawns.add(new Spawners(WATER_SNAKE, weight = (watersnakeSpawnweight/10)+1, min = 1, max = 1));
 			} else if (structure == Structure.RUINED_PORTAL) {
-				if (rgSC > 0) 
-					spawns.add(new Spawners(RIVER_GUARDIAN, weight = (rgSC/2)+1, min = 1, max = 1));
-				if (sbSC > 0) 
-					spawns.add(new Spawners(SLIPPERY_BITER, weight = (sbSC/3)+1, min = 1, max = 1));
-				if (gSC > 0) 
-					spawns.add(new Spawners(GURTY, weight = (gSC/4)+1, min = 1, max = 3));
+				if (riverguardianSpawnweight > 0) 
+					spawns.add(new Spawners(RIVER_GUARDIAN, weight = (riverguardianSpawnweight/2)+1, min = 1, max = 1));
+				if (slipperybiterSpawnweight > 0) 
+					spawns.add(new Spawners(SLIPPERY_BITER, weight = (slipperybiterSpawnweight/3)+1, min = 1, max = 1));
+				if (gurtySpawnweight > 0) 
+					spawns.add(new Spawners(GURTY, weight = (gurtySpawnweight/4)+1, min = 1, max = 3));
+				if (watersnakeSpawnweight > 0) 
+					spawns.add(new Spawners(WATER_SNAKE, weight = (watersnakeSpawnweight/4)+1, min = 1, max = 1));
 			}
 		} else {
 			if (MyConfig.getModStructureBoost() > 0) {

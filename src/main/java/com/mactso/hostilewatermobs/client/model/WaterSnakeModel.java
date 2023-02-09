@@ -1,10 +1,11 @@
 package com.mactso.hostilewatermobs.client.model;
 
 import com.google.common.collect.ImmutableList;
-import com.mactso.hostilewatermobs.config.MyConfig;
-import com.mactso.hostilewatermobs.entities.WaterSnakeEntity;
+import com.mactso.hostilewatermobs.entities.WaterSnake;
+import com.mactso.hostilewatermobs.utility.Utility;
 import com.mojang.blaze3d.matrix.MatrixStack;
 import com.mojang.blaze3d.vertex.IVertexBuilder;
+
 import net.minecraft.client.renderer.entity.model.SegmentedModel;
 import net.minecraft.client.renderer.model.ModelRenderer;
 import net.minecraft.entity.Entity;
@@ -109,11 +110,11 @@ public class WaterSnakeModel <T extends Entity> extends SegmentedModel<T>  {
 		Vector3d vector3d = entity.getDeltaMovement();
 	    boolean isMoving = false;
 	    if (vector3d.length() != 0) isMoving = true;
-	    WaterSnakeEntity snake = (WaterSnakeEntity) entity;
+	    WaterSnake snake = (WaterSnake) entity;
 	    boolean isAttacking = false;
-	    boolean isAngry = ((WaterSnakeEntity) entity).isAngry();
-	    boolean hasTargetedEntity = ((WaterSnakeEntity) entity).hasTargetedEntity();
-	    MyConfig.debugMsg(1, "is: " + isAngry + "has: " +hasTargetedEntity);
+	    boolean isAngry = ((WaterSnake) entity).isAngry();
+	    boolean hasTargetedEntity = ((WaterSnake) entity).hasTargetedEntity();
+	    Utility.debugMsg(2, "is: " + isAngry + "has: " +hasTargetedEntity);
 	    if (isAngry && hasTargetedEntity) {
 	    	isAttacking = true;
 	    	swaySpeed = 0.4f;
@@ -123,21 +124,21 @@ public class WaterSnakeModel <T extends Entity> extends SegmentedModel<T>  {
 	    
 	    float attackAnim= (float) snake.startAttackTime - snake.level.getGameTime();
 	    if (isAttacking) {
-		    MyConfig.debugMsg(1, "attackAnim: "+attackAnim);
+		    Utility.debugMsg(2, "attackAnim: "+attackAnim);
 	    }
 	    if ( attackAnim > 0) {
-	    	MyConfig.debugMsg(1, "snake.attackAnim: "+snake.attackAnim);
-	    	MyConfig.debugMsg(1, "snake.swingTime: "+snake.swingTime);
+	    	Utility.debugMsg(2, "snake.attackAnim: "+snake.attackAnim);
+	    	Utility.debugMsg(2, "snake.swingTime: "+snake.swingTime);
 	    	headNeckAngle += MathHelper.sin(attackAnim/32);
 	    }
 
 	    float spitAnim= (float) snake.startSpittingTime - snake.level.getGameTime();
 	    if (isAttacking) {
-	    	MyConfig.debugMsg(1, "spitAnim: "+spitAnim);
+	    	Utility.debugMsg(2, "spitAnim: "+spitAnim);
 	    }
 	    if ( spitAnim > 0) {
-	    	MyConfig.debugMsg(1, "snake.attackAnim: "+snake.attackAnim);
-	    	MyConfig.debugMsg(1, "snake.swingTime: "+snake.swingTime);
+	    	Utility.debugMsg(2, "snake.attackAnim: "+snake.attackAnim);
+	    	Utility.debugMsg(2, "snake.swingTime: "+snake.swingTime);
 	    	headNeckAngle += MathHelper.cos(spitAnim/32);
 	    }
         

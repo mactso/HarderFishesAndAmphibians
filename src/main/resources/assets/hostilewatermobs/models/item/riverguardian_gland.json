@@ -1,0 +1,6 @@
+{
+	"parent" : "item/generated",
+	"textures" : {
+		"layer0" : "hostilewatermobs:item/riverguardian_gland"
+	}
+}

@@ -1,0 +1,11 @@
+{
+  "type": "minecraft:smelting",
+  "ingredient": [
+    {
+      "item": "hostilewatermobs:riverguardian_scales"
+    }
+  ],
+  "result": "minecraft:prismarine_shard",
+  "experience": 0.3,
+  "cookingtime": 200
+}

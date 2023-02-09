@@ -8,6 +8,7 @@ import javax.annotation.Nullable;
 import com.mactso.hostilewatermobs.config.MyConfig;
 import com.mactso.hostilewatermobs.sound.ModSounds;
 import com.mactso.hostilewatermobs.util.TwoGuysLib;
+import com.mactso.hostilewatermobs.utility.Utility;
 
 import net.minecraft.block.BlockState;
 import net.minecraft.block.Blocks;
@@ -55,9 +56,10 @@ import net.minecraft.potion.Effect;
 import net.minecraft.potion.EffectInstance;
 import net.minecraft.potion.Effects;
 import net.minecraft.tags.FluidTags;
-import net.minecraft.util.ClassInheritanceMultiMap;
 import net.minecraft.util.DamageSource;
 import net.minecraft.util.RangedInteger;
+import net.minecraft.util.RegistryKey;
+import net.minecraft.util.ResourceLocation;
 import net.minecraft.util.SoundCategory;
 import net.minecraft.util.SoundEvent;
 import net.minecraft.util.SoundEvents;
@@ -67,25 +69,27 @@ import net.minecraft.util.math.BlockPos;
 import net.minecraft.util.math.MathHelper;
 import net.minecraft.util.math.vector.Vector3d;
 import net.minecraft.util.math.vector.Vector3i;
+import net.minecraft.util.registry.Registry;
 import net.minecraft.world.Difficulty;
 import net.minecraft.world.DifficultyInstance;
 import net.minecraft.world.IServerWorld;
 import net.minecraft.world.IWorld;
 import net.minecraft.world.IWorldReader;
+import net.minecraft.world.LightType;
 import net.minecraft.world.World;
 import net.minecraft.world.biome.Biome;
 import net.minecraft.world.biome.Biome.Category;
-import net.minecraft.world.chunk.Chunk;
 import net.minecraft.world.server.ServerWorld;
+import net.minecraftforge.common.BiomeDictionary;
 
-public class WaterSnakeEntity extends WaterMobEntity implements IMob, IRangedAttackMob {
+public class WaterSnake extends WaterMobEntity implements IMob, IRangedAttackMob {
 	static class GoLandGoal extends Goal {
-		private final WaterSnakeEntity watersnake;
+		private final WaterSnake watersnake;
 		private final double speed;
 		private int chance;
 		private boolean finished;
 
-		GoLandGoal(WaterSnakeEntity watersnakeIn, double speedIn, int chanceIn) {
+		GoLandGoal(WaterSnake watersnakeIn, double speedIn, int chanceIn) {
 			this.watersnake = watersnakeIn;
 			this.speed = speedIn;
 			this.chance = chanceIn;
@@ -119,7 +123,7 @@ public class WaterSnakeEntity extends WaterMobEntity implements IMob, IRangedAtt
 		 * Execute a one shot task or start executing a continuous task
 		 */
 		public void start() {
-			MyConfig.debugMsg(1, watersnake.blockPosition(), "Start Walking to Land");
+			Utility.debugMsg(2, watersnake.blockPosition(), "Start Walking to Land");
 			Random random = watersnake.random;
 			int k = random.nextInt(128) - 64;
 			int l = random.nextInt(9) - 4;
@@ -176,12 +180,12 @@ public class WaterSnakeEntity extends WaterMobEntity implements IMob, IRangedAtt
 		}
 	}
 	static class GoNestGoal extends Goal {
-		private WaterSnakeEntity watersnake;
+		private WaterSnake watersnake;
 		private double speed;
 		private boolean noPath;
 		private int timer;
 
-		GoNestGoal(WaterSnakeEntity watersnake, double speedIn) {
+		GoNestGoal(WaterSnake watersnake, double speedIn) {
 			this.watersnake = watersnake;
 			this.speed = speedIn;
 		}
@@ -241,7 +245,7 @@ public class WaterSnakeEntity extends WaterMobEntity implements IMob, IRangedAtt
 			
 			
 			if (watersnake.getCommandSenderWorld().getGameTime() % 20 == 0) {
-				MyConfig.debugMsg(1, watersnake.blockPosition(), "Tick GoToNest at " + watersnake.getNestPos());
+				Utility.debugMsg(1, watersnake.blockPosition(), "Tick GoToNest at " + watersnake.getNestPos());
 			}
 
 			if (isNearNest) {
@@ -272,9 +276,9 @@ public class WaterSnakeEntity extends WaterMobEntity implements IMob, IRangedAtt
 		}
 	}
 	static class GoWanderGoal extends RandomWalkingGoal {
-		private final WaterSnakeEntity watersnake;
+		private final WaterSnake watersnake;
 
-		private GoWanderGoal(WaterSnakeEntity watersnakeIn, double speedIn, int chance) {
+		private GoWanderGoal(WaterSnake watersnakeIn, double speedIn, int chance) {
 			super(watersnakeIn, speedIn, chance);
 			watersnake = watersnakeIn;
 		}
@@ -288,10 +292,10 @@ public class WaterSnakeEntity extends WaterMobEntity implements IMob, IRangedAtt
 		}
 	}
 	static class GoWaterGoal extends MoveToBlockGoal {
-		private final WaterSnakeEntity watersnake;
+		private final WaterSnake watersnake;
 		private int chance;
 
-		private GoWaterGoal(WaterSnakeEntity watersnakeIn, double speedIn, int chanceIn) {
+		private GoWaterGoal(WaterSnake watersnakeIn, double speedIn, int chanceIn) {
 			super(watersnakeIn, speedIn, 24);
 			watersnake = watersnakeIn;
 			chance = chanceIn;
@@ -335,10 +339,10 @@ public class WaterSnakeEntity extends WaterMobEntity implements IMob, IRangedAtt
 		}
 	}
 	static class MoveHelperController extends MovementController {
-		private final WaterSnakeEntity watersnake;
+		private final WaterSnake watersnake;
 		private int jumpTimer = 0;
 
-		public MoveHelperController(final WaterSnakeEntity watersnakeEntityIn) {
+		public MoveHelperController(final WaterSnake watersnakeEntityIn) {
 			super(watersnakeEntityIn);
 			this.watersnake = watersnakeEntityIn;
 
@@ -356,7 +360,7 @@ public class WaterSnakeEntity extends WaterMobEntity implements IMob, IRangedAtt
 			}
 
 			if (watersnake.getCommandSenderWorld().getGameTime() % 20 == 0) {
-				MyConfig.debugMsg(2, watersnake.blockPosition(),
+				Utility.debugMsg(2, watersnake.blockPosition(),
 						"Tick MoveHelperController to " + watersnake.getTravelPos());
 			}
 			if (this.operation == MovementController.Action.MOVE_TO && !watersnake.getNavigation().isDone()) {
@@ -391,7 +395,7 @@ public class WaterSnakeEntity extends WaterMobEntity implements IMob, IRangedAtt
 
 	}
 	static class Navigator extends SwimmerPathNavigator {
-		Navigator(WaterSnakeEntity watersnake, World worldIn) {
+		Navigator(WaterSnake watersnake, World worldIn) {
 			super(watersnake, worldIn);
 		}
 
@@ -408,8 +412,8 @@ public class WaterSnakeEntity extends WaterMobEntity implements IMob, IRangedAtt
 		}
 
 		public boolean isStableDestination(BlockPos pos) {
-			if (this.mob instanceof WaterSnakeEntity) {
-				WaterSnakeEntity watersnake = (WaterSnakeEntity) this.mob;
+			if (this.mob instanceof WaterSnake) {
+				WaterSnake watersnake = (WaterSnake) this.mob;
 				if (watersnake.isTravelling()) {
 					return this.level.getBlockState(pos).is(Blocks.WATER);
 				}
@@ -419,7 +423,7 @@ public class WaterSnakeEntity extends WaterMobEntity implements IMob, IRangedAtt
 		}
 	}
 	static class PanicGoal extends net.minecraft.entity.ai.goal.PanicGoal {
-		PanicGoal(WaterSnakeEntity watersnake, double speedIn) {
+		PanicGoal(WaterSnake watersnake, double speedIn) {
 			super(watersnake, speedIn);
 		}
 
@@ -447,16 +451,16 @@ public class WaterSnakeEntity extends WaterMobEntity implements IMob, IRangedAtt
 		}
 	}
 	static class SwimGoal extends net.minecraft.entity.ai.goal.SwimGoal {
-		WaterSnakeEntity watersnake;
+		WaterSnake watersnake;
 		int chance;
 
-		SwimGoal(WaterSnakeEntity watersnakeIn) {
+		SwimGoal(WaterSnake watersnakeIn) {
 			super(watersnakeIn);
 			this.chance = 40;
 			this.watersnake = watersnakeIn;
 		}
 
-		SwimGoal(WaterSnakeEntity watersnakeIn, int chanceIn) {
+		SwimGoal(WaterSnake watersnakeIn, int chanceIn) {
 			super(watersnakeIn);
 			this.chance = chanceIn;
 			this.watersnake = watersnakeIn;
@@ -477,9 +481,9 @@ public class WaterSnakeEntity extends WaterMobEntity implements IMob, IRangedAtt
 	}
 	
 	static class TargetPredicate implements Predicate<LivingEntity> {
-		private final WaterSnakeEntity waterSnakeEntity;
+		private final WaterSnake waterSnakeEntity;
 
-		public TargetPredicate(WaterSnakeEntity waterSnakeIn) {
+		public TargetPredicate(WaterSnake waterSnakeIn) {
 			waterSnakeEntity = waterSnakeIn;
 		}
 
@@ -487,7 +491,7 @@ public class WaterSnakeEntity extends WaterMobEntity implements IMob, IRangedAtt
 		public boolean test(@Nullable LivingEntity entity) {
 
 			// 's don't attack each other
-			if (entity instanceof WaterSnakeEntity) {
+			if (entity instanceof WaterSnake) {
 				return false;
 			}
 
@@ -607,9 +611,9 @@ public class WaterSnakeEntity extends WaterMobEntity implements IMob, IRangedAtt
 		}
 	}
 	public class WatersnakeAttackGoal extends MeleeAttackGoal {
-		private final WaterSnakeEntity snake;
+		private final WaterSnake snake;
 
-		public WatersnakeAttackGoal(final WaterSnakeEntity snakeIn, final double speedBoost,
+		public WatersnakeAttackGoal(final WaterSnake snakeIn, final double speedBoost,
 				final boolean followingTargetEvenIfNotSeen) {
 			super((CreatureEntity) snakeIn, speedBoost, followingTargetEvenIfNotSeen);
 			this.snake = snakeIn;
@@ -618,13 +622,13 @@ public class WaterSnakeEntity extends WaterMobEntity implements IMob, IRangedAtt
 
 		public void start() {
 			super.start();
-			MyConfig.debugMsg(1, "Start Melee Attack");
+			Utility.debugMsg(1, "Start Melee Attack");
 			this.snake.setAggressive(true);
 		}
 
 		public void stop() {
 			super.stop();
-			MyConfig.debugMsg(1, "Stop Melee Attack");
+			Utility.debugMsg(1, "Stop Melee Attack");
 			this.snake.setAggressive(false);
 		}
 
@@ -634,10 +638,10 @@ public class WaterSnakeEntity extends WaterMobEntity implements IMob, IRangedAtt
 	// GOAL section
 	//
 	public class WatersnakeSpitAttackGoal extends RangedAttackGoal {
-		private final WaterSnakeEntity snake;
+		private final WaterSnake snake;
 		private final float attackRadius;
 
-		public WatersnakeSpitAttackGoal(final WaterSnakeEntity snakeIn, final double speedModifier, final int attackIntervalMin, final int attackIntervalMax, final float attackRadius) {
+		public WatersnakeSpitAttackGoal(final WaterSnake snakeIn, final double speedModifier, final int attackIntervalMin, final int attackIntervalMax, final float attackRadius) {
 	
 			super(snakeIn, speedModifier, attackIntervalMin, attackIntervalMax, attackRadius);
 			this.snake = snakeIn;
@@ -649,159 +653,113 @@ public class WaterSnakeEntity extends WaterMobEntity implements IMob, IRangedAtt
 		public void start() {
 			super.start();
 			snake.startSpittingTime = snake.level.getGameTime()+16;
-			MyConfig.debugMsg(1, "Start Spitting");
+			Utility.debugMsg(2, "Start Spitting");
 			this.snake.setAggressive(true);
 		}
 
 		public void stop() {
 			super.stop();
-			MyConfig.debugMsg(1, "Stop Spitting");
+			Utility.debugMsg(2, "Stop Spitting");
 			this.snake.setAggressive(false);
 		}
-		
-//		public void tick() {
-//			super.tick();
-//			if (this.snake.getTarget() == null) {
-//				return;
-//			}
-//			double distance = this.snake.distanceToSqr(this.snake.getTarget().getX(), this.snake.getTarget().getY(), this.snake.getTarget().getZ());
-//			MyConfig.debugMsg(0, "Distance to Target: "+ distance);
-//
-//			if (distance < 3.0d) {
-//				MyConfig.debugMsg(0, "Too Close Stop Spitting");
-//				stop();
-//			}
-//			if (distance > this.attackRadius) {
-//				MyConfig.debugMsg(0, "Too Far Stop Spitting");
-//				stop();
-//			}
-//		}
 
 	}
 
-	private static final DataParameter<Integer> TARGET_ENTITY = EntityDataManager.defineId(WaterSnakeEntity.class,
+	private static final DataParameter<Integer> TARGET_ENTITY = EntityDataManager.defineId(WaterSnake.class,
 			DataSerializers.INT);
-	private static final DataParameter<Boolean> ANGRY = EntityDataManager.defineId(WaterSnakeEntity.class,
+	private static final DataParameter<Boolean> ANGRY = EntityDataManager.defineId(WaterSnake.class,
 			DataSerializers.BOOLEAN);
-	private static final DataParameter<Boolean> GOING_NEST = EntityDataManager.defineId(WaterSnakeEntity.class,
+	private static final DataParameter<Boolean> GOING_NEST = EntityDataManager.defineId(WaterSnake.class,
 			DataSerializers.BOOLEAN);
-	private static final DataParameter<BlockPos> NEST_POS = EntityDataManager.defineId(WaterSnakeEntity.class,
+	private static final DataParameter<BlockPos> NEST_POS = EntityDataManager.defineId(WaterSnake.class,
 			DataSerializers.BLOCK_POS);
-	private static final DataParameter<BlockPos> TRAVEL_POS = EntityDataManager.defineId(WaterSnakeEntity.class,
+	private static final DataParameter<BlockPos> TRAVEL_POS = EntityDataManager.defineId(WaterSnake.class,
 			DataSerializers.BLOCK_POS);
-	private static final DataParameter<Boolean> TRAVELLING = EntityDataManager.defineId(WaterSnakeEntity.class,
+	private static final DataParameter<Boolean> TRAVELLING = EntityDataManager.defineId(WaterSnake.class,
 			DataSerializers.BOOLEAN);
-	private static final DataParameter<Integer> ATK_ANIM_TIME = EntityDataManager.defineId(WaterSnakeEntity.class,
+	private static final DataParameter<Integer> ATK_ANIM_TIME = EntityDataManager.defineId(WaterSnake.class,
 			DataSerializers.INT);
-	private static final DataParameter<Integer> SPIT_TIME = EntityDataManager.defineId(WaterSnakeEntity.class,
+	private static final DataParameter<Integer> SPIT_TIME = EntityDataManager.defineId(WaterSnake.class,
 			DataSerializers.INT);
+	
+	public static final int NUM_WATER_CHECKS = 17;
 	public static final int ANGER_MILD = 300;
 	public static final int ANGER_INTENSE = 1200;
 	private static long lastSpawnTime = 0;
 	public static final float SIZE = EntityType.PIG.getWidth() * 0.45f;
 	private static final RangedInteger rangedInteger = TickRangeConverter.rangeOfSeconds(20, 39);
-	public static boolean canSpawn(EntityType<? extends WaterSnakeEntity> watersnakeIn, IWorld worldIn,
+	private static int calcNetMobCap(IWorld level, BlockPos pos) {
+
+		int mobCap = MyConfig.getWatersnakeSpawnCap() +
+				((ServerWorld) level).getServer().getPlayerCount();
+
+		int waterBonus = TwoGuysLib.fastRandomBlockCount(level, Blocks.WATER, pos, NUM_WATER_CHECKS);
+
+		String bC = Utility.getBiomeCategory(level.getBiome(pos));
+		if ((bC == Utility.OCEAN) || (bC == Utility.RIVER) || (bC == Utility.SWAMP) || (bC == Utility.BEACH)) {
+			mobCap += 1 + (waterBonus/2);
+			return mobCap;
+		}
+
+		// support for unknown modded wet biomes.
+		Biome biome = level.getBiome(pos);
+		ResourceLocation biomeNameResourceKey = level.registryAccess().registryOrThrow(Registry.BIOME_REGISTRY)
+				.getKey(biome);
+		String biomename = biomeNameResourceKey.toString();
+		RegistryKey<Biome> biomeKey = RegistryKey.create(Registry.BIOME_REGISTRY, biomeNameResourceKey);
+		if (BiomeDictionary.hasType(biomeKey, BiomeDictionary.Type.WATER)) 
+			mobCap += 5;		
+		if (BiomeDictionary.hasType(biomeKey, BiomeDictionary.Type.WET)) 
+			mobCap += 3;		
+		
+		return mobCap;
+	}
+	
+	public static boolean canSpawn(EntityType<? extends WaterSnake> watersnakeIn, IWorld level,
 			SpawnReason reason, BlockPos pos, Random randomIn) {
 
-		if (worldIn.isClientSide()) {
+		Utility.debugMsg(1, pos, "canSpawn waterSnake?");
+		// SpawnPlacements.Type.ON_GROUND
+		
+		if (Utility.isSpawnRateThrottled(level, 0)) {
 			return false;
 		}
-
 		
-		ServerWorld w = (ServerWorld) worldIn;
-		if (lastSpawnTime+24000 > w.getGameTime()) {
-			int lightLevel = w.getMaxLocalRawBrightness(pos);
-			int roll = w.getRandom().nextInt(8);
-			if (lightLevel > roll) { 
-				return false;
-			}
-		} else { // once a day- can spawn at light level up to 9;
-			lastSpawnTime = w.getGameTime();
-			int lightLevel = w.getMaxLocalRawBrightness(pos);
-			if (lightLevel > 9) { 
-				return false;
-			}
-		}
-//		if (w.getDifficulty() == Difficulty.PEACEFUL)
-//			return false;  // if peaceful will not attack player characters
-
+		if (level.getDifficulty() == Difficulty.PEACEFUL)
+			return false;
+		
 		if (reason == SpawnReason.SPAWN_EGG)
 			return true;
 
-//		if (w.getLightValue(pos) > 13) {
-//			return false;
-//		}
-
+		if (isTooBright(level, pos))
+			return false;
+		
 		if (reason == SpawnReason.SPAWNER) {
 			return true;
 		}
 
-		if (w.getBlockState(pos).getMaterial().isLiquid()) {
+		if (isBadAltitude(level, pos))
+			return false;
+
+		if (isFailBiomeLimits(level, pos))
+			return false;
+	
+		// prevent local overcrowding
+		if (Utility.isOverCrowded(level, WaterSnake.class, pos, 5))
+			return false;
+		
+		int mobCount = ((ServerWorld) level).getEntities(ModEntities.WATER_SNAKE, (entity) -> true).size();
+		if (mobCount >= calcNetMobCap(level, pos)) {
 			return false;
 		}
 
-		if (!w.getBlockState(pos.below()).getMaterial().isSolid()) {
-			return false;
-		}
+		Utility.debugMsg(1, "spawn watersnake true at " + pos.getX() + " " + pos.getY() + " " + pos.getZ());
 
-		if (isBubbleColumn(w, pos)) {
-			return false;
-		}
-
-		// watersnakes require nearby water.
-		if (!TwoGuysLib.findWaterBlocks(watersnakeIn, w, pos, 21, 4, 9) ) {
-				return false;
-		}
-
-		int watersnakeSpawnChance = MyConfig.getWatersnakeSpawnChance();
-		int watersnakeSpawnCap = MyConfig.getWatersnakeSpawnCap();
-		int watersnakeSpawnRoll = randomIn.nextInt(30);
-		int watersnakeCount = ((ServerWorld) w).getEntities(ModEntities.WATER_SNAKE, (entity) -> true).size();
-
-		if (watersnakeCount < 7) {
-			watersnakeSpawnRoll = 0;
-		}
-
-		Biome biome = w.getBiome(pos);
-		Category bC = biome.getBiomeCategory();
-		if ((bC == Category.OCEAN) || (bC == Category.RIVER) || (bC == Category.SWAMP) || (bC == Category.BEACH)) {
-			watersnakeSpawnChance += 7;
-		}
-
-		if ((bC == Category.SWAMP) || (bC == Category.BEACH)) {
-			watersnakeSpawnCap += 7;
-		}
-
-//			System.out.println(
-//					"Classic Snake Spawn Cap: " + watersnakeSpawnCap + " Count : " + watersnakeCount + " Chance:" + watersnakeSpawnChance);
-
-		if (watersnakeCount > watersnakeSpawnCap) {
-			return false;
-		}
-
-		if (watersnakeSpawnRoll < watersnakeSpawnChance) {
-			Chunk c = (Chunk) w.getChunk(pos);
-			ClassInheritanceMultiMap<Entity>[] aL = c.getEntitySections();
-			int height = pos.getY() / 16;
-			if (height < 0) {
-				height = 0; // cubic chunk
-			}
-			if (aL[height].find(WaterSnakeEntity.class).size() > 5) {
-				return false;
-			}
-
-			if (MyConfig.getaDebugLevel() > 0) {
-				System.out.println("spawn watersnake true at " + pos.getX() + " " + pos.getY() + " " + pos.getZ());
-			}
-			// TODO
-			System.out.println("spawn watersnake true at " + pos.getX() + " " + pos.getY() + " " + pos.getZ());
-			return true;
-		}
-		return false;
+		return true;
 	}
-
+	
 	@Nullable
-	private static Vector3d findSolidBlock(EntityType<? extends WaterSnakeEntity> snakeIn, IWorld world,
+	private static Vector3d findSolidBlock(EntityType<? extends WaterSnake> snakeIn, IWorld world,
 			BlockPos blockPos, int maxXZ, int maxY) {
 		Random rand = world.getRandom();
 		for (int i = 0; i < 12; ++i) {
@@ -816,17 +774,72 @@ public class WaterSnakeEntity extends WaterMobEntity implements IMob, IRangedAtt
 		}
 		return null;
 	}
+	
+	@SuppressWarnings("deprecation")
+	private static boolean isBadAltitude(IWorld level, BlockPos pos) {
 
+		if (pos.getY() > level.getSeaLevel() + 32)
+			return true;
+		if (pos.getY() < level.getSeaLevel() - 48)
+			return true;
 
+		return false;
+	}
+	
 	public static boolean isBubbleColumn(IWorld world, BlockPos pos) {
 		return world.getBlockState(pos).is(Blocks.BUBBLE_COLUMN);
+	}
+	
+	private static boolean isDeep(BlockPos pos) {
+		return (pos.getY() < 48);
+	}
+
+	private static boolean isFailBiomeLimits(IWorld level, BlockPos pos) {
+
+		String bC = Utility.getBiomeCategory(level.getBiome(pos));
+		if ( bC == Utility.MUSHROOM || bC == Utility.THEEND	) {
+			return true;
+		}
+		
+		Biome biome = level.getBiome(pos);
+		ResourceLocation biomeNameResourceKey = level.registryAccess().registryOrThrow(Registry.BIOME_REGISTRY).getKey(biome);
+		String biomename = biomeNameResourceKey.toString();
+		RegistryKey<Biome> biomeKey = RegistryKey.create(Registry.BIOME_REGISTRY, biomeNameResourceKey);
+
+		if ((BiomeDictionary.hasType(biomeKey, BiomeDictionary.Type.HOT)) && 
+				(BiomeDictionary.hasType(biomeKey, BiomeDictionary.Type.DRY))) {
+			return true;
+		}
+
+		return false;
+	}
+
+
+	private static boolean isTooBright(IWorld level, BlockPos pos) {
+
+		if (isDeep(pos)) {
+			if (level.getMaxLocalRawBrightness(pos) > 9) {
+				return true;
+			}
+		}
+
+		if (level.getMaxLocalRawBrightness(pos) > 13) {
+			return true; // combined skylight and blocklight
+		}
+
+		if (level.getBrightness(LightType.BLOCK, pos) > MyConfig.getBlockLightLevel()) {
+			return true;
+		}
+
+		return false;
+
 	}
 
 	public static AttributeModifierMap.MutableAttribute registerAttributes() {
 
 		return MonsterEntity.createMonsterAttributes().add(Attributes.MOVEMENT_SPEED, (double) 0.26F)
 				.add(Attributes.FOLLOW_RANGE, 20.0D).add(Attributes.ATTACK_DAMAGE, 2.5D)
-				.add(Attributes.MAX_HEALTH, 5.0D);
+				.add(Attributes.MAX_HEALTH, 18.5D);
 	}
 
 	private boolean hasNest;
@@ -855,12 +868,12 @@ public class WaterSnakeEntity extends WaterMobEntity implements IMob, IRangedAtt
 
 	private LivingEntity targetedEntity;
 	
-	public WaterSnakeEntity(EntityType<? extends WaterSnakeEntity> type, World worldIn) {
+	public WaterSnake(EntityType<? extends WaterSnake> type, World worldIn) {
 
 		super(type, worldIn);
 		this.xpReward = 7;
 		this.setPathfindingMalus(PathNodeType.WATER, 0.0f);
-		this.moveControl = new WaterSnakeEntity.MoveHelperController(this);
+		this.moveControl = new WaterSnake.MoveHelperController(this);
 		this.maxUpStep = 1.0f;
 		this.nestProtectionDistSq = MyConfig.getGurtyNestDistance();
 		nestProtectionDistSq = (nestProtectionDistSq * nestProtectionDistSq) + 3;
@@ -924,7 +937,7 @@ public class WaterSnakeEntity extends WaterMobEntity implements IMob, IRangedAtt
 	}
 
 	public int AttackAnimTime() {
-		return (int) this.entityData.get((DataParameter<Integer>) WaterSnakeEntity.ATK_ANIM_TIME);
+		return (int) this.entityData.get((DataParameter<Integer>) WaterSnake.ATK_ANIM_TIME);
 	}
 
 	@Override
@@ -993,14 +1006,14 @@ public class WaterSnakeEntity extends WaterMobEntity implements IMob, IRangedAtt
 	// Movement and Navigator Section
 	// Returns new PathNavigateGround instance
 	protected PathNavigator createNavigation(World worldIn) {
-		return new WaterSnakeEntity.Navigator(this, worldIn);
+		return new WaterSnake.Navigator(this, worldIn);
 	}
 	
 	
 	protected void defineSynchedData() {
 		super.defineSynchedData();
-		this.entityData.define((DataParameter<Integer>) WaterSnakeEntity.TARGET_ENTITY, 0);
-		this.entityData.define((DataParameter<Boolean>) WaterSnakeEntity.ANGRY, false);
+		this.entityData.define((DataParameter<Integer>) WaterSnake.TARGET_ENTITY, 0);
+		this.entityData.define((DataParameter<Boolean>) WaterSnake.ANGRY, false);
 		this.entityData.define(NEST_POS, BlockPos.ZERO);
 
 		this.entityData.define(TRAVEL_POS, BlockPos.ZERO);
@@ -1127,7 +1140,7 @@ public class WaterSnakeEntity extends WaterMobEntity implements IMob, IRangedAtt
 			return this.targetedEntity;
 		}
 		final Entity targetEntity = this.level
-				.getEntity((int) this.entityData.get((DataParameter<Integer>) WaterSnakeEntity.TARGET_ENTITY));
+				.getEntity((int) this.entityData.get((DataParameter<Integer>) WaterSnake.TARGET_ENTITY));
 		if (targetEntity instanceof LivingEntity) {
 			return this.targetedEntity = (LivingEntity) targetEntity;
 		}
@@ -1144,7 +1157,7 @@ public class WaterSnakeEntity extends WaterMobEntity implements IMob, IRangedAtt
 	}
 
 	public boolean hasTargetedEntity() {
-		return (int) this.entityData.get((DataParameter<Integer>) WaterSnakeEntity.TARGET_ENTITY) != 0;
+		return (int) this.entityData.get((DataParameter<Integer>) WaterSnake.TARGET_ENTITY) != 0;
 	}
 
 	private BlockPos helperFindExistingNest(BlockPos pos) {
@@ -1186,7 +1199,7 @@ public class WaterSnakeEntity extends WaterMobEntity implements IMob, IRangedAtt
 	}
 
 	public boolean isAngry() {
-		return this.entityData.get((DataParameter<Boolean>) WaterSnakeEntity.ANGRY);
+		return this.entityData.get((DataParameter<Boolean>) WaterSnake.ANGRY);
 	}
 
 	private boolean isGoingNest() {
@@ -1246,11 +1259,11 @@ public class WaterSnakeEntity extends WaterMobEntity implements IMob, IRangedAtt
 		// snakeIn, speedModifier, attackIntervalMin, attackIntervalMax, attackRadius
 		this.goalSelector.addGoal(0, (Goal) new WatersnakeSpitAttackGoal(this, 1.25, 40, 50, 12.0f));
 //		this.goalSelector.addGoal(1, new LeapAtTargetGoal(this, 0.2F));
-		this.goalSelector.addGoal(3, new WaterSnakeEntity.GoNestGoal(this, 1.0D));
-		this.goalSelector.addGoal(3, new WaterSnakeEntity.GoWaterGoal(this, swimSpeedModifier, rndSwimOdds));
-		this.goalSelector.addGoal(3, new WaterSnakeEntity.GoLandGoal(this, walkSpeedModifier, rndWalkOdds));
+		this.goalSelector.addGoal(3, new WaterSnake.GoNestGoal(this, 1.0D));
+		this.goalSelector.addGoal(3, new WaterSnake.GoWaterGoal(this, swimSpeedModifier, rndSwimOdds));
+		this.goalSelector.addGoal(3, new WaterSnake.GoLandGoal(this, walkSpeedModifier, rndWalkOdds));
 //		this.goalSelector.addGoal(4, new WaterSnakeEntity.PanicGoal(this, 1.4D));
-		this.goalSelector.addGoal(4, new WaterSnakeEntity.GoWanderGoal(this, 1.4D, 40));
+		this.goalSelector.addGoal(4, new WaterSnake.GoWanderGoal(this, 1.4D, 40));
 		this.goalSelector.addGoal(5, new LookRandomlyGoal(this));
 		this.goalSelector.addGoal(5, new LookAtGoal(this, PlayerEntity.class, 12.0F));
 		this.goalSelector.addGoal(6, new SwimGoal(this, 60));
@@ -1286,16 +1299,15 @@ public class WaterSnakeEntity extends WaterMobEntity implements IMob, IRangedAtt
 
 	public void setAngry(boolean bool) {
 		this.angryTime = this.level.getGameTime();
-		this.entityData.set((DataParameter<Boolean>) WaterSnakeEntity.ANGRY, bool);
+		this.entityData.set((DataParameter<Boolean>) WaterSnake.ANGRY, bool);
 	}
 
 	private void setAttackAnimTime(final int attackAnimTime) {
-		this.entityData.set((DataParameter<Integer>) WaterSnakeEntity.ATK_ANIM_TIME, attackAnimTime);
+		this.entityData.set((DataParameter<Integer>) WaterSnake.ATK_ANIM_TIME, attackAnimTime);
 	}
 
 	@Override
 	public void setBoundingBox(AxisAlignedBB p_174826_1_) {
-		// TODO Auto-generated method stub
 		super.setBoundingBox(p_174826_1_);
 	}
 
@@ -1343,7 +1355,7 @@ public class WaterSnakeEntity extends WaterMobEntity implements IMob, IRangedAtt
 	}
 
 	private void setTargetedEntity(final int targetEntityId) {
-		this.entityData.set((DataParameter<Integer>) WaterSnakeEntity.TARGET_ENTITY, targetEntityId);
+		this.entityData.set((DataParameter<Integer>) WaterSnake.TARGET_ENTITY, targetEntityId);
 	}
 
 	private void setTravelling(boolean bool) {

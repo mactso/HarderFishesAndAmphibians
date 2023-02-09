@@ -4,7 +4,7 @@ package com.mactso.hostilewatermobs.client.renderer;
 import com.mactso.hostilewatermobs.Main;
 import com.mactso.hostilewatermobs.client.model.WaterSnakeModel;
 import com.mactso.hostilewatermobs.client.renderer.layers.WaterSnakeAngryLayer;
-import com.mactso.hostilewatermobs.entities.WaterSnakeEntity;
+import com.mactso.hostilewatermobs.entities.WaterSnake;
 import com.mojang.blaze3d.matrix.MatrixStack;
 
 import net.minecraft.client.renderer.IRenderTypeBuffer;
@@ -16,12 +16,12 @@ import net.minecraftforge.api.distmarker.Dist;
 import net.minecraftforge.api.distmarker.OnlyIn;
 
 @OnlyIn(Dist.CLIENT)
-public class WaterSnakeRenderer extends MobRenderer<WaterSnakeEntity, WaterSnakeModel<WaterSnakeEntity>> {
-	private WaterSnakeEntity watersnakeIn;
+public class WaterSnakeRenderer extends MobRenderer<WaterSnake, WaterSnakeModel<WaterSnake>> {
+	private WaterSnake watersnakeIn;
 //		BiomeMaker b;
 
 	private static final ResourceLocation WATER_SNAKE_TEXTURES = new ResourceLocation(Main.MODID,
-			"textures/entity/classicsnake_texture.png");
+			"textures/entity/watersnake_texture.png");
 
 
 	public WaterSnakeRenderer(final EntityRendererManager renderManagerIn) {
@@ -29,7 +29,7 @@ public class WaterSnakeRenderer extends MobRenderer<WaterSnakeEntity, WaterSnake
         addLayer(new WaterSnakeAngryLayer<>(this));
 	}
 
-	protected void scale(WaterSnakeEntity entityIn, MatrixStack matrixStackIn,
+	protected void scale(WaterSnake entityIn, MatrixStack matrixStackIn,
 		  float partialTickTime) 
 	{
 
@@ -43,11 +43,11 @@ public class WaterSnakeRenderer extends MobRenderer<WaterSnakeEntity, WaterSnake
 		  }
 		  float uniqueSize = 0.4f + (float)(eSize+angrySize)/(32);
 
-		  matrixStackIn.scale(WaterSnakeEntity.SIZE + uniqueSize, WaterSnakeEntity.SIZE+uniqueSize, WaterSnakeEntity.SIZE+uniqueSize);
+		  matrixStackIn.scale(WaterSnake.SIZE + uniqueSize, WaterSnake.SIZE+uniqueSize, WaterSnake.SIZE+uniqueSize);
 
 	}
 
-	public void render(WaterSnakeEntity entityIn, float entityYaw, float partialTicks, MatrixStack matrixStackIn,
+	public void render(WaterSnake entityIn, float entityYaw, float partialTicks, MatrixStack matrixStackIn,
 			IRenderTypeBuffer bufferIn, int packedLightIn) {
 
 		float f = entityIn.yRotO;
@@ -56,7 +56,7 @@ public class WaterSnakeRenderer extends MobRenderer<WaterSnakeEntity, WaterSnake
 	}
 
 	@Override
-	public ResourceLocation getTextureLocation(WaterSnakeEntity entity) {
+	public ResourceLocation getTextureLocation(WaterSnake entity) {
 		return WATER_SNAKE_TEXTURES;
 	}
 }

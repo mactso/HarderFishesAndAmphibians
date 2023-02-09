@@ -4,7 +4,7 @@ package com.mactso.hostilewatermobs.client.renderer;
 import com.mactso.hostilewatermobs.Main;
 import com.mactso.hostilewatermobs.client.model.GurtyModel;
 import com.mactso.hostilewatermobs.client.renderer.layers.GurtyAngryLayer;
-import com.mactso.hostilewatermobs.entities.GurtyEntity;
+import com.mactso.hostilewatermobs.entities.Gurty;
 import com.mojang.blaze3d.matrix.MatrixStack;
 
 import net.minecraft.client.renderer.IRenderTypeBuffer;
@@ -16,8 +16,8 @@ import net.minecraftforge.api.distmarker.Dist;
 import net.minecraftforge.api.distmarker.OnlyIn;
 
 @OnlyIn(Dist.CLIENT)
-public class GurtyRenderer extends MobRenderer<GurtyEntity, GurtyModel<GurtyEntity>> {
-	private GurtyEntity gurtyIn;
+public class GurtyRenderer extends MobRenderer<Gurty, GurtyModel<Gurty>> {
+	private Gurty gurtyIn;
 //		BiomeMaker b;
 
 	private static final ResourceLocation GURTY_TEXTURES = new ResourceLocation(Main.MODID,
@@ -29,16 +29,13 @@ public class GurtyRenderer extends MobRenderer<GurtyEntity, GurtyModel<GurtyEnti
         addLayer(new GurtyAngryLayer<>(this));
 	}
 
-	protected void scale(GurtyEntity entityIn, MatrixStack matrixStackIn,
+	protected void scale(Gurty entityIn, MatrixStack matrixStackIn,
 		  float partialTickTime) 
 	{
 
 		  int eSize =  entityIn.getId()%16-8;
 		  gurtyIn = entityIn;
 		  boolean gurtyAngry = gurtyIn.isAngry();
-//		  if (gurtyAngry) {
-//			  System.out.println("Gurty"+ entityIn.getEntityId()  +" angry");
-//		  }
 		  
 		  int angrySize = 0;
 		  if (gurtyAngry) {
@@ -46,12 +43,11 @@ public class GurtyRenderer extends MobRenderer<GurtyEntity, GurtyModel<GurtyEnti
 		  }
 		  float uniqueSize =0.4f+ (float)(eSize+angrySize)/(16);
 
-//			  System.out.println ("Normal ("+GurtyBiterEntity.SIZE+") + " + uniqueSize);
-		  matrixStackIn.scale(GurtyEntity.SIZE+uniqueSize, GurtyEntity.SIZE+uniqueSize, GurtyEntity.SIZE+uniqueSize);
+		  matrixStackIn.scale(Gurty.SIZE+uniqueSize, Gurty.SIZE+uniqueSize, Gurty.SIZE+uniqueSize);
 
 	}
 
-	public void render(GurtyEntity entityIn, float entityYaw, float partialTicks, MatrixStack matrixStackIn,
+	public void render(Gurty entityIn, float entityYaw, float partialTicks, MatrixStack matrixStackIn,
 			IRenderTypeBuffer bufferIn, int packedLightIn) {
 
 		float f = entityIn.yRotO;
@@ -60,7 +56,7 @@ public class GurtyRenderer extends MobRenderer<GurtyEntity, GurtyModel<GurtyEnti
 	}
 
 	@Override
-	public ResourceLocation getTextureLocation(GurtyEntity entity) {
+	public ResourceLocation getTextureLocation(Gurty entity) {
 		return GURTY_TEXTURES;
 	}
 }

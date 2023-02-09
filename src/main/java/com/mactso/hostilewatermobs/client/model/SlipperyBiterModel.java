@@ -1,7 +1,7 @@
 package com.mactso.hostilewatermobs.client.model;
 
 import com.google.common.collect.ImmutableList;
-import com.mactso.hostilewatermobs.entities.SlipperyBiterEntity;
+import com.mactso.hostilewatermobs.entities.SlipperyBiter;
 
 import net.minecraft.client.renderer.entity.model.SegmentedModel;
 import net.minecraft.client.renderer.model.ModelRenderer;
@@ -109,12 +109,12 @@ public class SlipperyBiterModel<T extends Entity> extends SegmentedModel<T> {
 		}
 
 		float tailSwingMagnitude = 0.2f;
-		if (((SlipperyBiterEntity) entity).isMoving()) {
+		if (((SlipperyBiter) entity).isMoving()) {
 			tailSwingMagnitude = 1.0f;
 		}
 		fin_back_1.zRot = 0.0f;
 		/* linear interpolation */
-		SlipperyBiterEntity s = (SlipperyBiterEntity) entity;
+		SlipperyBiter s = (SlipperyBiter) entity;
 		
 		final float lerpTailValue = MathHelper.lerp(age, s.getClientSideTailAnimationO(),
 				s.getClientSideTailAnimation());

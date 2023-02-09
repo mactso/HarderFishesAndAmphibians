@@ -7,17 +7,14 @@ import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 
 import com.mactso.hostilewatermobs.Main;
+import com.mactso.hostilewatermobs.utility.Utility;
 
-import net.minecraft.entity.player.PlayerEntity;
 import net.minecraft.item.Item;
 import net.minecraft.item.Items;
 import net.minecraft.util.ResourceLocation;
-import net.minecraft.util.math.BlockPos;
-import net.minecraft.util.text.Color;
-import net.minecraft.util.text.StringTextComponent;
 import net.minecraftforge.common.ForgeConfigSpec;
-import net.minecraftforge.common.ForgeConfigSpec.IntValue;
 import net.minecraftforge.common.ForgeConfigSpec.BooleanValue;
+import net.minecraftforge.common.ForgeConfigSpec.IntValue;
 import net.minecraftforge.eventbus.api.SubscribeEvent;
 import net.minecraftforge.fml.common.Mod;
 import net.minecraftforge.fml.config.ModConfig;
@@ -37,8 +34,12 @@ public class MyConfig {
 		COMMON = specPair.getLeft();
 	}
 	
-	public static int getaDebugLevel() {
+	public static int getDebugLevel() {
 		return debugLevel;
+	}
+
+	public static int getBlockLightLevel() {
+		return blockLightLevel;
 	}
 
 	public static boolean getRiverGuardianPreysOnVillagerChildren() {
@@ -49,8 +50,8 @@ public class MyConfig {
 		MyConfig.debugLevel = aDebugLevel;
 	}
 
-	public static int getRiverGuardianSpawnChance() {
-		return riverGuardianSpawnChance;
+	public static int getRiverGuardianSpawnWeight() {
+		return riverGuardianSpawnWeight;
 	}
 
 	public static int getRiverGuardianSoundRange() {
@@ -65,8 +66,8 @@ public class MyConfig {
 		return riverGuardianSpawnCap;
 	}
 	
-	public static int getSlipperyBiterSpawnChance() {
-		return slipperyBiterSpawnChance;
+	public static int getSlipperyBiterSpawnWeight() {
+		return slipperyBiterSpawnWeight;
 	}
 
 
@@ -74,16 +75,16 @@ public class MyConfig {
 		return slipperyBiterSpawnCap;
 	}
 
-	public static int getGurtySpawnChance() {
-		return gurtySpawnChance;
+	public static int getGurtySpawnWeight() {
+		return gurtySpawnWeight;
 	}
 
 	public static int getGurtySpawnCap() {
 		return gurtySpawnCap;
 	}
 	
-	public static int getWatersnakeSpawnChance() {
-		return watersnakeSpawnChance;
+	public static int getWatersnakeSpawnWeight() {
+		return watersnakeSpawnWeight;
 	}
 
 
@@ -133,22 +134,22 @@ public class MyConfig {
 	}
 	
 	private static int      debugLevel;
-
+	private static int 		blockLightLevel;
 	private static boolean  riverGuardianPreysOnVillagerChildren;
-	private static int 	    riverGuardianSpawnChance;
+	private static int 	    riverGuardianSpawnWeight;
 	private static int 	    riverGuardianSpawnCap;
 	private static int 	    riverGuardianSoundRange;
 
-	private static int 	    slipperyBiterSpawnChance;
+	private static int 	    slipperyBiterSpawnWeight;
 	private static int 	    slipperyBiterSpawnCap;
 
-	private static int 	    gurtySpawnChance;
+	private static int 	    gurtySpawnWeight;
 	private static int 	    gurtySpawnCap;
 	private static int      gurtyBaseHitPoints;
 	private static int      gurtyBaseDefense;
 	private static int      gurtyNestDistance;
 
-	private static int 	    watersnakeSpawnChance;
+	private static int 	    watersnakeSpawnWeight;
 	private static int 	    watersnakeSpawnCap;
 	
 	private static int      modStructureBoost;
@@ -184,22 +185,25 @@ public class MyConfig {
 		
 		COMMON.debugLevel.set(debugLevel);
 
+		COMMON.blockLightLevel.set(blockLightLevel);
+
+		
 		COMMON.riverGuardianPreysOnVillagerChildren.set(riverGuardianPreysOnVillagerChildren);
-		COMMON.riverGuardianSpawnChance.set(riverGuardianSpawnChance);
+		COMMON.riverGuardianSpawnWeight.set(riverGuardianSpawnWeight);
 		COMMON.riverGuardianSoundRange.set(riverGuardianSoundRange);
 		COMMON.riverGuardianSpawnCap.set(riverGuardianSpawnCap);
 
 		COMMON.slipperyBiterSpawnCap.set(slipperyBiterSpawnCap);
-		COMMON.slipperyBiterSpawnChance.set(slipperyBiterSpawnChance);
+		COMMON.slipperyBiterSpawnWeight.set(slipperyBiterSpawnWeight);
 
 		COMMON.gurtySpawnCap.set(gurtySpawnCap);
-		COMMON.gurtySpawnChance.set(gurtySpawnChance);
+		COMMON.gurtySpawnWeight.set(gurtySpawnWeight);
 		COMMON.gurtyBaseHitPoints.set(gurtyBaseHitPoints);
 		COMMON.gurtyBaseDefense.set(gurtyBaseDefense);
 		COMMON.gurtyNestDistance.set(gurtyNestDistance);
 
 		COMMON.watersnakeSpawnCap.set(watersnakeSpawnCap);
-		COMMON.watersnakeSpawnChance.set(watersnakeSpawnChance);
+		COMMON.watersnakeSpawnWeight.set(watersnakeSpawnWeight);
 		
 		COMMON.codSpawnBoost.set(codSpawnBoost);
 		COMMON.salmonSpawnBoost.set(salmonSpawnBoost);
@@ -215,21 +219,22 @@ public class MyConfig {
 
 		debugLevel = COMMON.debugLevel.get();
 
-		riverGuardianSpawnChance = COMMON.riverGuardianSpawnChance.get();
+		blockLightLevel = COMMON.blockLightLevel.get();
 		riverGuardianSpawnCap = COMMON.riverGuardianSpawnCap.get();
+		riverGuardianSpawnWeight = COMMON.riverGuardianSpawnWeight.get();
 		riverGuardianSoundRange = COMMON.riverGuardianSoundRange.get();
 
-		slipperyBiterSpawnChance = COMMON.slipperyBiterSpawnChance.get();
+		slipperyBiterSpawnWeight = COMMON.slipperyBiterSpawnWeight.get();
 		slipperyBiterSpawnCap = COMMON.slipperyBiterSpawnCap.get();
 
-		gurtySpawnChance = COMMON.gurtySpawnChance.get();
+		gurtySpawnWeight = COMMON.gurtySpawnWeight.get();
 		gurtySpawnCap = COMMON.gurtySpawnCap.get();
 		gurtyBaseHitPoints = COMMON.gurtyBaseHitPoints.get();
 		gurtyBaseDefense = COMMON.gurtyBaseDefense.get();
 		gurtyNestDistance = COMMON.gurtyNestDistance.get();
 		modStructureBoost = COMMON.modStructureBoost.get();
 
-		watersnakeSpawnChance = COMMON.watersnakeSpawnChance.get();
+		watersnakeSpawnWeight = COMMON.watersnakeSpawnWeight.get();
 		watersnakeSpawnCap = COMMON.watersnakeSpawnCap.get();
 		
 		codSpawnBoost = COMMON.codSpawnBoost.get();
@@ -240,9 +245,8 @@ public class MyConfig {
 		zombifiedPiglinSpawnBoost = COMMON.zombifiedPiglinSpawnBoost.get();
 		ghastSpawnBoost = COMMON.ghastSpawnBoost.get();		
 		
-		if (debugLevel > 0) {
-			System.out.println("Harder Farther Debug Level: " + debugLevel );
-		}
+		Utility.debugMsg(1,"Hostile Water Mobs Debug Level: " + debugLevel );
+		
 	}
 	
 	public static class Common {
@@ -250,21 +254,23 @@ public class MyConfig {
 		public final IntValue debugLevel;
 		public final BooleanValue riverGuardianPreysOnVillagerChildren;
 
-		public final IntValue riverGuardianSpawnChance;
+		public final IntValue blockLightLevel; 
+		
+		public final IntValue riverGuardianSpawnWeight;
 		public final IntValue riverGuardianSpawnCap;
 		public final IntValue riverGuardianSoundRange;
 
-		public final IntValue slipperyBiterSpawnChance;
+		public final IntValue slipperyBiterSpawnWeight;
 		public final IntValue slipperyBiterSpawnCap;	
 		
-		public final IntValue gurtySpawnChance;
+		public final IntValue gurtySpawnWeight;
 		public final IntValue gurtySpawnCap;
 		public final IntValue gurtyBaseHitPoints;
 		public final IntValue gurtyBaseDefense;
 		public final IntValue gurtyNestDistance;
 		public final IntValue modStructureBoost;
 		
-		public final IntValue watersnakeSpawnChance;
+		public final IntValue watersnakeSpawnWeight;
 		public final IntValue watersnakeSpawnCap;			
 
 		public final IntValue codSpawnBoost;
@@ -286,6 +292,11 @@ public class MyConfig {
 					.translation(Main.MODID + ".config." + "debugLevel")
 					.defineInRange("debugLevel", () -> 0, 0, 2);
 
+			blockLightLevel = builder
+					.comment("blockLightLevel from light emitting blocks that prevents spawn")
+					.translation(Main.MODID + ".config." + "blockLightLevel")
+					.defineInRange("blockLightLevel", () -> 7, 1, 15);
+
 			builder.pop();
 			builder.push("Hostile Water Mobs - River Guardian");
 
@@ -294,10 +305,10 @@ public class MyConfig {
 					.translation(Main.MODID + ".config." + "riverGuardianPreysOnVillagerChildren")
 					.define("riverGuardianPreysOnVillagerChildren", true);
 			
-			riverGuardianSpawnChance = builder
-					.comment("riverGuardianSpawnChance Weight")
-					.translation(Main.MODID + ".config." + "riverGuardianSpawnChance")
-					.defineInRange("riverGuardianSpawnChance", () -> 30, 0, 500);
+			riverGuardianSpawnWeight = builder
+					.comment("riverGuardianSpawnWeight")
+					.translation(Main.MODID + ".config." + "riverGuardianSpawnWeight")
+					.defineInRange("riverGuardianSpawnWeight", () -> 30, 0, 500);
 
 			riverGuardianSpawnCap = builder
 					.comment("riverGuardianSpawnCap")
@@ -307,15 +318,15 @@ public class MyConfig {
 			riverGuardianSoundRange = builder
 					.comment("riverGuardian attack SoundRange in meters.  default is 7 meters. 0 turns off attack sound unless the river guardian is attacking the player.")
 					.translation(Main.MODID + ".config." + "riverGuardianSoundRange")
-					.defineInRange("riverGuardianSoundRange", () -> 5, 0, 24);
+					.defineInRange("riverGuardianSoundRange", () -> 19, 0, 32);
 
 			builder.pop();
 			builder.push("Hostile Water Mobs - Slippery Biter");
 
-			slipperyBiterSpawnChance = builder
-					.comment("slipperyBiterSpawnChance Weight")
-					.translation(Main.MODID + ".config." + "slipperyBiterSpawnChance")
-					.defineInRange("slipperyBiterSpawnChance", () -> 30, 0, 500);
+			slipperyBiterSpawnWeight = builder
+					.comment("slipperyBiterSpawnWeight")
+					.translation(Main.MODID + ".config." + "slipperyBiterSpawnWeight")
+					.defineInRange("slipperyBiterSpawnWeight", () -> 30, 0, 500);
 
 			slipperyBiterSpawnCap = builder
 					.comment("slipperyBiterSpawnCap")
@@ -325,10 +336,10 @@ public class MyConfig {
 			builder.pop();
 			builder.push("Hostile Water Mobs - Gurty");
 
-			gurtySpawnChance = builder
-					.comment("gurtySpawnChance Weight")
-					.translation(Main.MODID + ".config." + "gurtySpawnChance")
-					.defineInRange("gurtySpawnChance", () -> 40, 0, 500);
+			gurtySpawnWeight = builder
+					.comment("gurtySpawnWeight")
+					.translation(Main.MODID + ".config." + "gurtySpawnWeight")
+					.defineInRange("gurtySpawnWeight", () -> 40, 0, 500);
 
 			gurtySpawnCap = builder
 					.comment("gurtySpawnCap")
@@ -352,17 +363,17 @@ public class MyConfig {
 			
 			builder.pop();
 			
-			builder.push("Hostile Water Mobs - Slippery Biter");
+			builder.push("Hostile Water Mobs - Watersnake");
 
-			watersnakeSpawnChance = builder
-					.comment("watersnakeSpawnChance Weight")
-					.translation(Main.MODID + ".config." + "watersnakeSpawnChance")
-					.defineInRange("slipperyBiterSpawnChance", () -> 10, 0, 500);
+			watersnakeSpawnWeight = builder
+					.comment("watersnakeSpawnWeight")
+					.translation(Main.MODID + ".config." + "watersnakeSpawnWeight")
+					.defineInRange("watersnakeSpawnWeight", () -> 30, 0, 500);
 
 			watersnakeSpawnCap = builder
 					.comment("watersnakeSpawnCap")
 					.translation(Main.MODID + ".config." + "watersnakeSpawnCap")
-					.defineInRange("watersnakeSpawnCap", () -> 21, 1, 100);
+					.defineInRange("watersnakeSpawnCap", () -> 17, 1, 100);
 
 			builder.pop();
 			
@@ -431,35 +442,7 @@ public class MyConfig {
 		}
 		return ret;
 	}
-	
-	public static void debugMsg (int level, String dMsg) {
-		if (debugLevel > level-1) {
-			System.out.println("L"+level + ":" + dMsg);
-		}
-	}
 
-	public static void debugMsg (int level, BlockPos pos, String dMsg) {
-		if (debugLevel > level-1) {
-			System.out.println("L"+level+" ("+pos.getX()+","+pos.getY()+","+pos.getZ()+"): " + dMsg);
-		}
-	}
-	
-	// support for any color chattext
-	public static void sendChat(PlayerEntity p, String chatMessage, Color color) {
-		StringTextComponent component = new StringTextComponent (chatMessage);
-		component.getStyle().withColor(color);
-		p.sendMessage(component, p.getUUID());
-	}
-	
-	// support for any color, optionally bold text.
-	public static void sendBoldChat(PlayerEntity p, String chatMessage, Color color) {
-		StringTextComponent component = new StringTextComponent (chatMessage);
-
-		component.getStyle().withBold(true);
-		component.getStyle().withColor(color);
-		
-		p.sendMessage(component, p.getUUID());
-	}
 	
 }
 

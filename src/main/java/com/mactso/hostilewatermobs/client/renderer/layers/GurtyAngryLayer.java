@@ -2,7 +2,7 @@ package com.mactso.hostilewatermobs.client.renderer.layers;
 
 import com.mactso.hostilewatermobs.Main;
 import com.mactso.hostilewatermobs.client.model.GurtyModel;
-import com.mactso.hostilewatermobs.entities.GurtyEntity;
+import com.mactso.hostilewatermobs.entities.Gurty;
 import com.mojang.blaze3d.matrix.MatrixStack;
 
 import net.minecraft.client.renderer.IRenderTypeBuffer;
@@ -24,8 +24,7 @@ public class GurtyAngryLayer<T extends WaterMobEntity, M extends GurtyModel<T>> 
 	public void render(MatrixStack p_225628_1_, IRenderTypeBuffer p_225628_2_, int p_225628_3_, T p_225628_4_,
 			float p_225628_5_, float p_225628_6_, float p_225628_7_, float p_225628_8_, float p_225628_9_,
 			float p_225628_10_) {
-		// TODO Auto-generated method stub
-		GurtyEntity gurtyIn = (GurtyEntity) p_225628_4_;
+		Gurty gurtyIn = (Gurty) p_225628_4_;
 		if (gurtyIn.isAngry()) {
 			super.render(p_225628_1_, p_225628_2_, p_225628_3_, p_225628_4_, p_225628_5_, p_225628_6_, p_225628_7_,
 					p_225628_8_, p_225628_9_, p_225628_10_);

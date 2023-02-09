@@ -27,16 +27,6 @@ public class WaterSnakePoisonSpitEntity extends LlamaSpitEntity {
 		super(csSpit, w);
 	}
 
-	public WaterSnakePoisonSpitEntity(World p_i47273_1_, WaterSnakeEntity p_i47273_2_) {
-		this(EntityType.LLAMA_SPIT, p_i47273_1_);
-		super.setOwner(p_i47273_2_);
-		this.setPos(
-				p_i47273_2_.getX() - (double) (p_i47273_2_.getBbWidth() + 1.0F) * 0.5D
-						* (double) MathHelper.sin(p_i47273_2_.yBodyRot * ((float) Math.PI / 180F)),
-				p_i47273_2_.getEyeY() - (double) 0.1F, p_i47273_2_.getZ() + (double) (p_i47273_2_.getBbWidth() + 1.0F)
-						* 0.5D * (double) MathHelper.cos(p_i47273_2_.yBodyRot * ((float) Math.PI / 180F)));
-	}
-
 	@OnlyIn(Dist.CLIENT)
 	public WaterSnakePoisonSpitEntity(World p_i47274_1_, double p_i47274_2_, double p_i47274_4_, double p_i47274_6_,
 			double p_i47274_8_, double p_i47274_10_, double p_i47274_12_) {
@@ -50,6 +40,54 @@ public class WaterSnakePoisonSpitEntity extends LlamaSpitEntity {
 		}
 
 		this.setDeltaMovement(p_i47274_8_, p_i47274_10_, p_i47274_12_);
+	}
+
+	public WaterSnakePoisonSpitEntity(World p_i47273_1_, WaterSnake p_i47273_2_) {
+		this(EntityType.LLAMA_SPIT, p_i47273_1_);
+		super.setOwner(p_i47273_2_);
+		this.setPos(
+				p_i47273_2_.getX() - (double) (p_i47273_2_.getBbWidth() + 1.0F) * 0.5D
+						* (double) MathHelper.sin(p_i47273_2_.yBodyRot * ((float) Math.PI / 180F)),
+				p_i47273_2_.getEyeY() - (double) 0.1F, p_i47273_2_.getZ() + (double) (p_i47273_2_.getBbWidth() + 1.0F)
+						* 0.5D * (double) MathHelper.cos(p_i47273_2_.yBodyRot * ((float) Math.PI / 180F)));
+	}
+
+	protected void defineSynchedData() {
+	}
+
+	public IPacket<?> getAddEntityPacket() {
+		return new SSpawnObjectPacket(this);
+	}
+
+	protected void onHitBlock(BlockRayTraceResult p_230299_1_) {
+		super.onHitBlock(p_230299_1_);
+		if (!this.level.isClientSide) {
+			this.remove();
+		}
+
+	}
+
+	protected void onHitEntity(EntityRayTraceResult targetRayTraceResult) {
+		super.onHitEntity(targetRayTraceResult);
+
+		if (!(targetRayTraceResult.getEntity() instanceof LivingEntity)) {
+			return;
+		}
+		LivingEntity targetEntity = (LivingEntity) targetRayTraceResult.getEntity();
+		Entity spitOwnerEntity = this.getOwner(); // who owns the projectile (the snake).
+		if (spitOwnerEntity instanceof WaterSnake) {
+            targetEntity.hurt(DamageSource.indirectMobAttack(this, (LivingEntity) spitOwnerEntity).setProjectile(),
+					0.25F);  // direct damage from attack is small.
+			EffectInstance ei =  targetEntity.getEffect(Effects.POISON);
+    		if (ei != null) {
+    			if (ei.getDuration() > 10) return;
+    			if (ei.getAmplifier() > 0) return;
+    		}
+    		targetEntity.removeEffect(Effects.POISON);
+			targetEntity.addEffect(new EffectInstance(Effects.POISON, 160, 1));
+
+		}
+
 	}
 
 	public void tick() {
@@ -79,43 +117,5 @@ public class WaterSnakePoisonSpitEntity extends LlamaSpitEntity {
 
 			this.setPos(d0, d1, d2);
 		}
-	}
-
-	protected void onHitEntity(EntityRayTraceResult targetRayTraceResult) {
-		super.onHitEntity(targetRayTraceResult);
-
-		if (!(targetRayTraceResult.getEntity() instanceof LivingEntity)) {
-			return;
-		}
-		LivingEntity targetEntity = (LivingEntity) targetRayTraceResult.getEntity();
-		Entity spitOwnerEntity = this.getOwner(); // who owns the projectile (the snake).
-		if (spitOwnerEntity instanceof WaterSnakeEntity) {
-            targetEntity.hurt(DamageSource.indirectMobAttack(this, (LivingEntity) spitOwnerEntity).setProjectile(),
-					0.25F);  // direct damage from attack is small.
-			EffectInstance ei =  targetEntity.getEffect(Effects.POISON);
-    		if (ei != null) {
-    			if (ei.getDuration() > 10) return;
-    			if (ei.getAmplifier() > 0) return;
-    		}
-    		targetEntity.removeEffect(Effects.POISON);
-			targetEntity.addEffect(new EffectInstance(Effects.POISON, 160, 1));
-
-		}
-
-	}
-
-	protected void onHitBlock(BlockRayTraceResult p_230299_1_) {
-		super.onHitBlock(p_230299_1_);
-		if (!this.level.isClientSide) {
-			this.remove();
-		}
-
-	}
-
-	protected void defineSynchedData() {
-	}
-
-	public IPacket<?> getAddEntityPacket() {
-		return new SSpawnObjectPacket(this);
 	}
 }
