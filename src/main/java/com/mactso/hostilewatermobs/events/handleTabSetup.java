@@ -31,7 +31,9 @@ public class handleTabSetup {
 			event.accept(ModItems.WATERSNAKE_SPAWN_EGG);
 		} else if (event.getTab() == CreativeModeTabs.FOOD_AND_DRINKS) {
 			event.accept(ModItems.GURTY_GLAND);
+			event.accept(ModItems.RIVER_GUARDIAN_GLAND);
 			event.accept(ModItems.SLIPPERY_BITER_GLAND);
+			event.accept(ModItems.WATERSNAKE_GLAND);
 		} else if (event.getTab() == CreativeModeTabs.FUNCTIONAL_BLOCKS) {
 			event.accept(ModBlocks.NEST_BLOCK);
 		}

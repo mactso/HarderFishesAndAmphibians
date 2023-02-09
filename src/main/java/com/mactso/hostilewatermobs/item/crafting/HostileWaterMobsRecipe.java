@@ -5,21 +5,20 @@ import com.google.gson.JsonObject;
 import com.google.gson.JsonParseException;
 import com.mactso.hostilewatermobs.Main;
 
+import net.minecraft.core.NonNullList;
+import net.minecraft.nbt.CompoundTag;
+import net.minecraft.network.FriendlyByteBuf;
+import net.minecraft.resources.ResourceLocation;
+import net.minecraft.util.GsonHelper;
 import net.minecraft.world.inventory.CraftingContainer;
 import net.minecraft.world.item.DyeItem;
 import net.minecraft.world.item.Item;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.item.Items;
-import net.minecraft.world.item.crafting.RecipeSerializer;
-import net.minecraft.world.item.crafting.CraftingBookCategory;
 import net.minecraft.world.item.crafting.Ingredient;
+import net.minecraft.world.item.crafting.RecipeSerializer;
 import net.minecraft.world.item.crafting.ShapedRecipe;
 import net.minecraft.world.item.crafting.ShapelessRecipe;
-import net.minecraft.nbt.CompoundTag;
-import net.minecraft.network.FriendlyByteBuf;
-import net.minecraft.util.GsonHelper;
-import net.minecraft.core.NonNullList;
-import net.minecraft.resources.ResourceLocation;
 
 public class HostileWaterMobsRecipe extends ShapelessRecipe {
 	protected final String operation;
@@ -29,7 +28,9 @@ public class HostileWaterMobsRecipe extends ShapelessRecipe {
 
 	public HostileWaterMobsRecipe(ResourceLocation resourceLocationIn, String groupIn, ItemStack recipeOutputIn,
 			NonNullList<Ingredient> recipeItemsIn, String operationIn) {
-		// public ShapelessRecipe(ResourceLocation p_251840_, String p_249640_, CraftingBookCategory p_249390_, ItemStack p_252071_, NonNullList<Ingredient> p_250689_) {
+		// public ShapelessRecipe(ResourceLocation p_251840_, String p_249640_,
+		// CraftingBookCategory p_249390_, ItemStack p_252071_, NonNullList<Ingredient>
+		// p_250689_) {
 		super(resourceLocationIn, groupIn, null, recipeOutputIn, recipeItemsIn);
 //		super(resourceLocationIn, groupIn, CraftingBookCategory.EQUIPMENT , recipeItemsIn);
 		operation = operationIn;

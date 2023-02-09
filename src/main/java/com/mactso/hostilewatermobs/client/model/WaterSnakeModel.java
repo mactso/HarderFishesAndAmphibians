@@ -103,7 +103,7 @@ public class WaterSnakeModel<T extends Entity> extends ListModel<T> {
 	    boolean isAttacking = false;
 	    boolean isAngry = ((WaterSnake) entity).isAngry();
 	    boolean hasTargetedEntity = ((WaterSnake) entity).hasTargetedEntity();
-	    Utility.debugMsg(1, "is: " + isAngry + "has: " +hasTargetedEntity);
+	    Utility.debugMsg(2, "isAngry: " + isAngry + " has Target: " +hasTargetedEntity);
 	    if (isAngry && hasTargetedEntity) {
 	    	isAttacking = true;
 	    	swaySpeed = 0.4f;
@@ -113,21 +113,21 @@ public class WaterSnakeModel<T extends Entity> extends ListModel<T> {
 	    
 	    float attackAnim= (float) snake.startAttackTime - snake.level.getGameTime();
 	    if (isAttacking) {
-		    Utility.debugMsg(1, "attackAnim: "+attackAnim);
+		    Utility.debugMsg(2, "attackAnim: "+attackAnim);
 	    }
 	    if ( attackAnim > 0) {
-	    	Utility.debugMsg(1, "snake.attackAnim: "+snake.attackAnim);
-	    	Utility.debugMsg(1, "snake.swingTime: "+snake.swingTime);
+	    	Utility.debugMsg(2, "snake.attackAnim: "+snake.attackAnim);
+	    	Utility.debugMsg(2, "snake.swingTime: "+snake.swingTime);
 	    	headNeckAngle += Mth.sin(attackAnim/32);
 	    }
 
 	    float spitAnim= (float) snake.startSpittingTime - snake.level.getGameTime();
 	    if (isAttacking) {
-	    	Utility.debugMsg(1, "spitAnim: "+spitAnim);
+	    	Utility.debugMsg(2, "spitAnim: "+spitAnim);
 	    }
 	    if ( spitAnim > 0) {
-	    	Utility.debugMsg(1, "snake.attackAnim: "+snake.attackAnim);
-	    	Utility.debugMsg(1, "snake.swingTime: "+snake.swingTime);
+	    	Utility.debugMsg(2, "snake.attackAnim: "+snake.attackAnim);
+	    	Utility.debugMsg(2, "snake.swingTime: "+snake.swingTime);
 	    	headNeckAngle += Mth.cos(spitAnim/32);
 	    }
         
