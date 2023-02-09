@@ -1,6 +1,5 @@
 package com.mactso.hostilewatermobs.entities;
 
-import java.util.List;
 import java.util.Random;
 import java.util.UUID;
 import java.util.function.Predicate;
@@ -80,7 +79,6 @@ import net.minecraft.world.level.block.state.BlockState;
 import net.minecraft.world.level.pathfinder.AmphibiousNodeEvaluator;
 import net.minecraft.world.level.pathfinder.BlockPathTypes;
 import net.minecraft.world.level.pathfinder.PathFinder;
-import net.minecraft.world.phys.AABB;
 import net.minecraft.world.phys.Vec3;
 
 public class Gurty extends PathfinderMob implements NeutralMob, Enemy {
@@ -91,7 +89,7 @@ public class Gurty extends PathfinderMob implements NeutralMob, Enemy {
 		private int chance;
 		private boolean finished;
 
-		GoLandGoal(Gurty gurtyIn, double speedIn, int chanceIn) {
+		GoLandGoal(Gurty gurtyIn, double speedIn, int chanceIn ) {
 			this.gurty = gurtyIn;
 			this.speed = speedIn;
 			this.chance = chanceIn;
@@ -180,7 +178,6 @@ public class Gurty extends PathfinderMob implements NeutralMob, Enemy {
 
 		}
 	}
-
 	static class GoNestGoal extends Goal {
 		private Gurty gurty;
 		private double speed;
@@ -347,7 +344,7 @@ public class Gurty extends PathfinderMob implements NeutralMob, Enemy {
 
 		public void tick() {
 			this.updateSpeed();
-
+			
 			if (gurty.isAngry()) {
 				gurty.setTailHeight(0.77f);
 			} else {
@@ -466,15 +463,17 @@ public class Gurty extends PathfinderMob implements NeutralMob, Enemy {
 		 * necessary for execution in this method as well.
 		 */
 		public boolean canUse() {
-
-			if (gurty.random.nextInt(chance) != 0) {
+			
+			if (gurty.random.nextInt(chance) != 0 ){
 				return false;
 			}
 			return true;
 
 		}
 	}
-
+	
+	
+	
 	static class TargetPredicate implements Predicate<LivingEntity> {
 		private final Gurty gurtyEntity;
 
@@ -494,14 +493,13 @@ public class Gurty extends PathfinderMob implements NeutralMob, Enemy {
 			if (entity instanceof Villager) {
 				return false;
 			}
-
+			
 			// gurtys are non-hostile to turtles.
 			if (entity instanceof Turtle) {
 				return false;
 			}
 
 			// gurty's don't attack things they can't see unless attacked first.
-
 			if (!gurtyEntity.hasLineOfSight(entity)) { // was canSee(). Bugger to find- found in Ghast.
 				if (entity != gurtyEntity.getKillCredit()) {
 					return false;
@@ -541,7 +539,7 @@ public class Gurty extends PathfinderMob implements NeutralMob, Enemy {
 				gurtyEntity.setTarget(entity);
 				return true;
 			}
-
+			
 			// Don't attack things when too far from nest.
 			if ((nestPos.distSqr(gurtyEntity.blockPosition()) > 1600)) {
 				gurtyEntity.setTarget(null);
@@ -563,7 +561,7 @@ public class Gurty extends PathfinderMob implements NeutralMob, Enemy {
 			if ((bC == Utility.SWAMP)) {
 				dstToEntitySq += 64;
 			}
-
+			
 			// less aggressive in light
 			int lightLevel = w.getMaxLocalRawBrightness(this.gurtyEntity.blockPosition());
 			if (lightLevel > 13) {
@@ -581,7 +579,7 @@ public class Gurty extends PathfinderMob implements NeutralMob, Enemy {
 
 			double followDistance = gurtyEntity.getAttribute(Attributes.FOLLOW_RANGE).getValue();
 			int followDistanceSq = (int) (followDistance * followDistance);
-
+			
 			// if modified distance to entity > follow distance attribute, don't attack.
 			if (dstToEntitySq > (followDistanceSq)) {
 				// But if a player and in range and random playsound (2.5%) then play a warning
@@ -597,7 +595,7 @@ public class Gurty extends PathfinderMob implements NeutralMob, Enemy {
 				gurtyEntity.setTarget(null);
 				return false;
 			}
-
+			
 			gurtyEntity.setTarget(entity);
 			w.playSound(null, gurtyEntity.blockPosition(), ModSounds.GURTY_ANGRY, SoundSource.HOSTILE, 1.0f, 1.0f);
 			return true;
@@ -618,71 +616,19 @@ public class Gurty extends PathfinderMob implements NeutralMob, Enemy {
 	private static final EntityDataAccessor<Boolean> TRAVELLING = SynchedEntityData.defineId(Gurty.class,
 			EntityDataSerializers.BOOLEAN);
 
-	private static final UniformInt rangedInteger = TimeUtil.rangeOfSeconds(20, 39);
 	public static final int ANGER_MILD = 300;
 
 	public static final int ANGER_INTENSE = 1200;
 
 	public static final int NUM_WATER_CHECKS = 21;
-
+	
 	public static final float SIZE = EntityType.PIG.getWidth() * 1.25f;
 
-	public static boolean canSpawn(EntityType<? extends Gurty> gurtyIn, LevelAccessor level, MobSpawnType reason,
-			BlockPos pos, Random randomIn) {
+	private static long lastSpawnTime = 0;
+
+	private static final UniformInt rangedInteger = TimeUtil.rangeOfSeconds(20, 39);
 
 
-		Utility.debugMsg(1, pos, "canSpawn Gurty?");
-		// SpawnPlacements.Type.ON_GROUND
-
-		if (isSpawnRateThrottled(level)) {
-			return false;
-		}
-
-
-		if (level.getDifficulty() == Difficulty.PEACEFUL)
-			return false;
-
-		if (reason == MobSpawnType.SPAWN_EGG)
-			return true;
-
-		if (isWellLit(level, pos))
-			return false;
-
-		if (reason == MobSpawnType.SPAWNER) {
-			return true;
-		}
-
-		if (isBadAltitude(level, pos))
-			return false;
-
-
-		if (isFailBiomeLimits(level, pos))
-			return false;
-
-		if (!isWaterNearby(level, pos)) {
-			return false;
-		}
-
-
-		// prevent local overcrowding
-		if (isOverCrowded(level, Gurty.class, pos))
-			return false;
-
-		int mobCount = ((ServerLevel) level).getEntities(ModEntities.GURTY, (entity) -> true).size();
-		if (mobCount >= calcNetMobCap(level, pos)) {
-			return false;
-		}
-
-		Utility.debugMsg(1, pos, "spawned Gurty.");
-
-		return true;
-
-	}
-
-	// needed for water creatures because so many valid spawn blocks.
-	private static boolean isSpawnRateThrottled(LevelAccessor level) {
-		return false;
-	}
 
 	private static int calcNetMobCap(LevelAccessor level, BlockPos pos) {
 
@@ -698,6 +644,7 @@ public class Gurty extends PathfinderMob implements NeutralMob, Enemy {
 			return mobCap;
 		}
 
+		// support for unknown modded wet biomes.
 		if (level.getBiome(pos).is(BiomeTags.IS_OCEAN)) {
 			mobCap += 3;		
 			return mobCap;
@@ -708,19 +655,64 @@ public class Gurty extends PathfinderMob implements NeutralMob, Enemy {
 			return mobCap;
 		}
 
-		if (level.getBiome(pos).is(BiomeTags.HAS_SWAMP_HUT)) {
-			mobCap += 3;		
-			return mobCap;
-		}
 
 		return mobCap;
+	}
+	
+	public static boolean canSpawn(EntityType<? extends Gurty> gurtyIn, LevelAccessor level, MobSpawnType reason,
+			BlockPos pos, Random randomIn) {
+
+		
+		Utility.debugMsg(1, pos, "canSpawn Gurty?");
+		// SpawnPlacements.Type.ON_GROUND
+
+		if (Utility.isSpawnRateThrottled(level,0)) {
+			return false;
+		}
+
+		if (level.getDifficulty() == Difficulty.PEACEFUL)
+			return false;
+
+		if (reason == MobSpawnType.SPAWN_EGG)
+			return true;
+
+		if (isTooBright(level, pos))
+			return false;
+
+		if (reason == MobSpawnType.SPAWNER) {
+			return true;
+		}
+
+		if (isBadAltitude(level, pos))
+			return false;
+
+		if (isFailBiomeLimits(level, pos))
+			return false;
+
+		if (!isWaterNearby(level, pos)) {
+			return false;
+		}
+
+		// prevent local overcrowding
+		if (Utility.isOverCrowded(level, Gurty.class, pos, 5))
+			return false;
+
+		int mobCount = ((ServerLevel) level).getEntities(ModEntities.GURTY, (entity) -> true).size();
+		if (mobCount >= calcNetMobCap(level, pos)) {
+			return false;
+		}
+
+		Utility.debugMsg(1, pos, "spawned Gurty.");
+
+		return true;
+
 	}
 
 	public static AttributeSupplier.Builder createAttributes() {
 
 		return Monster.createMonsterAttributes().add(Attributes.MOVEMENT_SPEED, (double) 0.26F)
 				.add(Attributes.FOLLOW_RANGE, 20.0D).add(Attributes.ATTACK_DAMAGE, 2.5D)
-				.add(Attributes.MAX_HEALTH, 5.0D);
+				.add(Attributes.MAX_HEALTH, 21.5D);
 	}
 
 	@Nullable
@@ -747,6 +739,7 @@ public class Gurty extends PathfinderMob implements NeutralMob, Enemy {
 		return new EntityDimensions(width, height, fixed_size);
 	}
 
+	@SuppressWarnings("deprecation")
 	private static boolean isBadAltitude(LevelAccessor level, BlockPos pos) {
 
 		if (pos.getY() < level.getSeaLevel() - 10)
@@ -792,22 +785,7 @@ public class Gurty extends PathfinderMob implements NeutralMob, Enemy {
 
 	}
 
-	private static boolean isOverCrowded(LevelAccessor level, Class<Gurty> entityClass, BlockPos pos) {
-		if (level.getEntitiesOfClass(entityClass,
-				new AABB(pos.north(20).west(20).above(6), pos.south(20).east(20).below(6))).size() > 5)
-			return true;
-		return false;
-	}
-
-	private static boolean isWaterNearby(LevelAccessor level, BlockPos pos) {
-		if (TwoGuysLib.fastRandomBlockCheck(level, Blocks.WATER, pos, NUM_WATER_CHECKS)) {
-			return true;
-		}
-		;
-		return false;
-	}
-
-	private static boolean isWellLit(LevelAccessor level, BlockPos pos) {
+	private static boolean isTooBright(LevelAccessor level, BlockPos pos) {
 
 		if (level.getMaxLocalRawBrightness(pos) > 13) {
 			return true; // combined skylight and blocklight
@@ -821,6 +799,14 @@ public class Gurty extends PathfinderMob implements NeutralMob, Enemy {
 			return true; // no gurties in dimensions lacking skylight
 		}
 
+		return false;
+	}
+
+	private static boolean isWaterNearby(LevelAccessor level, BlockPos pos) {
+		if (TwoGuysLib.fastRandomBlockCheck(level, Blocks.WATER, pos, NUM_WATER_CHECKS)) {
+			return true;
+		}
+		;
 		return false;
 	}
 

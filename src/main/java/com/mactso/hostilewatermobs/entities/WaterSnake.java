@@ -1,6 +1,5 @@
 package com.mactso.hostilewatermobs.entities;
 
-import java.util.List;
 import java.util.Random;
 import java.util.function.Predicate;
 
@@ -43,8 +42,8 @@ import net.minecraft.world.entity.MoverType;
 import net.minecraft.world.entity.PathfinderMob;
 import net.minecraft.world.entity.SpawnGroupData;
 import net.minecraft.world.entity.ai.attributes.AttributeModifier;
-import net.minecraft.world.entity.ai.attributes.AttributeModifier.Operation;
 import net.minecraft.world.entity.ai.attributes.AttributeSupplier;
+import net.minecraft.world.entity.ai.attributes.AttributeModifier.Operation;
 import net.minecraft.world.entity.ai.attributes.Attributes;
 import net.minecraft.world.entity.ai.control.MoveControl;
 import net.minecraft.world.entity.ai.goal.Goal;
@@ -62,6 +61,7 @@ import net.minecraft.world.entity.ai.util.DefaultRandomPos;
 import net.minecraft.world.entity.animal.Turtle;
 import net.minecraft.world.entity.animal.WaterAnimal;
 import net.minecraft.world.entity.monster.Enemy;
+import net.minecraft.world.entity.monster.Guardian;
 import net.minecraft.world.entity.monster.Monster;
 import net.minecraft.world.entity.monster.RangedAttackMob;
 import net.minecraft.world.entity.npc.Villager;
@@ -78,7 +78,6 @@ import net.minecraft.world.level.block.state.BlockState;
 import net.minecraft.world.level.pathfinder.AmphibiousNodeEvaluator;
 import net.minecraft.world.level.pathfinder.BlockPathTypes;
 import net.minecraft.world.level.pathfinder.PathFinder;
-import net.minecraft.world.phys.AABB;
 import net.minecraft.world.phys.Vec3;
 
 public class WaterSnake extends WaterAnimal implements Enemy, RangedAttackMob {
@@ -373,7 +372,7 @@ public class WaterSnake extends WaterAnimal implements Enemy, RangedAttackMob {
 				double dx = this.wantedX - watersnake.getX();
 				double dy = this.wantedY - watersnake.getY();
 				double dz = this.wantedZ - watersnake.getZ();
-				double distance = (double) Math.sqrt(dx * dx + dy * dy + dz * dz); 
+				double distance = (double) Math.sqrt(dx * dx + dy * dy + dz * dz);
 				dy = dy / distance;
 				float f = (float) (Mth.atan2(dz, dx) * (double) (180F / (float) Math.PI)) - 90.0F;
 
@@ -642,7 +641,6 @@ public class WaterSnake extends WaterAnimal implements Enemy, RangedAttackMob {
 			Utility.debugMsg(1, "Stop Melee Attack");
 			this.snake.setAggressive(false);
 		}
-
 	}
 
 	//
@@ -701,49 +699,6 @@ public class WaterSnake extends WaterAnimal implements Enemy, RangedAttackMob {
 	public static final float SIZE = EntityType.PIG.getWidth() * 0.45f;
 	private static final UniformInt rangedInteger = TimeUtil.rangeOfSeconds(20, 39);
 
-	public static boolean canSpawn(EntityType<? extends WaterSnake> watersnakeIn, LevelAccessor level,
-			MobSpawnType reason, BlockPos pos, Random randomIn) {
-
-		Utility.debugMsg(1, pos, "canSpawn waterSnake?");
-		// SpawnPlacements.Type.ON_GROUND
-
-		if (isSpawnRateThrottled(level, pos)) {
-			return false;
-		}
-
-		if (level.getDifficulty() == Difficulty.PEACEFUL)
-			return false;
-
-		if (reason == MobSpawnType.SPAWN_EGG)
-			return true;
-
-		if (isWellLit(level, pos))
-			return false;
-
-		if (reason == MobSpawnType.SPAWNER) {
-			return true;
-		}
-
-		if (isBadAltitude(level, pos))
-			return false;
-
-		if (isFailBiomeLimits(level, pos))
-			return false;
-
-		// prevent local overcrowding
-		if (isOverCrowded(level, WaterSnake.class, pos))
-			return false;
-
-		int mobCount = ((ServerLevel) level).getEntities(ModEntities.WATER_SNAKE, (entity) -> true).size();
-		if (mobCount >= calcNetMobCap(level, pos)) {
-			return false;
-		}
-
-		Utility.debugMsg(1, pos, "spawned water snake.");
-
-		return true;
-	}
-
 	private static int calcNetMobCap(LevelAccessor level, BlockPos pos) {
 
 		int mobCap = MyConfig.getWatersnakeSpawnCap() + level.getServer().getPlayerCount();
@@ -762,16 +717,61 @@ public class WaterSnake extends WaterAnimal implements Enemy, RangedAttackMob {
 			mobCap += 5;
 			return mobCap;
 		}
-
+		
 		return mobCap;
+
 	}
 
-	private static <T extends Entity> boolean isOverCrowded(LevelAccessor level, Class<T> entityClass, BlockPos pos) {
-		if (level.getEntitiesOfClass(entityClass,
-				new AABB(pos.north(20).west(20).above(6), pos.south(20).east(20).below(6))).size() > 3)
+	public static boolean canSpawn(EntityType<? extends WaterSnake> watersnakeIn, LevelAccessor level,
+			MobSpawnType reason, BlockPos pos, Random randomIn) {
+
+		Utility.debugMsg(1, pos, "canSpawn waterSnake?");
+		// SpawnPlacements.Type.ON_GROUND
+		
+		if (Utility.isSpawnRateThrottled(level, 0)) {
+			return false;
+		}
+		
+		if (level.getDifficulty() == Difficulty.PEACEFUL)
+			return false;
+		
+		if (reason == MobSpawnType.SPAWN_EGG)
 			return true;
-		return false;
+
+		if (isTooBright(level, pos))
+			return false;
+		
+		if (reason == MobSpawnType.SPAWNER) {
+			return true;
+		}
+
+		if (isBadAltitude(level, pos))
+			return false;
+
+		if (isFailBiomeLimits(level, pos))
+			return false;
+	
+		// prevent local overcrowding
+		if (Utility.isOverCrowded(level, WaterSnake.class, pos, 5))
+			return false;
+		
+		int mobCount = ((ServerLevel) level).getEntities(ModEntities.WATER_SNAKE, (entity) -> true).size();
+		if (mobCount >= calcNetMobCap(level, pos)) {
+			return false;
+		}
+
+		Utility.debugMsg(1, "spawn watersnake true at " + pos.getX() + " " + pos.getY() + " " + pos.getZ());
+
+		return true;
 	}
+	
+	
+	public static AttributeSupplier.Builder createAttributes() {
+		return Monster.createMonsterAttributes().add(Attributes.MOVEMENT_SPEED, 0.73D)
+				.add(Attributes.FOLLOW_RANGE, 20.0D).add(Attributes.ATTACK_DAMAGE, 2.5D)
+				.add(Attributes.MAX_HEALTH, 10.5D);
+	}
+
 
 	private static boolean isFailBiomeLimits(LevelAccessor level, BlockPos pos) {
 
@@ -800,7 +800,9 @@ public class WaterSnake extends WaterAnimal implements Enemy, RangedAttackMob {
 
 		return false;
 	}
-
+	    
+	
+	@SuppressWarnings("deprecation")
 	private static boolean isBadAltitude(LevelAccessor level, BlockPos pos) {
 
 		if (pos.getY() > level.getSeaLevel() + 32)
@@ -809,6 +811,63 @@ public class WaterSnake extends WaterAnimal implements Enemy, RangedAttackMob {
 			return true;
 
 		return false;
+	}
+
+	
+	private static boolean isDeep(BlockPos pos) {
+		return (pos.getY() < 48);
+	}
+
+
+	// needed for water creatures because so many valid spawn blocks.
+	private static boolean isSpawnRateThrottled(LevelAccessor level, BlockPos pos) {
+
+		int waterBonus = TwoGuysLib.fastRandomBlockCount(level, Blocks.WATER, pos, NUM_WATER_CHECKS);
+		if (waterBonus == 0) 
+			waterBonus = -21;
+		
+		int watersnakeSpawnRoll = waterBonus+level.getRandom().nextInt(100);
+
+		String bC = Utility.getBiomeCategory(level.getBiome(pos));
+		
+		if ((bC == Utility.OCEAN) || (bC == Utility.RIVER) || (bC == Utility.SWAMP) || (bC == Utility.BEACH)) {
+			watersnakeSpawnRoll += 11;
+		}
+
+		if ((bC == Utility.ICY)) {
+			watersnakeSpawnRoll -= 11;
+		}
+		
+		if ((bC == Utility.MOUNTAIN)) {
+			watersnakeSpawnRoll -= 41;
+		}
+		
+		if (watersnakeSpawnRoll < 50) {
+			return true;
+		}
+
+		return false;
+	}
+
+
+	private static boolean isTooBright(LevelAccessor level, BlockPos pos) {
+
+		if (isDeep(pos)) {
+			if (level.getMaxLocalRawBrightness(pos) > 9) {
+				return true;
+			}
+		}
+
+		if (level.getMaxLocalRawBrightness(pos) > 13) {
+			return true; // combined skylight and blocklight
+		}
+
+		if (level.getBrightness(LightLayer.BLOCK, pos) > MyConfig.getBlockLightLevel()) {
+			return true;
+		}
+
+		return false;
+
 	}
 
 	private static boolean isWellLit(LevelAccessor level, BlockPos pos) {
@@ -829,91 +888,6 @@ public class WaterSnake extends WaterAnimal implements Enemy, RangedAttackMob {
 
 		return false;
 
-	}
-
-	private static boolean isDeep(BlockPos pos) {
-		return (pos.getY() < 48);
-	}
-
-	// needed for water creatures because so many valid spawn blocks.
-	private static boolean isSpawnRateThrottled(LevelAccessor level, BlockPos pos) {
-
-		int waterBonus = TwoGuysLib.fastRandomBlockCount(level, Blocks.WATER, pos, NUM_WATER_CHECKS);
-		if (waterBonus == 0)
-			waterBonus = -21;
-
-		int watersnakeSpawnRoll = waterBonus + level.getRandom().nextInt(100);
-
-		String bC = Utility.getBiomeCategory(level.getBiome(pos));
-
-		if ((bC == Utility.OCEAN) || (bC == Utility.RIVER) || (bC == Utility.SWAMP) || (bC == Utility.BEACH)) {
-			watersnakeSpawnRoll += 11;
-		}
-
-		if ((bC == Utility.ICY)) {
-			watersnakeSpawnRoll -= 11;
-		}
-
-		if ((bC == Utility.MOUNTAIN)) {
-			watersnakeSpawnRoll -= 41;
-		}
-
-		if (watersnakeSpawnRoll < 50) {
-			return true;
-		}
-
-		return false;
-	}
-
-	private static boolean exceedsSpawnCap(LevelAccessor level, BlockPos pos, String bC, int waterBonus,
-			int watersnakeCount) {
-		int watersnakeSpawnCap = MyConfig.getWatersnakeSpawnCap();
-
-		if ((bC == Utility.OCEAN) || (bC == Utility.RIVER) || (bC == Utility.SWAMP) || (bC == Utility.BEACH)) {
-			watersnakeSpawnCap += 1 + (waterBonus / 2);
-		}
-		List<Gurty> list = level.getEntitiesOfClass(Gurty.class,
-				new AABB(pos.north(16).west(16).above(8), pos.south(16).east(16).below(8)));
-
-		if (list.size() > 5) {
-			Utility.debugMsg(2, pos, "WaterSnake Spawn canceled by Local cap (" + watersnakeSpawnCap + ").");
-			return true;
-		}
-
-		if (watersnakeCount >= watersnakeSpawnCap) {
-			Utility.debugMsg(2, pos, "WaterSnake Spawn canceled by Server Global cap (" + watersnakeSpawnCap + ").");
-			return true;
-		}
-
-		return false;
-	}
-
-	public static boolean isBubbleColumn(LevelAccessor world, BlockPos pos) {
-		return world.getBlockState(pos).is(Blocks.BUBBLE_COLUMN);
-	}
-
-	public static AttributeSupplier.Builder createAttributes() {
-
-		return Monster.createMonsterAttributes().add(Attributes.MOVEMENT_SPEED, (double) 0.26F)
-				.add(Attributes.FOLLOW_RANGE, 20.0D).add(Attributes.ATTACK_DAMAGE, 2.5D)
-				.add(Attributes.MAX_HEALTH, 5.0D);
-	}
-
-	@Nullable
-	private static Vec3 findSolidBlock(EntityType<? extends WaterSnake> snakeIn, LevelAccessor world, BlockPos blockPos,
-			int maxXZ, int maxY) {
-		Random rand = world.getRandom();
-		for (int i = 0; i < 12; ++i) {
-			int xD = rand.nextInt(maxXZ + maxXZ) - maxXZ;
-			int zD = rand.nextInt(maxXZ + maxXZ) - maxXZ;
-			int yD = rand.nextInt(maxY + maxY) - maxY;
-			if (blockPos.getY() + yD > 0 && blockPos.getY() + yD < 254) {
-				if (world.getBlockState(blockPos).getMaterial().isSolid()) {
-					return Vec3.atBottomCenterOf(blockPos.east(xD).above(yD).west(zD));
-				}
-			}
-		}
-		return null;
 	}
 
 	private boolean hasNest;

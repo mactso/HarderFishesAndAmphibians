@@ -244,7 +244,8 @@ public class MyConfig {
 		zombifiedPiglinSpawnBoost = COMMON.zombifiedPiglinSpawnBoost.get();
 		ghastSpawnBoost = COMMON.ghastSpawnBoost.get();		
 		
-		Utility.debugMsg(1,"Harder Farther Debug Level: " + debugLevel );
+		Utility.debugMsg(1,"Hostile Water Mobs Debug Level: " + debugLevel );
+		
 	}
 	
 	public static class Common {
@@ -306,7 +307,7 @@ public class MyConfig {
 			riverGuardianSpawnWeight = builder
 					.comment("riverGuardianSpawnWeight")
 					.translation(Main.MODID + ".config." + "riverGuardianSpawnWeight")
-					.defineInRange("riverGuardianSpawnWeight", () -> 80, 0, 500);
+					.defineInRange("riverGuardianSpawnWeight", () -> 30, 0, 500);
 
 			riverGuardianSpawnCap = builder
 					.comment("riverGuardianSpawnCap")

@@ -334,24 +334,21 @@ public class SlipperyBiter extends WaterAnimal implements NeutralMob, Enemy {
 	public static boolean canSpawn(EntityType<? extends SlipperyBiter> type, LevelAccessor level, MobSpawnType reason,
 			BlockPos pos, Random randomIn) {
 
-		MyConfig.setaDebugLevel(0);
 		Utility.debugMsg(1, pos, "canSpawn slipperyBiter?");
 		// SpawnPlacements.Type.IN_WATER
 
-
-		if (isSpawnRateThrottled(level)) {
+		if (Utility.isSpawnRateThrottled(level,20)) {
 			return false;
 		}
 
-		if (isInBubbleColumn(level, pos)) {
+		if (Utility.isInBubbleColumn(level, pos)) {
 			return false;
 		}
 
 		if (level.getDifficulty() == Difficulty.PEACEFUL)
 			return false;
 
-
-		if (isWellLit(level, pos))
+		if (isTooBright(level, pos))
 			return false;
 
 		if (reason == MobSpawnType.SPAWN_EGG)
@@ -367,10 +364,8 @@ public class SlipperyBiter extends WaterAnimal implements NeutralMob, Enemy {
 			return false;
 
 		// prevent local overcrowding
-
-		if (isOverCrowded(level, SlipperyBiter.class, pos))
+		if (Utility.isOverCrowded(level, SlipperyBiter.class, pos,5))
 			return false;
-
 
 		int mobCount = ((ServerLevel) level).getEntities(ModEntities.SLIPPERY_BITER, (entity) -> true).size();
 		if (mobCount >= calcNetMobCap(level, pos)) {
@@ -384,8 +379,9 @@ public class SlipperyBiter extends WaterAnimal implements NeutralMob, Enemy {
 	public static AttributeSupplier.Builder createAttributes() {
 		return Monster.createMonsterAttributes().add(Attributes.MOVEMENT_SPEED, 0.73D)
 				.add(Attributes.FOLLOW_RANGE, 20.0D).add(Attributes.ATTACK_DAMAGE, 2.5D)
-				.add(Attributes.MAX_HEALTH, 11.0D);
+				.add(Attributes.MAX_HEALTH, 10.5D);
 	}
+	
 	public static EntityDimensions getSize() {
 		float width = 0.7f;
 		float height = 0.17f;
@@ -444,22 +440,8 @@ public class SlipperyBiter extends WaterAnimal implements NeutralMob, Enemy {
 	}
 
 
-	private static boolean isOverCrowded(LevelAccessor level, Class<SlipperyBiter> entityClass, BlockPos pos) {
-		if (level.getEntitiesOfClass(entityClass,
-				new AABB(pos.north(20).west(20).above(6), pos.south(20).east(20).below(6))).size() > 5)
-			return true;
-		return false;
-	}
 
-	// needed for water creatures because so many valid spawn blocks.
-	private static boolean isSpawnRateThrottled(LevelAccessor level) {
-		if (level.getRandom().nextInt(5) != 0) {
-			return true;
-		}
-		return false;
-	}
-
-	private static boolean isWellLit(LevelAccessor level, BlockPos pos) {
+	private static boolean isTooBright(LevelAccessor level, BlockPos pos) {
 
 		if (isDeep(pos)) {
 			if (level.getMaxLocalRawBrightness(pos) > 11) {

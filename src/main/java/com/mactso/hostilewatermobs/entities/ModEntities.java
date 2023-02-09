@@ -150,13 +150,13 @@ public class ModEntities {
 
 		} else if (biomeCategory == Biome.BiomeCategory.RIVER) {
 			if (riverguardianSpawnweight > 0)
-				spawns.add(new SpawnerData(RIVER_GUARDIAN, riverguardianSpawnweight, min = 1, max = 1));
+				spawns.add(new SpawnerData(RIVER_GUARDIAN, (int)(riverguardianSpawnweight*1.2), min = 1, max = 1));
 			if (slipperybiterSpawnweight > 0)
 				spawns.add(new SpawnerData(SLIPPERY_BITER, slipperybiterSpawnweight, min = 1, max = 1));
 			if (watersnakeSpawnweight > 0)
 				spawns.add(new SpawnerData(WATER_SNAKE, watersnakeSpawnweight, min = 1, max = 1));
 			if (gurtySpawnweight > 0)
-				spawns.add(new SpawnerData(GURTY, gurtySpawnweight, min = 1, max = 1));
+				spawns.add(new SpawnerData(GURTY, (int)(gurtySpawnweight*1.2), min = 1, max = 1));
 			spawns.add(new SpawnerData(EntityType.COD, weight = MyConfig.getCodSpawnBoost() / 3, min = 1, max = 2));
 			spawns.add(new SpawnerData(EntityType.SALMON, weight = MyConfig.getSalmonSpawnBoost() / 5, min = 1, max = 2));
 			spawns.add(new SpawnerData(EntityType.SQUID, weight = MyConfig.getSquidSpawnBoost() / 2, min = 1, max = 2));

@@ -14,6 +14,7 @@ import net.minecraft.server.level.ServerLevel;
 import net.minecraft.tags.BiomeTags;
 import net.minecraft.world.effect.MobEffect;
 import net.minecraft.world.effect.MobEffectInstance;
+import net.minecraft.world.entity.Entity;
 import net.minecraft.world.entity.EntityType;
 import net.minecraft.world.entity.LivingEntity;
 import net.minecraft.world.entity.Mob;
@@ -21,12 +22,14 @@ import net.minecraft.world.entity.MobSpawnType;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.item.Item;
 import net.minecraft.world.item.Items;
+import net.minecraft.world.level.LevelAccessor;
 import net.minecraft.world.level.biome.Biome;
+import net.minecraft.world.level.block.Blocks;
 import net.minecraft.world.level.levelgen.Heightmap.Types;
+import net.minecraft.world.phys.AABB;
 import net.minecraftforge.registries.ForgeRegistries;
 
 public class Utility {
-	
 	final static int TWO_SECONDS = 40;
 	private static final Logger LOGGER = LogManager.getLogger();
 	
@@ -70,8 +73,40 @@ public class Utility {
 		
 	}
 
+
+	public static boolean isInBubbleColumn(LevelAccessor level, BlockPos pos) {
+		return level.getBlockState(pos).is(Blocks.BUBBLE_COLUMN);
+	}
+	
+	public static boolean isOcean(LevelAccessor level, BlockPos pos) {
+
+		String bC = Utility.getBiomeCategory(level.getBiome(pos));
+		if (bC == Utility.OCEAN) {
+			return true;
+		}
+
+		if (level.getBiome(pos).is(BiomeTags.IS_OCEAN)) {
+			return true;
+		}
+
+		return false;
+
+	}
+	
+	public static <T extends Entity> boolean isOverCrowded(LevelAccessor level, Class<T> entityClass, BlockPos pos, int crowdValue) {
+        if (level.getEntitiesOfClass(entityClass,
+                new AABB(pos.north(20).west(20).above(6), pos.south(20).east(20).below(6))).size() > crowdValue)
+            return true;
+        return false;
+    }
 	
 	
+	public static boolean isSpawnRateThrottled(LevelAccessor level, int throttleChance) {
+		if (level.getRandom().nextInt(100) < throttleChance) {
+			return true;
+		}
+		return false;
+	}
 	
 	public static void sendBoldChat(Player p, String chatMessage, ChatFormatting textColor) {
 
@@ -81,8 +116,7 @@ public class Utility {
 		p.sendMessage(component, p.getUUID());
 
 	}	
-	
-
+    
 	public static void sendChat(Player p, String chatMessage, ChatFormatting textColor) {
 
 		TextComponent component = new TextComponent (chatMessage);
@@ -91,9 +125,7 @@ public class Utility {
 
 	}
 	
-	
-	
-	public static void updateEffect(LivingEntity e, int amplifier,  MobEffect mobEffect, int duration) {
+	public static boolean updateEffect(LivingEntity e, int amplifier,  MobEffect mobEffect, int duration) {
 		MobEffectInstance ei = e.getEffect(mobEffect);
 		if (amplifier == 10) {
 			amplifier = 20;  // player "plaid" speed.
@@ -103,15 +135,15 @@ public class Utility {
 				e.removeEffect(mobEffect);
 			} 
 			if (amplifier == ei.getAmplifier() && ei.getDuration() > 10) {
-				return;
+				return false;
 			}
 			if (ei.getDuration() > 10) {
-				return;
+				return false;
 			}
 			e.removeEffect(mobEffect);			
 		}
 		e.addEffect(new MobEffectInstance(mobEffect, duration, amplifier, true, true));
-		return;
+		return true;
 	}
 	
 	public static boolean populateEntityType(EntityType<?> et, ServerLevel level, BlockPos savePos, int range,

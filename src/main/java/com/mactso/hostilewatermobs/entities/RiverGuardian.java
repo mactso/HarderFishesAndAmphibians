@@ -1,6 +1,5 @@
 package com.mactso.hostilewatermobs.entities;
 
-import java.util.List;
 import java.util.Random;
 import java.util.function.Predicate;
 
@@ -23,7 +22,6 @@ import net.minecraft.server.level.ServerLevel;
 import net.minecraft.server.level.ServerPlayer;
 import net.minecraft.sounds.SoundEvent;
 import net.minecraft.tags.BiomeTags;
-import net.minecraft.tags.FluidTags;
 import net.minecraft.world.Difficulty;
 import net.minecraft.world.DifficultyInstance;
 import net.minecraft.world.damagesource.DamageSource;
@@ -49,20 +47,18 @@ import net.minecraft.world.entity.animal.Turtle;
 import net.minecraft.world.entity.monster.Enemy;
 import net.minecraft.world.entity.monster.Guardian;
 import net.minecraft.world.entity.monster.Monster;
-import net.minecraft.world.entity.npc.Villager;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.level.Level;
 import net.minecraft.world.level.LevelAccessor;
 import net.minecraft.world.level.LightLayer;
 import net.minecraft.world.level.ServerLevelAccessor;
 import net.minecraft.world.level.biome.Biome;
-import net.minecraft.world.level.biome.Biome.BiomeCategory;
 import net.minecraft.world.level.block.Blocks;
 import net.minecraft.world.phys.AABB;
-import net.minecraftforge.common.BiomeDictionary;
 
 public class RiverGuardian extends Guardian implements Enemy {
 
+	
 	static class TargetPredicate implements Predicate<LivingEntity> {
 		private static int timer = 0;
 		private static int hunttimer = 0;
@@ -121,6 +117,7 @@ public class RiverGuardian extends Guardian implements Enemy {
 			parentEntity.setSilent(true);
 			
 			int range = MyConfig.getRiverGuardianSoundRange();
+
 			range *= range;
 			if (range > 0) {
 				Player p = w.getNearestPlayer(parentEntity, range); // note: range not squared.
@@ -172,7 +169,7 @@ public class RiverGuardian extends Guardian implements Enemy {
 				isMonster = true;
 			}
 
-			if (isMonster && !isRiverGuardianEntity && !entity.isBaby()) {
+			if (isMonster && !isRiverGuardianEntity) {
 				return false;
 			}
 
@@ -190,7 +187,7 @@ public class RiverGuardian extends Guardian implements Enemy {
 
 			// attack nearby prey animals
 			boolean preyAnimal = entity instanceof Cod || entity instanceof Pig || entity instanceof Chicken
-					|| entity instanceof Rabbit || entity.isBaby() || entity instanceof RiverGuardian;
+					|| entity instanceof Rabbit || entity instanceof RiverGuardian;
 
 			int huntingRange = calcBaseHuntingRange(entity);
 
@@ -256,6 +253,7 @@ public class RiverGuardian extends Guardian implements Enemy {
 			return mobCap;
 		}
 
+		// support for unknown modded wet biomes.
 		if (level.getBiome(pos).is(BiomeTags.IS_OCEAN)) {
 			mobCap += 5;		
 			return mobCap;
@@ -277,7 +275,6 @@ public class RiverGuardian extends Guardian implements Enemy {
 	public static boolean canSpawn(EntityType<? extends RiverGuardian> type, LevelAccessor level, MobSpawnType reason,
 			BlockPos pos, Random randomIn) {
 
-		MyConfig.setaDebugLevel(0);
 		Utility.debugMsg(1, pos, "canSpawn riverGuardian?");
 		// SpawnPlacements.Type.IN_WATER
 
@@ -295,7 +292,7 @@ public class RiverGuardian extends Guardian implements Enemy {
 		if (reason == MobSpawnType.SPAWN_EGG)
 			return true;
 
-		if (isWellLit(level, pos))
+		if (isTooBright(level, pos))
 			return false;
 
 		if (reason == MobSpawnType.SPAWNER)
@@ -352,28 +349,14 @@ public class RiverGuardian extends Guardian implements Enemy {
 		if (!level.canSeeSkyFromBelowWater(pos))
 			return false;
 
-		if (isOcean(level, pos)) {
+		if (Utility.isOcean(level, pos)) {
 			return true;
 		}
 		
 		return false;
 	}
 	
-	private static boolean isOcean(LevelAccessor level, BlockPos pos) {
 
-		String bC = Utility.getBiomeCategory(level.getBiome(pos));
-		if (bC == Utility.OCEAN) {
-			return true;
-		}
-
-		if (level.getBiome(pos).is(BiomeTags.IS_OCEAN)) {
-			return true;
-		}
-
-		return false;
-
-	}
-	
 	private static ResourceKey<Biome> getBiomeKey(LevelAccessor level, BlockPos pos) {
 		ResourceLocation biomeNameResourceKey = level.registryAccess().registryOrThrow(Registry.BIOME_REGISTRY)
 				.getKey(level.getBiome(pos).value());
@@ -402,7 +385,7 @@ public class RiverGuardian extends Guardian implements Enemy {
 
 	
 	
-	private static boolean isWellLit(LevelAccessor level, BlockPos pos) {
+	private static boolean isTooBright(LevelAccessor level, BlockPos pos) {
 
 		if (isDeep(pos)) {
 			if (level.getMaxLocalRawBrightness(pos) > 9) {
@@ -427,7 +410,7 @@ public class RiverGuardian extends Guardian implements Enemy {
 	public static AttributeSupplier.Builder registerAttributes() {
 		return Guardian.createAttributes().add(Attributes.MOVEMENT_SPEED, (double) 0.65F)
 				.add(Attributes.FOLLOW_RANGE, 24.0D).add(Attributes.ATTACK_DAMAGE, 2.0D)
-				.add(Attributes.MAX_HEALTH, 11.0D);
+				.add(Attributes.MAX_HEALTH, 18.5D);
 	}
 
 	
