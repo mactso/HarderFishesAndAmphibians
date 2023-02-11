@@ -21,10 +21,7 @@ import net.minecraftforge.registries.IForgeRegistry;
 
 public class ModEntities {
 
-	// TODO: This is probably wrong
-	// public static final SoundEvent RIVER_GUARDIAN_HURT =
-	// create("river_guardian.hurt");
-	public static final EntityType<RiverGuardian> RIVER_GUARDIAN = register("river_guardian",
+	public static final EntityType<RiverGuardian> RIVER_GUARDIAN = register("riverguardian",
 			EntityType.Builder.of(RiverGuardian::new, MobCategory.MONSTER).sized(0.85F, 0.85F).clientTrackingRange(5));
 
 	public static final EntityType<SlipperyBiter> SLIPPERY_BITER = register("slipperybiter",
@@ -53,22 +50,22 @@ public class ModEntities {
 
 	public static void register(IForgeRegistry<EntityType<?>> forgeRegistry) {
 
-		forgeRegistry.register("river_guardian", RIVER_GUARDIAN);
+		forgeRegistry.register("riverguardian", RIVER_GUARDIAN);
 		forgeRegistry.register("gurty", GURTY);
 		forgeRegistry.register("slipperybiter", SLIPPERY_BITER);
 		forgeRegistry.register("watersnake", WATER_SNAKE);
 
 		SpawnPlacements.register(RIVER_GUARDIAN, SpawnPlacements.Type.IN_WATER,
-				Heightmap.Types.MOTION_BLOCKING_NO_LEAVES, RiverGuardian:: checkSpawnRules);
+				Heightmap.Types.MOTION_BLOCKING_NO_LEAVES, RiverGuardian:: canSpawn);
 
 		SpawnPlacements.register(GURTY, SpawnPlacements.Type.ON_GROUND, Heightmap.Types.MOTION_BLOCKING_NO_LEAVES,
-				Gurty::checkSpawnRules);
+				Gurty::canSpawn);
 
 		SpawnPlacements.register(SLIPPERY_BITER, SpawnPlacements.Type.IN_WATER,
-				Heightmap.Types.MOTION_BLOCKING_NO_LEAVES, SlipperyBiter::checkSpawnRules);
+				Heightmap.Types.MOTION_BLOCKING_NO_LEAVES, SlipperyBiter::canSpawn);
 
 		SpawnPlacements.register(WATER_SNAKE, SpawnPlacements.Type.ON_GROUND, Heightmap.Types.MOTION_BLOCKING_NO_LEAVES,
-				WaterSnake::checkSpawnRules);
+				WaterSnake::canSpawn);
 	}
 
 	public static void onAttribute(final EntityAttributeCreationEvent event) {

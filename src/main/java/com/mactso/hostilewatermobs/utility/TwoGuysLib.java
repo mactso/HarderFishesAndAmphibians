@@ -4,6 +4,7 @@ import javax.annotation.Nullable;
 
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.BlockPos.MutableBlockPos;
+import net.minecraft.util.RandomSource;
 import net.minecraft.world.entity.EntityType;
 import net.minecraft.world.entity.Mob;
 import net.minecraft.world.level.Level;
@@ -19,7 +20,7 @@ public class TwoGuysLib {
 		return helperCountBlocksBB(searchBlock, maxCount, w, bPos, boxSize, boxSize); // "square" box subcase
 	}
 
-	public int helperCountBlocksBB(Block searchBlock, int maxCount, Level w, BlockPos pos, int boxSize, int ySize) {
+	public static int helperCountBlocksBB(Block searchBlock, int maxCount, Level w, BlockPos pos, int boxSize, int ySize) {
 		int count = 0;
 		int minX = pos.getX() - boxSize;
 		int maxX = pos.getX() + boxSize;
@@ -87,6 +88,69 @@ public class TwoGuysLib {
 		return count;
 	}
 
+
+	
+	public static int fastRandomBlockCount (LevelAccessor level, Block testBlock, BlockPos pos, int numChecks) {
+
+		RandomSource rand = level.getRandom();
+		int found = 0;
+		numChecks = numChecks > 64 ? 64 : numChecks;
+
+		int range = numChecks >> 1;
+		int offset = numChecks;
+
+		int posX = pos.getX();
+		int posZ = pos.getZ();
+		int posY = pos.below().getY();
+
+		MutableBlockPos mPos = new MutableBlockPos(posX, posY, posZ) ;
+		mPos.setY(posY);
+		
+		for (int i = 0; i<numChecks; i++) {
+			int x = posX + rand.nextInt(range) - offset;
+			int y = posY - rand.nextInt(5);
+			int z = posZ + rand.nextInt(range) - offset;
+			mPos.setX(x);
+			mPos.setY(y);
+			mPos.setZ(z);
+			if (level.getBlockState(mPos).getBlock() == testBlock) {
+				found++;
+			}
+		}
+		Utility.debugMsg(2,pos, "Found " + found + " blocks " + testBlock.getDescriptionId()+" .");
+		return found;
+	}
+
+
+	public static boolean fastRandomBlockCheck (LevelAccessor level, Block testBlock, BlockPos pos, int numChecks) {
+
+		RandomSource rand = level.getRandom();
+		numChecks = numChecks > 64 ? 64 : numChecks;
+
+		int range = numChecks >> 1;
+		int offset = numChecks;
+
+		int posX = pos.getX();
+		int posZ = pos.getZ();
+		int posY = pos.below().getY();
+
+		MutableBlockPos mPos = new MutableBlockPos(posX, posY, posZ) ;
+		mPos.setY(posY);
+		
+		for (int i = 0; i<numChecks; i++) {
+			int x = posX + rand.nextInt(range) - offset;
+			int y = posY - rand.nextInt(5);
+			int z = posZ + rand.nextInt(range) - offset;
+			mPos.setX(x);
+			mPos.setY(y);
+			mPos.setZ(z);
+			if (level.getBlockState(mPos).getBlock() == testBlock) {
+				return true;
+			}
+		}
+		return false;
+	}
+	
 	@Nullable
 	public static boolean findWaterBlocks(EntityType<? extends Mob> entityIn, LevelAccessor world, BlockPos pos,
 			int maxXZ, int maxY, int MinWaterCount) {

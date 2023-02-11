@@ -1,0 +1,11 @@
+{
+  "type": "minecraft:crafting_shapeless",
+  "ingredients": [
+    {
+      "item": "hostilewatermobs:riverguardian_scales"
+    }
+  ],
+  "result": {
+    "item": "minecraft:purple_dye"
+  }
+}

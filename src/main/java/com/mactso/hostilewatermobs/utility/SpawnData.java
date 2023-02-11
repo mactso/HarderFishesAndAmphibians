@@ -29,10 +29,10 @@ public class SpawnData {
 		int weight;
 		int min;
 		int max;
-		int rgSC = MyConfig.getRiverGuardianSpawnChance();
-		int gSC = MyConfig.getGurtySpawnChance();
-		int sbSC = MyConfig.getSlipperyBiterSpawnChance();
-		int wsSC = MyConfig.getWatersnakeSpawnChance();
+		int rgSC = MyConfig.getRiverGuardianSpawnWeight();
+		int gSC = MyConfig.getGurtySpawnWeight();
+		int sbSC = MyConfig.getSlipperyBiterSpawnWeight();
+		int wsSC = MyConfig.getWatersnakeSpawnWeight();
 		MobSpawnSettingsBuilder builder = builderIn.getMobSpawnSettings();
 		String biomeCategory = Utility.getBiomeCategory(biome);
 		
@@ -99,10 +99,10 @@ public class SpawnData {
 		int weight;
 		int min;
 		int max;
-		int rgSC = MyConfig.getRiverGuardianSpawnChance();
-		int gSC = MyConfig.getGurtySpawnChance();
-		int sbSC = MyConfig.getSlipperyBiterSpawnChance();
-		int wsSC = MyConfig.getWatersnakeSpawnChance();
+		int riverguardianSpawnweight = MyConfig.getRiverGuardianSpawnWeight();
+		int gurtySpawnweight = MyConfig.getGurtySpawnWeight();
+		int slipperybiterSpawnweight = MyConfig.getSlipperyBiterSpawnWeight();
+		int watersnakeSpawnWeight = MyConfig.getWatersnakeSpawnWeight();
 		Structure structure = struct.get();
 		Optional<ResourceKey<Structure>> key = struct.unwrapKey();
 		if (!key.isPresent())
@@ -113,49 +113,49 @@ public class SpawnData {
 				.getOrAddSpawnOverrides(MobCategory.MONSTER);
 		if (key.get().location().getNamespace().equals("minecraft")) {
 			if (structure == StructurePieceType.OCEAN_RUIN) {
-				if (rgSC > 0)
-					builder.addSpawn(new SpawnerData(ModEntities.RIVER_GUARDIAN, weight = rgSC, min = 1, max = 1));
-				if (sbSC > 0)
+				if (riverguardianSpawnweight > 0)
+					builder.addSpawn(new SpawnerData(ModEntities.RIVER_GUARDIAN, weight = riverguardianSpawnweight, min = 1, max = 1));
+				if (slipperybiterSpawnweight > 0)
 					builder.addSpawn(
-							new SpawnerData(ModEntities.SLIPPERY_BITER, weight = (sbSC / 2) + 1, min = 1, max = 1));
+							new SpawnerData(ModEntities.SLIPPERY_BITER, weight = (slipperybiterSpawnweight / 2) + 1, min = 1, max = 1));
 			} else if (structure == StructurePieceType.SHIPWRECK_PIECE) {
-				if (rgSC > 0)
-					builder.addSpawn(new SpawnerData(ModEntities.RIVER_GUARDIAN, weight = rgSC, min = 1, max = 1));
-				if (sbSC > 0)
+				if (riverguardianSpawnweight > 0)
+					builder.addSpawn(new SpawnerData(ModEntities.RIVER_GUARDIAN, weight = riverguardianSpawnweight, min = 1, max = 1));
+				if (slipperybiterSpawnweight > 0)
 					builder.addSpawn(
-							new SpawnerData(ModEntities.SLIPPERY_BITER, weight = (sbSC / 2) + 1, min = 1, max = 1));
+							new SpawnerData(ModEntities.SLIPPERY_BITER, weight = (slipperybiterSpawnweight / 2) + 1, min = 1, max = 1));
 			} else if (structure == StructurePieceType.BURIED_TREASURE_PIECE) {
-				if (rgSC > 0)
-					builder.addSpawn(new SpawnerData(ModEntities.RIVER_GUARDIAN, weight = rgSC, min = 1, max = 1));
-				if (gSC > 0)
-					builder.addSpawn(new SpawnerData(ModEntities.GURTY, (gSC / 2) + 1, min = 1, max = 3));
-				if (sbSC > 0)
+				if (riverguardianSpawnweight > 0)
+					builder.addSpawn(new SpawnerData(ModEntities.RIVER_GUARDIAN, weight = riverguardianSpawnweight, min = 1, max = 1));
+				if (gurtySpawnweight > 0)
+					builder.addSpawn(new SpawnerData(ModEntities.GURTY, (gurtySpawnweight / 2) + 1, min = 1, max = 3));
+				if (slipperybiterSpawnweight > 0)
 					builder.addSpawn(
-							new SpawnerData(ModEntities.SLIPPERY_BITER, weight = (sbSC / 2) + 1, min = 1, max = 1));
+							new SpawnerData(ModEntities.SLIPPERY_BITER, weight = (slipperybiterSpawnweight / 2) + 1, min = 1, max = 1));
 			} else if (structure == StructurePieceType.SWAMPLAND_HUT) {
-				if (rgSC > 0)
+				if (riverguardianSpawnweight > 0)
 					builder.addSpawn(
-							new SpawnerData(ModEntities.RIVER_GUARDIAN, weight = (rgSC / 3) + 1, min = 1, max = 1));
-				if (gSC > 0)
-					builder.addSpawn(new SpawnerData(ModEntities.GURTY, weight = (gSC / 3) + 1, min = 1, max = 3));
-				if (sbSC > 0)
-					builder.addSpawn(new SpawnerData(ModEntities.SLIPPERY_BITER, (sbSC / 3) + 1, min = 1, max = 1));
-				if (wsSC > 0)
+							new SpawnerData(ModEntities.RIVER_GUARDIAN, weight = (riverguardianSpawnweight / 3) + 1, min = 1, max = 1));
+				if (gurtySpawnweight > 0)
+					builder.addSpawn(new SpawnerData(ModEntities.GURTY, weight = (gurtySpawnweight / 3) + 1, min = 1, max = 3));
+				if (slipperybiterSpawnweight > 0)
+					builder.addSpawn(new SpawnerData(ModEntities.SLIPPERY_BITER, (slipperybiterSpawnweight / 3) + 1, min = 1, max = 1));
+				if (watersnakeSpawnWeight > 0)
 					builder.addSpawn(
-							new SpawnerData(ModEntities.WATER_SNAKE, weight = (wsSC / 3) + 1, min = 1, max = 1));
+							new SpawnerData(ModEntities.WATER_SNAKE, weight = (watersnakeSpawnWeight / 3) + 1, min = 1, max = 1));
 
 			} else if (structure == StructurePieceType.RUINED_PORTAL) {
-				if (rgSC > 0)
+				if (riverguardianSpawnweight > 0)
 					builder.addSpawn(
-							new SpawnerData(ModEntities.RIVER_GUARDIAN, weight = (rgSC / 2) + 1, min = 1, max = 1));
-				if (gSC > 0)
-					builder.addSpawn(new SpawnerData(ModEntities.GURTY, weight = (gSC / 2) + 1, min = 1, max = 3));
-				if (sbSC > 0)
+							new SpawnerData(ModEntities.RIVER_GUARDIAN, weight = (riverguardianSpawnweight / 2) + 1, min = 1, max = 1));
+				if (gurtySpawnweight > 0)
+					builder.addSpawn(new SpawnerData(ModEntities.GURTY, weight = (gurtySpawnweight / 2) + 1, min = 1, max = 3));
+				if (slipperybiterSpawnweight > 0)
 					builder.addSpawn(
-							new SpawnerData(ModEntities.SLIPPERY_BITER, weight = (sbSC / 3) + 1, min = 1, max = 1));
-				if (wsSC > 0)
+							new SpawnerData(ModEntities.SLIPPERY_BITER, weight = (slipperybiterSpawnweight / 3) + 1, min = 1, max = 1));
+				if (watersnakeSpawnWeight > 0)
 					builder.addSpawn(
-							new SpawnerData(ModEntities.WATER_SNAKE, weight = (wsSC / 3) + 1, min = 1, max = 1));
+							new SpawnerData(ModEntities.WATER_SNAKE, weight = (watersnakeSpawnWeight / 3) + 1, min = 1, max = 1));
 			}
 		} else {
 			if (MyConfig.getModStructureBoost() > 0) {
