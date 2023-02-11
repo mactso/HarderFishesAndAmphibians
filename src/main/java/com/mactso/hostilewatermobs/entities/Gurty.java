@@ -1291,7 +1291,10 @@ public class Gurty extends PathfinderMob implements NeutralMob, Enemy {
 	public void setTailHeight(float amt) {
 		this.tailHeight = amt;
 	}
-
+	
+	//
+	// GOAL section
+	//
 	@Override
 	public void setTarget(LivingEntity entityIn) {
 		if (entityIn == null) {
@@ -1313,9 +1316,6 @@ public class Gurty extends PathfinderMob implements NeutralMob, Enemy {
 		this.entityData.set((EntityDataAccessor<Integer>) Gurty.TARGET_ENTITY, targetEntityId);
 	}
 
-	//
-	// GOAL section
-	//
 
 	private void setTravelling(boolean bool) {
 		this.entityData.set(TRAVELLING, bool);

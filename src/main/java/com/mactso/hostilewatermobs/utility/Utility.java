@@ -30,6 +30,7 @@ import net.minecraft.world.phys.AABB;
 import net.minecraftforge.registries.ForgeRegistries;
 
 public class Utility {
+	
 	final static int TWO_SECONDS = 40;
 	private static final Logger LOGGER = LogManager.getLogger();
 	
@@ -92,6 +93,7 @@ public class Utility {
 		return false;
 
 	}
+
 	
 	public static <T extends Entity> boolean isOverCrowded(LevelAccessor level, Class<T> entityClass, BlockPos pos, int crowdValue) {
         if (level.getEntitiesOfClass(entityClass,

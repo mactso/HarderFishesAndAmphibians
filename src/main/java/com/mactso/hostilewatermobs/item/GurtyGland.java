@@ -32,5 +32,4 @@ public class GurtyGland extends Item {
 
 	}
 
-
 }

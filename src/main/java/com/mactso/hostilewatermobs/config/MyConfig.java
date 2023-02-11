@@ -9,9 +9,6 @@ import org.apache.logging.log4j.Logger;
 import com.mactso.hostilewatermobs.Main;
 import com.mactso.hostilewatermobs.utility.Utility;
 
-import net.minecraft.network.chat.TextColor;
-import net.minecraft.network.chat.TextComponent;
-import net.minecraft.world.entity.player.Player;
 import net.minecraftforge.common.ForgeConfigSpec;
 import net.minecraftforge.common.ForgeConfigSpec.BooleanValue;
 import net.minecraftforge.common.ForgeConfigSpec.IntValue;
@@ -134,6 +131,7 @@ public class MyConfig {
 	
 	private static int      debugLevel;
 	private static int 		blockLightLevel;
+
 	private static boolean  riverGuardianPreysOnVillagerChildren;
 	private static int 	    riverGuardianSpawnWeight;
 	private static int 	    riverGuardianSpawnCap;
@@ -157,8 +155,6 @@ public class MyConfig {
 	private static int 	    salmonSpawnBoost;
 	private static int 	    squidSpawnBoost;
 	private static int 	    dolphinSpawnboost;
-	
-
 
 	private static int      zombifiedPiglinSpawnBoost;
 	private static int      ghastSpawnBoost;
@@ -219,6 +215,8 @@ public class MyConfig {
 		debugLevel = COMMON.debugLevel.get();
 
 		blockLightLevel = COMMON.blockLightLevel.get();
+		
+
 		riverGuardianSpawnCap = COMMON.riverGuardianSpawnCap.get();
 		riverGuardianSpawnWeight = COMMON.riverGuardianSpawnWeight.get();
 		riverGuardianSoundRange = COMMON.riverGuardianSoundRange.get();
@@ -307,7 +305,7 @@ public class MyConfig {
 			riverGuardianSpawnWeight = builder
 					.comment("riverGuardianSpawnWeight")
 					.translation(Main.MODID + ".config." + "riverGuardianSpawnWeight")
-					.defineInRange("riverGuardianSpawnWeight", () -> 30, 0, 500);
+					.defineInRange("riverGuardianSpawnWeight", () -> 80, 0, 500);
 
 			riverGuardianSpawnCap = builder
 					.comment("riverGuardianSpawnCap")
@@ -346,9 +344,9 @@ public class MyConfig {
 					.defineInRange("gurtySpawnCap", () -> 9, 1, 100);
 
 			gurtyBaseHitPoints = builder
-					.comment("gurtyBaseHitPoints")
+					.comment("gurtyBaseHitPoints : note- this doesn't seem to work.")
 					.translation(Main.MODID + ".config." + "gurtyBaseHitPoints")
-					.defineInRange("gurtyBaseHitPoints", () -> 10, 0, 100);
+					.defineInRange("gurtyBaseHitPoints", () -> 18, 0, 100);
 			
 			gurtyBaseDefense = builder
 					.comment("gurtyBaseDefense")
@@ -422,23 +420,6 @@ public class MyConfig {
 			
 		}
 	}
-	
-	// support for any color chattext
-	public static void sendChat(Player p, String chatMessage, TextColor color) {
-		TextComponent component = new TextComponent (chatMessage);
-		component.getStyle().withColor(color);
-		p.sendMessage(component, p.getUUID());
-	}
-	
-	// support for any color, optionally bold text.
-	public static void sendBoldChat(Player p, String chatMessage, TextColor color) {
-		TextComponent component = new TextComponent (chatMessage);
 
-		component.getStyle().withBold(true);
-		component.getStyle().withColor(color);
-		
-		p.sendMessage(component, p.getUUID());
-	}
-	
 }
 

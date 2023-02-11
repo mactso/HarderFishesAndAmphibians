@@ -1,5 +1,6 @@
 package com.mactso.hostilewatermobs.entities;
 
+
 import java.util.Random;
 import java.util.UUID;
 import java.util.function.Predicate;
@@ -69,7 +70,6 @@ import net.minecraft.world.level.ServerLevelAccessor;
 import net.minecraft.world.level.biome.Biome;
 import net.minecraft.world.level.block.Blocks;
 import net.minecraft.world.level.pathfinder.BlockPathTypes;
-import net.minecraft.world.phys.AABB;
 import net.minecraft.world.phys.Vec3;
 
 public class SlipperyBiter extends WaterAnimal implements NeutralMob, Enemy {
@@ -169,8 +169,7 @@ public class SlipperyBiter extends WaterAnimal implements NeutralMob, Enemy {
 								this.workSlipperyBiterEntity.getX(), this.workSlipperyBiterEntity.getY(),
 								this.workSlipperyBiterEntity.getZ());
 						for (int i = 0; i < 15; ++i) {
-							final Vec3 randXZVec = this
-									.rotateVector(new Vec3(this.workSlipperyBiterEntity.random.nextFloat() * 0.6 - 0.3,
+							final Vec3 randXZVec = this.rotateVector(new Vec3(this.workSlipperyBiterEntity.random.nextFloat() * 0.6 - 0.3,
 											-1.0, w.random.nextFloat() * 0.6 - 0.3));
 							final Vec3 randSpreadVec = randXZVec
 									.scale(0.3 + this.workSlipperyBiterEntity.random.nextFloat() * 2.0f);
