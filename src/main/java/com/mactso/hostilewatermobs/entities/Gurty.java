@@ -475,10 +475,10 @@ public class Gurty extends PathfinderMob implements NeutralMob, Enemy {
 	
 	
 	static class TargetPredicate implements Predicate<LivingEntity> {
-		private final Gurty gurtyEntity;
+		private final Gurty parentEntity;
 
 		public TargetPredicate(Gurty gurtyIn) {
-			gurtyEntity = gurtyIn;
+			parentEntity = gurtyIn;
 		}
 
 		// called to decide if a target in range is valid to attack
@@ -500,8 +500,8 @@ public class Gurty extends PathfinderMob implements NeutralMob, Enemy {
 			}
 
 			// gurty's don't attack things they can't see unless attacked first.
-			if (!gurtyEntity.hasLineOfSight(entity)) { // was canSee(). Bugger to find- found in Ghast.
-				if (entity != gurtyEntity.getKillCredit()) {
+			if (!parentEntity.hasLineOfSight(entity)) { // was canSee(). Bugger to find- found in Ghast.
+				if (entity != parentEntity.getKillCredit()) {
 					return false;
 				}
 			}
@@ -519,30 +519,30 @@ public class Gurty extends PathfinderMob implements NeutralMob, Enemy {
 			boolean validTarget = false;
 			// gurty's always take revenge on their attackers, regardless of any other
 			// condition
-			if (gurtyEntity.getTarget() != null) {
-				if (entity == this.gurtyEntity.getKillCredit()) {
-					gurtyEntity.setTarget(entity);
+			if (parentEntity.getTarget() != null) {
+				if (entity == this.parentEntity.getKillCredit()) {
+					parentEntity.setTarget(entity);
 					return true;
 				}
 			}
 
 			// distance to entity.
-			int dstToEntitySq = (int) entity.distanceToSqr(gurtyEntity);
-			Vec3i nestPos = (Vec3i) gurtyEntity.getNestPos();
+			int dstToEntitySq = (int) entity.distanceToSqr(parentEntity);
+			Vec3i nestPos = (Vec3i) parentEntity.getNestPos();
 
 			// gurty's always attack if entity threatens the nest and gurty is near entity.
 			Vec3i entityPosVec = (Vec3i) entity.blockPosition();
-			int nestThreatDistance = (int) entityPosVec.distSqr(gurtyEntity.getNestPos());
+			int nestThreatDistance = (int) entityPosVec.distSqr(parentEntity.getNestPos());
 
 			// gurty's get angry at creatures near their nest area if the gurty is nearby.
-			if ((nestThreatDistance < gurtyEntity.nestProtectionDistSq) && (dstToEntitySq < 121)) {
-				gurtyEntity.setTarget(entity);
+			if ((nestThreatDistance < parentEntity.nestProtectionDistSq) && (dstToEntitySq < 121)) {
+				parentEntity.setTarget(entity);
 				return true;
 			}
 			
 			// Don't attack things when too far from nest.
-			if ((nestPos.distSqr(gurtyEntity.blockPosition()) > 1600)) {
-				gurtyEntity.setTarget(null);
+			if ((nestPos.distSqr(parentEntity.blockPosition()) > 1600)) {
+				parentEntity.setTarget(null);
 				return false;
 			}
 
@@ -551,19 +551,19 @@ public class Gurty extends PathfinderMob implements NeutralMob, Enemy {
 			// rarely attack random fish and other creatures in range.
 			if (!(entity instanceof Player)) {
 				if (w.random.nextInt(600) != 100) {
-					gurtyEntity.setTarget(null);
+					parentEntity.setTarget(null);
 					return false;
 				}
 			}
 
 			// a little less aggressive in swamps
-			String bC = Utility.getBiomeCategory(gurtyEntity.level.getBiome(gurtyEntity.blockPosition()));
+			String bC = Utility.getBiomeCategory(parentEntity.level.getBiome(parentEntity.blockPosition()));
 			if ((bC == Utility.SWAMP)) {
 				dstToEntitySq += 64;
 			}
 			
 			// less aggressive in light
-			int lightLevel = w.getMaxLocalRawBrightness(this.gurtyEntity.blockPosition());
+			int lightLevel = w.getMaxLocalRawBrightness(this.parentEntity.blockPosition());
 			if (lightLevel > 13) {
 				dstToEntitySq += 81;
 			}
@@ -577,7 +577,7 @@ public class Gurty extends PathfinderMob implements NeutralMob, Enemy {
 				dstToEntitySq *= 0.75f;
 			}
 
-			double followDistance = gurtyEntity.getAttribute(Attributes.FOLLOW_RANGE).getValue();
+			double followDistance = parentEntity.getAttribute(Attributes.FOLLOW_RANGE).getValue();
 			int followDistanceSq = (int) (followDistance * followDistance);
 			
 			// if modified distance to entity > follow distance attribute, don't attack.
@@ -585,19 +585,19 @@ public class Gurty extends PathfinderMob implements NeutralMob, Enemy {
 				// But if a player and in range and random playsound (2.5%) then play a warning
 				// ambient sound.
 				if (entity instanceof Player) {
-					int playSound = gurtyEntity.random.nextInt(50);
+					int playSound = parentEntity.random.nextInt(50);
 
 					if ((dstToEntitySq < 900) && (playSound == 21)) {
 						w.playSound(null, entity.blockPosition(), ModSounds.GURTY_AMBIENT, SoundSource.HOSTILE, 0.35f,
 								1.0f);
 					}
 				}
-				gurtyEntity.setTarget(null);
+				parentEntity.setTarget(null);
 				return false;
 			}
 			
-			gurtyEntity.setTarget(entity);
-			w.playSound(null, gurtyEntity.blockPosition(), ModSounds.GURTY_ANGRY, SoundSource.HOSTILE, 1.0f, 1.0f);
+			parentEntity.setTarget(entity);
+			w.playSound(null, parentEntity.blockPosition(), ModSounds.GURTY_ANGRY, SoundSource.HOSTILE, 1.0f, 1.0f);
 			return true;
 		}
 	}

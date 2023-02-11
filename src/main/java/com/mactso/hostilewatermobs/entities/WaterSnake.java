@@ -491,10 +491,10 @@ public class WaterSnake extends WaterAnimal implements Enemy, RangedAttackMob {
 	}
 
 	static class TargetPredicate implements Predicate<LivingEntity> {
-		private final WaterSnake waterSnakeEntity;
+		private final WaterSnake parentEntity;
 
 		public TargetPredicate(WaterSnake waterSnakeIn) {
-			waterSnakeEntity = waterSnakeIn;
+			parentEntity = waterSnakeIn;
 		}
 
 		// called to decide if a target in range is valid to attack
@@ -516,8 +516,8 @@ public class WaterSnake extends WaterAnimal implements Enemy, RangedAttackMob {
 			}
 
 			// 's don't attack things they can't see unless attacked first.
-			if (!waterSnakeEntity.hasLineOfSight(entity)) {
-				if (entity != waterSnakeEntity.getKillCredit()) {
+			if (!parentEntity.hasLineOfSight(entity)) {
+				if (entity != parentEntity.getKillCredit()) {
 					return false;
 				}
 			}
@@ -534,31 +534,31 @@ public class WaterSnake extends WaterAnimal implements Enemy, RangedAttackMob {
 
 			boolean validTarget = false;
 			// 's always take revenge on their attackers, regardless of any other condition
-			if (waterSnakeEntity.getTarget() != null) {
-				if (entity == this.waterSnakeEntity.getKillCredit()) {
-					waterSnakeEntity.setTarget(entity);
+			if (parentEntity.getTarget() != null) {
+				if (entity == this.parentEntity.getKillCredit()) {
+					parentEntity.setTarget(entity);
 					return true;
 				}
 			}
 
 			// distance to entity.
-			int dstToEntitySq = (int) entity.distanceToSqr(waterSnakeEntity);
-			Vec3i nestPos = (Vec3i) waterSnakeEntity.getNestPos();
+			int dstToEntitySq = (int) entity.distanceToSqr(parentEntity);
+			Vec3i nestPos = (Vec3i) parentEntity.getNestPos();
 
 			// water snakes always attack if entity threatens the nest and is near entity.
 			Vec3i entityPosVec = (Vec3i) entity.blockPosition();
-			int nestThreatDistance = (int) entityPosVec.distSqr(waterSnakeEntity.getNestPos());
+			int nestThreatDistance = (int) entityPosVec.distSqr(parentEntity.getNestPos());
 
 			// water snakes get angry at creatures near their nest area if the snake is
 			// nearby.
-			if ((nestThreatDistance < waterSnakeEntity.nestProtectionDistSq) && (dstToEntitySq < 121)) {
-				waterSnakeEntity.setTarget(entity);
+			if ((nestThreatDistance < parentEntity.nestProtectionDistSq) && (dstToEntitySq < 121)) {
+				parentEntity.setTarget(entity);
 				return true;
 			}
 
 			// Don't attack things when too far from nest.
-			if ((nestPos.distSqr(waterSnakeEntity.blockPosition()) > 1600)) {
-				waterSnakeEntity.setTarget(null);
+			if ((nestPos.distSqr(parentEntity.blockPosition()) > 1600)) {
+				parentEntity.setTarget(null);
 				return false;
 			}
 
@@ -567,19 +567,19 @@ public class WaterSnake extends WaterAnimal implements Enemy, RangedAttackMob {
 			// rarely attack random fish and other creatures in range.
 			if (!(entity instanceof Player)) {
 				if (w.random.nextInt(600) != 100) {
-					waterSnakeEntity.setTarget(null);
+					parentEntity.setTarget(null);
 					return false;
 				}
 			}
 
 			// a little less aggressive in swamps
-			String bC = Utility.getBiomeCategory(w.getBiome(waterSnakeEntity.blockPosition()));
+			String bC = Utility.getBiomeCategory(w.getBiome(parentEntity.blockPosition()));
 			if ((bC == Utility.SWAMP)) {
 				dstToEntitySq += 64;
 			}
 
 			// less aggressive in light
-			int lightLevel = w.getMaxLocalRawBrightness(this.waterSnakeEntity.blockPosition());
+			int lightLevel = w.getMaxLocalRawBrightness(this.parentEntity.blockPosition());
 			if (lightLevel > 13) {
 				dstToEntitySq += 81;
 			}
@@ -593,7 +593,7 @@ public class WaterSnake extends WaterAnimal implements Enemy, RangedAttackMob {
 				dstToEntitySq *= 0.75f;
 			}
 
-			double followDistance = waterSnakeEntity.getAttribute(Attributes.FOLLOW_RANGE).getValue();
+			double followDistance = parentEntity.getAttribute(Attributes.FOLLOW_RANGE).getValue();
 			int followDistanceSq = (int) (followDistance * followDistance);
 
 			// if modified distance to entity > follow distance attribute, don't attack.
@@ -601,19 +601,19 @@ public class WaterSnake extends WaterAnimal implements Enemy, RangedAttackMob {
 				// But if a player and in range and random playsound (2.5%) then play a warning
 				// ambient sound.
 				if (entity instanceof Player) {
-					int playSound = waterSnakeEntity.random.nextInt(50);
+					int playSound = parentEntity.random.nextInt(50);
 
 					if ((dstToEntitySq < 900) && (playSound == 21)) {
 						w.playSound(null, entity.blockPosition(), ModSounds.WATER_SNAKE_AMBIENT, SoundSource.HOSTILE,
 								0.35f, 1.0f);
 					}
 				}
-				waterSnakeEntity.setTarget(null);
+				parentEntity.setTarget(null);
 				return false;
 			}
 
-			waterSnakeEntity.setTarget(entity);
-			w.playSound(null, waterSnakeEntity.blockPosition(), ModSounds.WATER_SNAKE_ANGRY, SoundSource.HOSTILE, 1.0f,
+			parentEntity.setTarget(entity);
+			w.playSound(null, parentEntity.blockPosition(), ModSounds.WATER_SNAKE_ANGRY, SoundSource.HOSTILE, 1.0f,
 					1.0f);
 			return true;
 		}
@@ -766,7 +766,7 @@ public class WaterSnake extends WaterAnimal implements Enemy, RangedAttackMob {
 	
 	
 	public static AttributeSupplier.Builder createAttributes() {
-		return Monster.createMonsterAttributes().add(Attributes.MOVEMENT_SPEED, 0.73D)
+		return Monster.createMonsterAttributes().add(Attributes.MOVEMENT_SPEED, 0.26D)
 				.add(Attributes.FOLLOW_RANGE, 20.0D).add(Attributes.ATTACK_DAMAGE, 2.5D)
 				.add(Attributes.MAX_HEALTH, 10.5D);
 	}

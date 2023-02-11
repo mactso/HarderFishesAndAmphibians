@@ -198,10 +198,10 @@ public class SlipperyBiter extends WaterAnimal implements NeutralMob, Enemy {
 	}
 	static class TargetPredicate implements Predicate<LivingEntity> {
 		private static int aa = 0;
-		private final SlipperyBiter slipperyBiterEntity;
+		private final SlipperyBiter parentEntity;
 
 		public TargetPredicate(SlipperyBiter biter) {
-			this.slipperyBiterEntity = biter;
+			this.parentEntity = biter;
 		}
 
 		public boolean test(@Nullable LivingEntity entity) {
@@ -218,8 +218,8 @@ public class SlipperyBiter extends WaterAnimal implements NeutralMob, Enemy {
 				return false;
 			}
 
-			if (this.slipperyBiterEntity.getTarget() != null) {
-				if (entity == this.slipperyBiterEntity.getKillCredit()) {
+			if (this.parentEntity.getTarget() != null) {
+				if (entity == this.parentEntity.getKillCredit()) {
 					return true;
 				} else {
 					return false;
@@ -241,25 +241,25 @@ public class SlipperyBiter extends WaterAnimal implements NeutralMob, Enemy {
 			aa++;
 
 			if (!targetInWater) {
-				this.slipperyBiterEntity.setPersistentAngerTarget(null);
-				this.slipperyBiterEntity.setTarget(null);
-				this.slipperyBiterEntity.setTargetedEntity(0);
+				this.parentEntity.setPersistentAngerTarget(null);
+				this.parentEntity.setTarget(null);
+				this.parentEntity.setTargetedEntity(0);
 				return false;
 			}
 
 			// this may be redundant. TargetPredicate may only be called for entities in
 			// range.
-			AttributeInstance followDistance = slipperyBiterEntity.getAttribute(Attributes.FOLLOW_RANGE);
+			AttributeInstance followDistance = parentEntity.getAttribute(Attributes.FOLLOW_RANGE);
 			int fRSq = (int) (followDistance.getValue() * followDistance.getValue());
-			if (((int) entity.distanceToSqr(this.slipperyBiterEntity) > fRSq)) {
+			if (((int) entity.distanceToSqr(this.parentEntity) > fRSq)) {
 				return false;
 			}
 
 			// 1 to ~500
-			int distanceSq = (int) entity.distanceToSqr(this.slipperyBiterEntity);
+			int distanceSq = (int) entity.distanceToSqr(this.parentEntity);
 
 			String bC = Utility.getBiomeCategory(
-					this.slipperyBiterEntity.level.getBiome(this.slipperyBiterEntity.blockPosition()));
+					this.parentEntity.level.getBiome(this.parentEntity.blockPosition()));
 
 			// a little less aggressive in swamps
 			if ((bC == Utility.SWAMP) && (distanceSq > 255)) {
@@ -271,7 +271,7 @@ public class SlipperyBiter extends WaterAnimal implements NeutralMob, Enemy {
 			}
 
 			// less aggressive in light, more aggressive in the dark
-			int lightLevel = w.getMaxLocalRawBrightness(this.slipperyBiterEntity.blockPosition());
+			int lightLevel = w.getMaxLocalRawBrightness(this.parentEntity.blockPosition());
 			if ((lightLevel > 13) && (distanceSq > 255)) {
 				if (aa % 3 == 0) {
 					w.playSound((Player) entity, entity.blockPosition(), ModSounds.SLIPPERY_BITER_AMBIENT,
@@ -288,8 +288,8 @@ public class SlipperyBiter extends WaterAnimal implements NeutralMob, Enemy {
 				return false;
 			}
 
-			this.slipperyBiterEntity.setTarget(entity);
-			this.slipperyBiterEntity.setTargetedEntity(entity.getId());
+			this.parentEntity.setTarget(entity);
+			this.parentEntity.setTargetedEntity(entity.getId());
 			w.playSound((Player) null, entity.blockPosition(), ModSounds.SLIPPERY_BITER_AMBIENT, SoundSource.HOSTILE,
 					1.0f, 1.0f);
 			return true;
