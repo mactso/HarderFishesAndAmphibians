@@ -43,6 +43,7 @@ import net.minecraft.world.entity.animal.Turtle;
 import net.minecraft.world.entity.monster.Enemy;
 import net.minecraft.world.entity.monster.Guardian;
 import net.minecraft.world.entity.monster.Monster;
+import net.minecraft.world.entity.npc.Villager;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.level.Level;
 import net.minecraft.world.level.LevelAccessor;
@@ -134,7 +135,7 @@ public class RiverGuardian extends Guardian implements Enemy {
 			}
 
 			int distanceSq = (int) entity.distanceToSqr(this.parentEntity);
-			// note: guardians do not attack when close. They back away.
+			// note: river guardians do not attack when close. They back away.
 			if (!isInAttackRange(distanceSq)) {
 				return false;
 			}
@@ -274,7 +275,7 @@ public class RiverGuardian extends Guardian implements Enemy {
 			return false;
 		}
 
-		if (isInBubbleColumn(level, pos)) {
+		if (Utility.isInBubbleColumn(level, pos)) {
 			return false;
 		}
 
@@ -351,9 +352,6 @@ public class RiverGuardian extends Guardian implements Enemy {
 		return false;
 	}
 
-	public static boolean isInBubbleColumn(LevelAccessor world, BlockPos pos) {
-		return world.getBlockState(pos).is(Blocks.BUBBLE_COLUMN);
-	}
 
 	// needed for water creatures because so many valid spawn blocks.
 	private static boolean isSpawnRateThrottled(LevelAccessor level) {

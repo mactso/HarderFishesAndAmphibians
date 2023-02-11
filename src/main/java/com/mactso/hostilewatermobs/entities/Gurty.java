@@ -581,14 +581,13 @@ public class Gurty extends PathfinderMob implements NeutralMob, Enemy {
 
 			// if modified distance to entity > follow distance attribute, don't attack.
 			if (dstToEntitySq > (followDistanceSq)) {
-				// But if a player and in range and random playsound (2.5%) then play a warning
+				// But if a player and in range and random playsound (2.0%) then play a warning
 				// ambient sound.
 				if (entity instanceof Player) {
 					int playSound = parentEntity.random.nextInt(50);
 
 					if ((dstToEntitySq < 900) && (playSound == 21)) {
-						w.playSound(null, entity.blockPosition(), ModSounds.GURTY_AMBIENT, SoundSource.HOSTILE, 0.35f,
-								1.0f);
+						w.playSound(null, entity.blockPosition(), ModSounds.GURTY_AMBIENT, SoundSource.HOSTILE, 0.35f, 1.0f);
 					}
 				}
 				parentEntity.setTarget(null);
@@ -609,7 +608,6 @@ public class Gurty extends PathfinderMob implements NeutralMob, Enemy {
 			EntityDataSerializers.BOOLEAN);
 	private static final EntityDataAccessor<BlockPos> NEST_POS = SynchedEntityData.defineId(Gurty.class,
 			EntityDataSerializers.BLOCK_POS);
-
 	private static final EntityDataAccessor<BlockPos> TRAVEL_POS = SynchedEntityData.defineId(Gurty.class,
 			EntityDataSerializers.BLOCK_POS);
 	private static final EntityDataAccessor<Boolean> TRAVELLING = SynchedEntityData.defineId(Gurty.class,
@@ -921,8 +919,7 @@ public class Gurty extends PathfinderMob implements NeutralMob, Enemy {
 			this.remove(RemovalReason.DISCARDED);
 		} else if (!this.isPersistenceRequired() && !this.requiresCustomPersistence()) {
 			Entity entity = this.level.getNearestPlayer(this, -1.0D);
-			net.minecraftforge.eventbus.api.Event.Result result = net.minecraftforge.event.ForgeEventFactory
-					.canEntityDespawn(this);
+			net.minecraftforge.eventbus.api.Event.Result result = net.minecraftforge.event.ForgeEventFactory.canEntityDespawn(this);
 			if (result == net.minecraftforge.eventbus.api.Event.Result.DENY) {
 				noActionTime = 0;
 				entity = null;
@@ -998,8 +995,8 @@ public class Gurty extends PathfinderMob implements NeutralMob, Enemy {
 
 	@Override
 	@Nullable
-	public SpawnGroupData finalizeSpawn(ServerLevelAccessor worldIn, DifficultyInstance difficultyIn,
-			MobSpawnType reason, @Nullable SpawnGroupData spawnDataIn, @Nullable CompoundTag dataTag) {
+	public SpawnGroupData finalizeSpawn(ServerLevelAccessor worldIn, DifficultyInstance difficultyIn, MobSpawnType reason,
+			@Nullable SpawnGroupData spawnDataIn, @Nullable CompoundTag dataTag) {
 
 		BlockPos pos = blockPosition();
 		setNestPos(pos);

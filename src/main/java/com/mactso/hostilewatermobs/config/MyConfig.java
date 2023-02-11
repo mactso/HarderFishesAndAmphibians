@@ -344,9 +344,9 @@ public class MyConfig {
 					.defineInRange("gurtySpawnCap", () -> 9, 1, 100);
 
 			gurtyBaseHitPoints = builder
-					.comment("gurtyBaseHitPoints")
+					.comment("gurtyBaseHitPoints : note- this doesn't seem to work.")
 					.translation(Main.MODID + ".config." + "gurtyBaseHitPoints")
-					.defineInRange("gurtyBaseHitPoints", () -> 10, 0, 100);
+					.defineInRange("gurtyBaseHitPoints", () -> 18, 0, 100);
 			
 			gurtyBaseDefense = builder
 					.comment("gurtyBaseDefense")
@@ -420,8 +420,6 @@ public class MyConfig {
 			
 		}
 	}
-
-
 
 }
 

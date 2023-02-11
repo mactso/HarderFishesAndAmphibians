@@ -766,7 +766,7 @@ public class WaterSnake extends WaterAnimal implements Enemy, RangedAttackMob {
 
 	public static AttributeSupplier.Builder createAttributes() {
 
-		return Monster.createMonsterAttributes().add(Attributes.MOVEMENT_SPEED, 0.73D)
+		return Monster.createMonsterAttributes().add(Attributes.MOVEMENT_SPEED, (double) 0.26F)
 				.add(Attributes.FOLLOW_RANGE, 20.0D).add(Attributes.ATTACK_DAMAGE, 2.5D)
 				.add(Attributes.MAX_HEALTH, 10.5D);
 	}
@@ -814,35 +814,6 @@ public class WaterSnake extends WaterAnimal implements Enemy, RangedAttackMob {
 		return (pos.getY() < 48);
 	}
 
-	// needed for water creatures because so many valid spawn blocks.
-	private static boolean isSpawnRateThrottled(LevelAccessor level, BlockPos pos) {
-
-		int waterBonus = TwoGuysLib.fastRandomBlockCount(level, Blocks.WATER, pos, NUM_WATER_CHECKS);
-		if (waterBonus == 0)
-			waterBonus = -21;
-
-		int watersnakeSpawnRoll = waterBonus + level.getRandom().nextInt(100);
-
-		String bC = Utility.getBiomeCategory(level.getBiome(pos));
-
-		if ((bC == Utility.OCEAN) || (bC == Utility.RIVER) || (bC == Utility.SWAMP) || (bC == Utility.BEACH)) {
-			watersnakeSpawnRoll += 11;
-		}
-
-		if ((bC == Utility.ICY)) {
-			watersnakeSpawnRoll -= 11;
-		}
-
-		if ((bC == Utility.MOUNTAIN)) {
-			watersnakeSpawnRoll -= 41;
-		}
-
-		if (watersnakeSpawnRoll < 50) {
-			return true;
-		}
-
-		return false;
-	}
 
 	private static boolean isTooBright(LevelAccessor level, BlockPos pos) {
 

@@ -46,7 +46,6 @@ import net.minecraft.world.entity.ai.attributes.AttributeSupplier;
 import net.minecraft.world.entity.ai.attributes.Attributes;
 import net.minecraft.world.entity.ai.control.MoveControl;
 import net.minecraft.world.entity.ai.control.SmoothSwimmingLookControl;
-// import net.minecraft.world.entity.ai.control.SmoothSwimmingMoveControl;
 import net.minecraft.world.entity.ai.goal.FollowBoatGoal;
 import net.minecraft.world.entity.ai.goal.LookAtPlayerGoal;
 import net.minecraft.world.entity.ai.goal.MeleeAttackGoal;
@@ -168,8 +167,7 @@ public class SlipperyBiter extends WaterAnimal implements NeutralMob, Enemy {
 								this.parentEntity.getX(), this.parentEntity.getY(),
 								this.parentEntity.getZ());
 						for (int i = 0; i < 15; ++i) {
-							final Vec3 randXZVec = this
-									.rotateVector(new Vec3(this.parentEntity.random.nextFloat() * 0.6 - 0.3,
+							final Vec3 randXZVec = this.rotateVector(new Vec3(this.parentEntity.random.nextFloat() * 0.6 - 0.3,
 											-1.0, w.random.nextFloat() * 0.6 - 0.3));
 							final Vec3 randSpreadVec = randXZVec
 									.scale(0.3 + this.parentEntity.random.nextFloat() * 2.0f);
@@ -437,9 +435,6 @@ public class SlipperyBiter extends WaterAnimal implements NeutralMob, Enemy {
 		return false;
 	}
 
-	public static boolean isInBubbleColumn(LevelAccessor world, BlockPos pos) {
-		return world.getBlockState(pos).is(Blocks.BUBBLE_COLUMN);
-	}
 
 	private static boolean isTooBright(LevelAccessor level, BlockPos pos) {
 

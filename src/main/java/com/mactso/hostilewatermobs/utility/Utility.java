@@ -81,7 +81,7 @@ public class Utility {
 		p.sendSystemMessage(component);
 
 	}
-	
+
 	public static void sendChat(Player p, String chatMessage, ChatFormatting textColor) {
 
 		MutableComponent component = Component.literal(chatMessage);
