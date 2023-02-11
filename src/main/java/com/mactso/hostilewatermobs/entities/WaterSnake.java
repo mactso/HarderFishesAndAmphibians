@@ -1367,7 +1367,7 @@ public class WaterSnake extends WaterMobEntity implements IMob, IRangedAttackMob
 	}
 
 	private void spit(final LivingEntity p_190713_1_) {
-		final WaterSnakePoisonSpitEntity lvt_2_1_ = new WaterSnakePoisonSpitEntity(this.level, this);
+		final WaterSnakePoisonSpit lvt_2_1_ = new WaterSnakePoisonSpit(this.level, this);
 		final double lvt_3_1_ = p_190713_1_.getX() - this.getX();
 		final double lvt_5_1_ = p_190713_1_.getY(0.3333333333333333) - lvt_2_1_.getY();
 		final double lvt_7_1_ = p_190713_1_.getZ() - this.getZ();

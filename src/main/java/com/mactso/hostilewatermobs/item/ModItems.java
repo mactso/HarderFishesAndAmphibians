@@ -11,7 +11,7 @@ import net.minecraft.item.SpawnEggItem;
 import net.minecraftforge.registries.IForgeRegistry;
 
 public class ModItems {
-	;
+	
 	public static final Item RIVER_GUARDIAN_SPAWN_EGG = new SpawnEggItem(ModEntities.RIVER_GUARDIAN, 0x799ABA, 0xBF4A0B, new Properties().tab(ItemGroup.TAB_MISC)).setRegistryName("riverguardian_spawn_egg");
 	public static final Item RIVER_GUARDIAN_SCALES = new Item((new Item.Properties()).tab(ItemGroup.TAB_MATERIALS)).setRegistryName("riverguardian_scales");
 	public static final Item RIVER_GUARDIAN_GLAND = new RiverGuardianGland ((new Item.Properties().food(new Food.Builder().nutrition(5).saturationMod(1.0F).fast().alwaysEat().build())).tab(ItemGroup.TAB_FOOD).stacksTo(16)).setRegistryName("riverguardian_gland");

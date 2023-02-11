@@ -9,16 +9,12 @@ import org.apache.logging.log4j.Logger;
 import com.mactso.hostilewatermobs.Main;
 import com.mactso.hostilewatermobs.utility.Utility;
 
-import net.minecraft.item.Item;
-import net.minecraft.item.Items;
-import net.minecraft.util.ResourceLocation;
 import net.minecraftforge.common.ForgeConfigSpec;
 import net.minecraftforge.common.ForgeConfigSpec.BooleanValue;
 import net.minecraftforge.common.ForgeConfigSpec.IntValue;
 import net.minecraftforge.eventbus.api.SubscribeEvent;
 import net.minecraftforge.fml.common.Mod;
 import net.minecraftforge.fml.config.ModConfig;
-import net.minecraftforge.registries.ForgeRegistries;
 
 @Mod.EventBusSubscriber(modid = Main.MODID, bus=Mod.EventBusSubscriber.Bus.MOD)
 public class MyConfig {
@@ -135,6 +131,7 @@ public class MyConfig {
 	
 	private static int      debugLevel;
 	private static int 		blockLightLevel;
+
 	private static boolean  riverGuardianPreysOnVillagerChildren;
 	private static int 	    riverGuardianSpawnWeight;
 	private static int 	    riverGuardianSpawnCap;
@@ -158,8 +155,6 @@ public class MyConfig {
 	private static int 	    salmonSpawnBoost;
 	private static int 	    squidSpawnBoost;
 	private static int 	    dolphinSpawnboost;
-	
-
 
 	private static int      zombifiedPiglinSpawnBoost;
 	private static int      ghastSpawnBoost;
@@ -220,6 +215,8 @@ public class MyConfig {
 		debugLevel = COMMON.debugLevel.get();
 
 		blockLightLevel = COMMON.blockLightLevel.get();
+		
+
 		riverGuardianSpawnCap = COMMON.riverGuardianSpawnCap.get();
 		riverGuardianSpawnWeight = COMMON.riverGuardianSpawnWeight.get();
 		riverGuardianSoundRange = COMMON.riverGuardianSoundRange.get();
@@ -308,17 +305,17 @@ public class MyConfig {
 			riverGuardianSpawnWeight = builder
 					.comment("riverGuardianSpawnWeight")
 					.translation(Main.MODID + ".config." + "riverGuardianSpawnWeight")
-					.defineInRange("riverGuardianSpawnWeight", () -> 30, 0, 500);
+					.defineInRange("riverGuardianSpawnWeight", () -> 80, 0, 500);
 
 			riverGuardianSpawnCap = builder
 					.comment("riverGuardianSpawnCap")
 					.translation(Main.MODID + ".config." + "riverGuardianSpawnCap")
-					.defineInRange("riverGuardianSpawnCap", () -> 31, 1, 100);
+					.defineInRange("riverGuardianSpawnCap", () -> 21, 1, 100);
 
 			riverGuardianSoundRange = builder
 					.comment("riverGuardian attack SoundRange in meters.  default is 7 meters. 0 turns off attack sound unless the river guardian is attacking the player.")
 					.translation(Main.MODID + ".config." + "riverGuardianSoundRange")
-					.defineInRange("riverGuardianSoundRange", () -> 19, 0, 32);
+					.defineInRange("riverGuardianSoundRange", () -> 17, 0, 24);
 
 			builder.pop();
 			builder.push("Hostile Water Mobs - Slippery Biter");
@@ -326,7 +323,7 @@ public class MyConfig {
 			slipperyBiterSpawnWeight = builder
 					.comment("slipperyBiterSpawnWeight")
 					.translation(Main.MODID + ".config." + "slipperyBiterSpawnWeight")
-					.defineInRange("slipperyBiterSpawnWeight", () -> 30, 0, 500);
+					.defineInRange("slipperyBiterSpawnWeight", () -> 80, 0, 500);
 
 			slipperyBiterSpawnCap = builder
 					.comment("slipperyBiterSpawnCap")
@@ -339,7 +336,7 @@ public class MyConfig {
 			gurtySpawnWeight = builder
 					.comment("gurtySpawnWeight")
 					.translation(Main.MODID + ".config." + "gurtySpawnWeight")
-					.defineInRange("gurtySpawnWeight", () -> 40, 0, 500);
+					.defineInRange("gurtySpawnWeight", () -> 80, 0, 500);
 
 			gurtySpawnCap = builder
 					.comment("gurtySpawnCap")
@@ -347,9 +344,9 @@ public class MyConfig {
 					.defineInRange("gurtySpawnCap", () -> 9, 1, 100);
 
 			gurtyBaseHitPoints = builder
-					.comment("gurtyBaseHitPoints")
+					.comment("gurtyBaseHitPoints : note- this doesn't seem to work.")
 					.translation(Main.MODID + ".config." + "gurtyBaseHitPoints")
-					.defineInRange("gurtyBaseHitPoints", () -> 10, 0, 100);
+					.defineInRange("gurtyBaseHitPoints", () -> 18, 0, 100);
 			
 			gurtyBaseDefense = builder
 					.comment("gurtyBaseDefense")
@@ -368,7 +365,7 @@ public class MyConfig {
 			watersnakeSpawnWeight = builder
 					.comment("watersnakeSpawnWeight")
 					.translation(Main.MODID + ".config." + "watersnakeSpawnWeight")
-					.defineInRange("watersnakeSpawnWeight", () -> 30, 0, 500);
+					.defineInRange("watersnakeSpawnWeight", () -> 80, 0, 500);
 
 			watersnakeSpawnCap = builder
 					.comment("watersnakeSpawnCap")
@@ -423,26 +420,6 @@ public class MyConfig {
 			
 		}
 	}
-	
-	private static Item getItemFromString (String name)
-	{
-		Item ret = Items.PAPER;
-		try {
-			ResourceLocation key = new ResourceLocation(name);
-			if (ForgeRegistries.ITEMS.containsKey(key))
-			{
-				ret = ForgeRegistries.ITEMS.getValue(key);
-			}
-			else
-				LOGGER.warn("Unknown item: " + name);
-		}
-		catch (Exception e)
-		{
-			LOGGER.warn("Bad item: " + name);
-		}
-		return ret;
-	}
 
-	
 }
 

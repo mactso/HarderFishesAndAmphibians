@@ -121,7 +121,7 @@ public class ModEntities {
 					}
 				}
 			}
-			
+
 			if (!zombiePiglinSpawner) {
 				if (MyConfig.getZombifiedPiglinSpawnBoost() > 0) {
 					spawns.add(new Spawners(EntityType.ZOMBIFIED_PIGLIN, weight = MyConfig.getZombifiedPiglinSpawnBoost(),

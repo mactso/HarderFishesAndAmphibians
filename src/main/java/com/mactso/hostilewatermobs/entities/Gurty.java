@@ -109,8 +109,8 @@ public class Gurty extends WaterMobEntity implements IMob {
 		 */
 		public boolean canUse() {
 			if (gurty.getRandom().nextInt(this.chance) != 0) {
-	               return false;
-	        }
+				return false;
+			}
 			if (!gurty.level.isDay()) {
 				if (gurty.isGoingNest()) {
 					return false;
@@ -649,7 +649,7 @@ public class Gurty extends WaterMobEntity implements IMob {
 	public static boolean canSpawn(EntityType<? extends Gurty> gurtyIn, IWorld level, SpawnReason reason,
 			BlockPos pos, Random randomIn) {
 
-		
+
 		Utility.debugMsg(1, pos, "canSpawn Gurty?");
 		// SpawnPlacements.Type.ON_GROUND
 
@@ -765,11 +765,11 @@ public static boolean isBubbleColumn(IWorld world, BlockPos pos) {
 		if (level.getBrightness(LightType.BLOCK, pos) > MyConfig.getBlockLightLevel()) {
 			return true; // let player lighting from blocks stop spawning.
 		}
-	
-		if (level.dimensionType().hasSkyLight()) {
+
+		if (!level.dimensionType().hasSkyLight()) {
 			return true; // no gurties in dimensions lacking skylight
 		}
-	
+
 		return false;
 	}
 

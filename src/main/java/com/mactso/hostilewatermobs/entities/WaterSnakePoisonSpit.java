@@ -21,14 +21,14 @@ import net.minecraft.world.World;
 import net.minecraftforge.api.distmarker.Dist;
 import net.minecraftforge.api.distmarker.OnlyIn;
 
-public class WaterSnakePoisonSpitEntity extends LlamaSpitEntity {
+public class WaterSnakePoisonSpit extends LlamaSpitEntity {
 
-	public WaterSnakePoisonSpitEntity(EntityType<LlamaSpitEntity> csSpit, World w) {
+	public WaterSnakePoisonSpit(EntityType<LlamaSpitEntity> csSpit, World w) {
 		super(csSpit, w);
 	}
 
 	@OnlyIn(Dist.CLIENT)
-	public WaterSnakePoisonSpitEntity(World p_i47274_1_, double p_i47274_2_, double p_i47274_4_, double p_i47274_6_,
+	public WaterSnakePoisonSpit(World p_i47274_1_, double p_i47274_2_, double p_i47274_4_, double p_i47274_6_,
 			double p_i47274_8_, double p_i47274_10_, double p_i47274_12_) {
 		this(EntityType.LLAMA_SPIT, p_i47274_1_);
 		this.setPos(p_i47274_2_, p_i47274_4_, p_i47274_6_);
@@ -42,7 +42,7 @@ public class WaterSnakePoisonSpitEntity extends LlamaSpitEntity {
 		this.setDeltaMovement(p_i47274_8_, p_i47274_10_, p_i47274_12_);
 	}
 
-	public WaterSnakePoisonSpitEntity(World p_i47273_1_, WaterSnake p_i47273_2_) {
+	public WaterSnakePoisonSpit(World p_i47273_1_, WaterSnake p_i47273_2_) {
 		this(EntityType.LLAMA_SPIT, p_i47273_1_);
 		super.setOwner(p_i47273_2_);
 		this.setPos(

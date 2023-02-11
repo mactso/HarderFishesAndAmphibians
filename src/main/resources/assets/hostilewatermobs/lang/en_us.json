@@ -1,14 +1,16 @@
 {
-	"entity.hostilewatermobs.river_guardian" : "River Guardian",
+	"entity.hostilewatermobs.riverguardian" : "River Guardian",
     "subtitles.riverguardian.hurt" : "River guardian hurt",
 	"subtitles.riverguardian.land_hurt" : "River guardian hurt on land",
 	"subtitles.riverguardian.death": "River guardian dies",
 	"subtitles.riverguardian.death_land" : "River guardian dies on land",
 	"subtitles.riverguardian.ambient": "River guardian burbles",
 	"subtitles.riverguardian.flop": "River guardian flops around",
+	
     "item.hostilewatermobs.riverguardian_scales": "River Guardian Scales",
 	"item.hostilewatermobs.riverguardian_spawn_egg": "River Guardian Spawn Egg",	
-	"item.hostilewatermobs.riverguardian_gland": "River Guardian Gland",	
+	"item.hostilewatermobs.riverguardian_gland": "River Guardian Gland",
+		
 	"entity.hostilewatermobs.slipperybiter" : "Slippery Biter",
     "subtitles.slipperybiter.hurt" : "Slippery biter hurt",
 	"subtitles.slipperybiter.land_hurt" : "Slippery biter hurt on land",
@@ -16,15 +18,18 @@
 	"subtitles.slipperybiter.death_land" : "Slippery biter dies on land",
 	"subtitles.slipperybiter.ambient": "Slippery biter burbles",
 	"subtitles.slipperybiter.flop": "Slippery biter flops around",
+	
     "item.hostilewatermobs.slipperybiter_scales": "Slippery Biter Scales",
     "item.hostilewatermobs.slipperybiter_gland": "Slippery Biter Gland",
-	"item.hostilewatermobs.slipperybiter_spawn_egg": "Slippery Biter Spawn Egg",	
+	"item.hostilewatermobs.slipperybiter_spawn_egg": "Slippery Biter Spawn Egg",
+		
 	"entity.hostilewatermobs.watersnake" : "Water Snake",
     "subtitles.watersnake.hurt" : "Water Snake hurt",
 	"subtitles.watersnake.land_hurt" : "Water Snake hurt on land",
 	"subtitles.watersnake.death": "Water Snake dies",
 	"subtitles.watersnake.death_land" : "Water Snake dies on land",
 	"subtitles.watersnake.ambient": "Water Snake burbles",
+	
     "item.hostilewatermobs.watersnake_scales": "Water Snake Scales",
  	"item.hostilewatermobs.watersnake_spawn_egg": "Water Snake Spawn Egg",	
 	"item.hostilewatermobs.watersnake_gland": "Water Snake Gland",	
@@ -35,9 +40,12 @@
     "subtitles.gurty.step" : "Gurty steps",
     "subtitles.gurty.hurt" : "Gurty hurts",
 	"subtitles.gurty.death": "Gurty dies",
+	
     "item.hostilewatermobs.gurty_guts": "Gurty Guts",
     "item.hostilewatermobs.gurty_gland": "Gurty Gland",
     "item.hostilewatermobs.gurty_spawn_egg": "Gurty Spawn Egg",
+	"block.hostilewatermobs.nest_block" : "Gurty Nest",
+	
     "advancements.adventure.hostilewatermobs.kill_a_mob.title" : "Clear the Waterfront",
     "advancements.adventure.hostilewatermobs.kill_a_mob.description": "Kill a gurty.",
     "advancements.hostilewatermobs.guts.title" : "It takes Guts",

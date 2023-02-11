@@ -9,6 +9,8 @@ import net.minecraft.block.Blocks;
 import net.minecraft.entity.Entity;
 import net.minecraft.entity.LivingEntity;
 import net.minecraft.entity.player.PlayerEntity;
+import net.minecraft.item.Item;
+import net.minecraft.item.Items;
 import net.minecraft.potion.Effect;
 import net.minecraft.potion.EffectInstance;
 import net.minecraft.util.RegistryKey;
@@ -22,6 +24,7 @@ import net.minecraft.world.IWorld;
 import net.minecraft.world.biome.Biome;
 import net.minecraft.world.biome.Biome.Category;
 import net.minecraftforge.common.BiomeDictionary;
+import net.minecraftforge.registries.ForgeRegistries;
 
 public class Utility {
 	final static int TWO_SECONDS = 40;
@@ -48,18 +51,21 @@ public class Utility {
 	public static String TAIGA = Category.TAIGA.getName();
 //	public static String UNDERGROUND = Category.UNDERGROUND.getName();
 	
-	public static void debugMsg (int level, BlockPos pos, String dMsg) {
-
-		if (MyConfig.getDebugLevel() > level-1) {
-			LOGGER.info("L"+level+" ("+pos.getX()+","+pos.getY()+","+pos.getZ()+"): " + dMsg);
-		}
-		
-	}
-
+	
+	
+	
 	public static void debugMsg (int level, String dMsg) {
 
 		if (MyConfig.getDebugLevel() > level-1) {
 			LOGGER.info("L"+level + ":" + dMsg);
+		}
+		
+	}
+
+	public static void debugMsg (int level, BlockPos pos, String dMsg) {
+
+		if (MyConfig.getDebugLevel() > level-1) {
+			LOGGER.info("L"+level+" ("+pos.getX()+","+pos.getY()+","+pos.getZ()+"): " + dMsg);
 		}
 		
 	}
@@ -76,8 +82,8 @@ public class Utility {
 	return RegistryKey.create(Registry.BIOME_REGISTRY, biomeNameResourceKey);
 }
 	
-	public static boolean isInBubbleColumn(IWorld world, BlockPos pos) {
-		return world.getBlockState(pos).is(Blocks.BUBBLE_COLUMN);
+	public static boolean isInBubbleColumn(IWorld level, BlockPos pos) {
+		return level.getBlockState(pos).is(Blocks.BUBBLE_COLUMN);
 	}
 	
 	public static boolean isOcean(IWorld level, BlockPos pos) {
@@ -149,5 +155,23 @@ public class Utility {
 		return true;
 	}
 
+	public static Item getItemFromString (String name)
+	{
+		Item ret = Items.PAPER;
+		try {
+			ResourceLocation key = new ResourceLocation(name);
+			if (ForgeRegistries.ITEMS.containsKey(key))
+			{
+				ret = ForgeRegistries.ITEMS.getValue(key);
+			}
+			else
+				LOGGER.warn("Unknown item: " + name);
+		}
+		catch (Exception e)
+		{
+			LOGGER.warn("Bad item: " + name);
+		}
+		return ret;
+	}
 
 }

@@ -13,7 +13,7 @@ import net.minecraft.util.ResourceLocation;
 
 public class WaterSnakeAngryLayer<T extends WaterMobEntity, M extends WaterSnakeModel<T>> extends AbstractEyesLayer<T, M> {
 	private static final RenderType RENDER_TYPE = RenderType
-			.eyes(new ResourceLocation(Main.MODID, "textures/entity/classicsnake_angry_texture.png"));
+			.eyes(new ResourceLocation(Main.MODID, "textures/entity/watersnake_angry_texture.png"));
 
 	public WaterSnakeAngryLayer(IEntityRenderer<T, M> renderer) {
 		super(renderer);
@@ -23,8 +23,8 @@ public class WaterSnakeAngryLayer<T extends WaterMobEntity, M extends WaterSnake
 	public void render(MatrixStack p_225628_1_, IRenderTypeBuffer p_225628_2_, int p_225628_3_, T p_225628_4_,
 			float p_225628_5_, float p_225628_6_, float p_225628_7_, float p_225628_8_, float p_225628_9_,
 			float p_225628_10_) {
-		WaterSnake classicSnakeIn = (WaterSnake) p_225628_4_;
-		if (classicSnakeIn.isAngry()) {
+		WaterSnake waterSnakeIn = (WaterSnake) p_225628_4_;
+		if (waterSnakeIn.isAngry()) {
 			super.render(p_225628_1_, p_225628_2_, p_225628_3_, p_225628_4_, p_225628_5_, p_225628_6_, p_225628_7_,
 					p_225628_8_, p_225628_9_, p_225628_10_);
 		}
