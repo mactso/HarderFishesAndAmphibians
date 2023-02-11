@@ -57,18 +57,20 @@ public class Utility {
 	public static String UNDERGROUND = BiomeCategory.UNDERGROUND.getName();
 	
 	
-	public static void debugMsg (int level, BlockPos pos, String dMsg) {
-
-		if (MyConfig.getDebugLevel() > level-1) {
-			LOGGER.info("L"+level+" ("+pos.getX()+","+pos.getY()+","+pos.getZ()+"): " + dMsg);
-		}
-		
-	}
-
+	
+	
 	public static void debugMsg (int level, String dMsg) {
 
 		if (MyConfig.getDebugLevel() > level-1) {
 			LOGGER.info("L"+level + ":" + dMsg);
+		}
+		
+	}
+
+	public static void debugMsg (int level, BlockPos pos, String dMsg) {
+
+		if (MyConfig.getDebugLevel() > level-1) {
+			LOGGER.info("L"+level+" ("+pos.getX()+","+pos.getY()+","+pos.getZ()+"): " + dMsg);
 		}
 		
 	}

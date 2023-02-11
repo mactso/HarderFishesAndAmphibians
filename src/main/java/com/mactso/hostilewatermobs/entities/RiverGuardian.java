@@ -23,7 +23,6 @@ import net.minecraft.sounds.SoundEvent;
 import net.minecraft.world.Difficulty;
 import net.minecraft.world.DifficultyInstance;
 import net.minecraft.world.damagesource.DamageSource;
-import net.minecraft.world.entity.Entity;
 import net.minecraft.world.entity.EntityType;
 import net.minecraft.world.entity.LivingEntity;
 import net.minecraft.world.entity.MobSpawnType;
@@ -45,7 +44,6 @@ import net.minecraft.world.entity.animal.Turtle;
 import net.minecraft.world.entity.monster.Enemy;
 import net.minecraft.world.entity.monster.Guardian;
 import net.minecraft.world.entity.monster.Monster;
-import net.minecraft.world.entity.npc.Villager;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.level.Level;
 import net.minecraft.world.level.LevelAccessor;
@@ -53,7 +51,6 @@ import net.minecraft.world.level.LightLayer;
 import net.minecraft.world.level.ServerLevelAccessor;
 import net.minecraft.world.level.biome.Biome;
 import net.minecraft.world.level.block.Blocks;
-import net.minecraft.world.phys.AABB;
 import net.minecraftforge.common.BiomeDictionary;
 
 public class RiverGuardian extends Guardian implements Enemy {
@@ -235,8 +232,7 @@ public class RiverGuardian extends Guardian implements Enemy {
 
 	private static int calcNetMobCap(LevelAccessor level, BlockPos pos) {
 
-		int mobCap = MyConfig.getRiverGuardianSpawnCap() +
-				level.getServer().getPlayerCount();
+		int mobCap = MyConfig.getRiverGuardianSpawnCap() + level.getServer().getPlayerCount();
 
 		if (isDeep(pos)) {
 			mobCap += 6;
@@ -302,14 +298,13 @@ public class RiverGuardian extends Guardian implements Enemy {
 			return false;
 
 		// prevent local overcrowding
-		if (isOverCrowded(level, RiverGuardian.class, pos))
+		if (Utility.isOverCrowded(level, RiverGuardian.class, pos, 5))
 			return false;
-		
+
 		int mobCount = ((ServerLevel) level).getEntities(ModEntities.RIVER_GUARDIAN, (entity) -> true).size();
 		if (mobCount >= calcNetMobCap(level, pos)) {
 			return false;
 		}
-
 
 		Utility.debugMsg(1, pos, "spawned riverGuardian.");
 
@@ -344,29 +339,14 @@ public class RiverGuardian extends Guardian implements Enemy {
 		if (!level.canSeeSkyFromBelowWater(pos))
 			return false;
 
-		if (isOcean(level, pos)) {
-			return true;
-		}
-		
-		return false;
-	}
-	
-	private static boolean isOcean(LevelAccessor level, BlockPos pos) {
-
-		String bC = Utility.getBiomeCategory(level.getBiome(pos));
-		if (bC == Utility.OCEAN) {
-			return true;
-		}
-
-		ResourceKey<Biome> biomeKey = getBiomeKey(level,pos);
-		if (BiomeDictionary.hasType(biomeKey, BiomeDictionary.Type.OCEAN)) {
+		if (Utility.isOcean(level, pos)) {
 			return true;
 		}
 
 		return false;
-
 	}
 	
+
 	private static ResourceKey<Biome> getBiomeKey(LevelAccessor level, BlockPos pos) {
 		ResourceLocation biomeNameResourceKey = level.registryAccess().registryOrThrow(Registry.BIOME_REGISTRY)
 				.getKey(level.getBiome(pos));
@@ -377,13 +357,6 @@ public class RiverGuardian extends Guardian implements Enemy {
 		return world.getBlockState(pos).is(Blocks.BUBBLE_COLUMN);
 	}
 
-    private static <T extends Entity> boolean isOverCrowded(LevelAccessor level, Class<T> entityClass, BlockPos pos) {
-        if (level.getEntitiesOfClass(entityClass,
-                new AABB(pos.north(20).west(20).above(6), pos.south(20).east(20).below(6))).size() > 5)
-            return true;
-        return false;
-    }
-	
 	
 	// needed for water creatures because so many valid spawn blocks.
 	private static boolean isSpawnRateThrottled(LevelAccessor level) {
@@ -415,8 +388,6 @@ public class RiverGuardian extends Guardian implements Enemy {
 
 	}
 
-	
-	
 	public static AttributeSupplier.Builder registerAttributes() {
 		return Guardian.createAttributes().add(Attributes.MOVEMENT_SPEED, (double) 0.65F)
 				.add(Attributes.FOLLOW_RANGE, 24.0D).add(Attributes.ATTACK_DAMAGE, 2.0D)

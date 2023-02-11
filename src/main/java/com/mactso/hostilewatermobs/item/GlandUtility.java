@@ -1,9 +1,8 @@
 package com.mactso.hostilewatermobs.item;
 
-import java.util.Random;
-
 import net.minecraft.core.particles.ParticleTypes;
 import net.minecraft.sounds.SoundEvents;
+import java.util.Random;
 import net.minecraft.world.effect.MobEffect;
 import net.minecraft.world.effect.MobEffectInstance;
 import net.minecraft.world.entity.LivingEntity;

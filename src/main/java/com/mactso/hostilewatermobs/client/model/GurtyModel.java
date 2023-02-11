@@ -32,7 +32,6 @@ public class GurtyModel<T extends Entity> extends QuadrupedModel<T> {
 	public static final ModelLayerLocation LAYER_LOCATION = new ModelLayerLocation(
 			new ResourceLocation(Main.MODID, "gurty"), "main");
 
-
 	private final ModelPart jaw;
 	private final ModelPart spines;
 	private final ModelPart tail;
@@ -48,7 +47,7 @@ public class GurtyModel<T extends Entity> extends QuadrupedModel<T> {
 	}
 
 	public static LayerDefinition createBodyLayer() {
-		
+
 		MeshDefinition meshdefinition = new MeshDefinition();
 		PartDefinition partdefinition = meshdefinition.getRoot();
 
