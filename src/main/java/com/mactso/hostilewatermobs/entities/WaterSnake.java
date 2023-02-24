@@ -1181,19 +1181,17 @@ public class WaterSnake extends WaterMobEntity implements IMob, IRangedAttackMob
 			return false;
 		}
 
-		if (source == DamageSource.OUT_OF_WORLD) {
+		if ((amount <= 0.0f) || (source == DamageSource.OUT_OF_WORLD) || (source.getEntity() == null)) {
 			return super.hurt(source, amount);
 		}
 
-		if ((amount > 0.0f) && (source.getEntity() != null)) {
+		if (source.getEntity() instanceof LivingEntity) {
 			Entity entity = source.getEntity();
-
 			if (entity.level.getDifficulty() != Difficulty.PEACEFUL) {
 				setTarget((LivingEntity) entity);
 				setTargetedEntity(entity.getId());
 			}
 			angryTime = level.getGameTime() + ANGER_INTENSE;
-
 		}
 		return super.hurt(source, amount);
 	}
