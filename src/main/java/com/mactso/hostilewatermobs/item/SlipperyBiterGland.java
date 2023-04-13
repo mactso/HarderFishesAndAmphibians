@@ -40,7 +40,7 @@ public class SlipperyBiterGland extends Item {
 				livingEntityIn.stopRiding();
 			}
 			if (potY < 5) potY = leY;
-			BlockPos targetPos = new BlockPos (potX, potY, potZ);
+			BlockPos targetPos = BlockPos.containing (potX, potY, potZ);
 		    if (worldIn.hasChunkAt(targetPos)) {
 				boolean topSafe = worldIn.getFluidState(targetPos.above()).is(FluidTags.WATER)
 						|| worldIn.getBlockState(targetPos.above()).getBlock() == Blocks.AIR;

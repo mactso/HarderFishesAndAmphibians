@@ -22,6 +22,7 @@ import net.minecraft.sounds.SoundEvent;
 import net.minecraft.sounds.SoundEvents;
 import net.minecraft.sounds.SoundSource;
 import net.minecraft.tags.BiomeTags;
+import net.minecraft.tags.DamageTypeTags;
 import net.minecraft.tags.FluidTags;
 import net.minecraft.util.Mth;
 import net.minecraft.util.RandomSource;
@@ -30,6 +31,7 @@ import net.minecraft.util.valueproviders.UniformInt;
 import net.minecraft.world.Difficulty;
 import net.minecraft.world.DifficultyInstance;
 import net.minecraft.world.damagesource.DamageSource;
+import net.minecraft.world.damagesource.DamageTypes;
 import net.minecraft.world.effect.MobEffect;
 import net.minecraft.world.effect.MobEffectInstance;
 import net.minecraft.world.effect.MobEffects;
@@ -78,6 +80,8 @@ import net.minecraft.world.level.pathfinder.AmphibiousNodeEvaluator;
 import net.minecraft.world.level.pathfinder.BlockPathTypes;
 import net.minecraft.world.level.pathfinder.PathFinder;
 import net.minecraft.world.phys.Vec3;
+import net.minecraftforge.event.ForgeEventFactory;
+import net.minecraftforge.eventbus.api.Event.Result;
 
 public class WaterSnake extends WaterAnimal implements Enemy, RangedAttackMob {
 	static class GoLandGoal extends Goal {
@@ -130,7 +134,7 @@ public class WaterSnake extends WaterAnimal implements Enemy, RangedAttackMob {
 				l = 0;
 			}
 
-			BlockPos blockpos = new BlockPos((double) k + watersnake.getX(), (double) l + watersnake.getY(),
+			BlockPos blockpos = BlockPos.containing((double) k + watersnake.getX(), (double) l + watersnake.getY(),
 					(double) i1 + watersnake.getZ());
 			watersnake.setTravelPos(blockpos);
 			watersnake.setTravelling(true);
@@ -166,7 +170,7 @@ public class WaterSnake extends WaterAnimal implements Enemy, RangedAttackMob {
 				}
 
 				if (vector3d1 != null && !isNearNest
-						&& !watersnake.level.getBlockState(new BlockPos(vector3d1)).is(Blocks.WATER)) {
+						&& !watersnake.level.getBlockState(BlockPos.containing(vector3d1)).is(Blocks.WATER)) {
 					vector3d1 = DefaultRandomPos.getPosTowards(watersnake, 16, 5, vector3d,
 							(double) ((float) Math.PI / 10F));
 				}
@@ -262,7 +266,7 @@ public class WaterSnake extends WaterAnimal implements Enemy, RangedAttackMob {
 				}
 
 				if (vector3d1 != null && !isNearNest
-						&& !watersnake.level.getBlockState(new BlockPos(vector3d1)).is(Blocks.WATER)) {
+						&& !watersnake.level.getBlockState(BlockPos.containing(vector3d1)).is(Blocks.WATER)) {
 					vector3d1 = DefaultRandomPos.getPosTowards(watersnake, 16, 5, vector3d,
 							(double) ((float) Math.PI / 10F));
 				}
@@ -712,11 +716,10 @@ public class WaterSnake extends WaterAnimal implements Enemy, RangedAttackMob {
 
 		// support for unknown modded wet biomes.
 		Biome bv = level.getBiome(pos).value();
-		if (!bv.isHumid() && !bv.warmEnoughToRain(pos)) {
+		if (!Utility.isBiomeWet( bv, pos )) {
 			mobCap += 5;
 			return mobCap;
 		}
-
 		return mobCap;
 
 	}
@@ -779,7 +782,7 @@ public class WaterSnake extends WaterAnimal implements Enemy, RangedAttackMob {
 		}
 
 		Biome bv = level.getBiome(pos).value();
-		if (!bv.isHumid() && !bv.warmEnoughToRain(pos)) {
+		if (!Utility.isBiomeWet(bv, pos)) {
 			return true;
 		}
 
@@ -897,14 +900,11 @@ public class WaterSnake extends WaterAnimal implements Enemy, RangedAttackMob {
 	@Override
 	protected void actuallyHurt(DamageSource source, float damageAmount) {
 
-		if (source == null) {
-			source = DamageSource.GENERIC;
-		}
 		if (damageAmount < 0) {
 			damageAmount = 0;
 		}
 
-		if (source.isProjectile()) {
+		if(source.is(DamageTypeTags.IS_PROJECTILE)) {
 			damageAmount *= 0.5f; // reduce projectile damage by 33% scaly skin
 		}
 
@@ -916,24 +916,28 @@ public class WaterSnake extends WaterAnimal implements Enemy, RangedAttackMob {
 			damageAmount *= 0.75f;
 		}
 
-		if (source.getMsgId() == DamageSource.thorns(source.getEntity()).getMsgId()) {
+		if (source.is(DamageTypes.THORNS)) {
 			damageAmount *= 0.25f; // highly resistant to Thorns
 		}
-		if (source.getMsgId() == DamageSource.SWEET_BERRY_BUSH.getMsgId()) {
+
+		if (source.is(DamageTypes.SWEET_BERRY_BUSH)) {
 			damageAmount = 0.0f; // thick scaly skin.
 		}
-		if (source.getMsgId() == DamageSource.CACTUS.getMsgId()) {
+
+		if (source.is(DamageTypes.CACTUS)) {
 			damageAmount = 0.0f; // thick scaly skin.
 			return;
 		}
+		
 		// resistant to magic and magic thorns
-		if (source.getMsgId() == DamageSource.MAGIC.getMsgId()) {
+		if (source.is(DamageTypes.MAGIC)) {
 			damageAmount *= 0.8f; // partial magic immunity
 		}
-		if (source.isBypassArmor()) {
+		if (source.is(DamageTypes.EXPLOSION)) {
 			damageAmount *= 0.8f; // partial magic immunity
 		}
-		if (source.isExplosion()) {
+
+		if (source.is(DamageTypes.EXPLOSION)) {
 			damageAmount *= 0.8f; // weak explosion resistance
 		}
 		super.actuallyHurt(source, damageAmount);
@@ -956,11 +960,6 @@ public class WaterSnake extends WaterAnimal implements Enemy, RangedAttackMob {
 
 	@Override
 	public boolean canBeAffected(MobEffectInstance potioneffectIn) {
-//		net.minecraftforge.event.entity.living.PotionEvent.PotionApplicableEvent event = new net.minecraftforge.event.entity.living.PotionEvent.PotionApplicableEvent(
-//				this, potioneffectIn);
-//		net.minecraftforge.common.MinecraftForge.EVENT_BUS.post(event);
-//		if (event.getResult() != net.minecraftforge.eventbus.api.Event.Result.DEFAULT)
-//			return event.getResult() == net.minecraftforge.eventbus.api.Event.Result.ALLOW;
 
 		MobEffect effect = potioneffectIn.getEffect();
 		if (effect == MobEffects.POISON) {
@@ -983,12 +982,12 @@ public class WaterSnake extends WaterAnimal implements Enemy, RangedAttackMob {
 			this.remove(RemovalReason.DISCARDED);
 		} else if (!this.isPersistenceRequired() && !this.requiresCustomPersistence()) {
 			Entity entity = this.level.getNearestPlayer(this, -1.0D);
-			net.minecraftforge.eventbus.api.Event.Result result = net.minecraftforge.event.ForgeEventFactory
-					.canEntityDespawn(this);
-			if (result == net.minecraftforge.eventbus.api.Event.Result.DENY) {
+			Result result = ForgeEventFactory
+					.canEntityDespawn(this, (ServerLevelAccessor) this.getLevel());
+			if (result == Result.DENY) {
 				noActionTime = 0;
 				entity = null;
-			} else if (result == net.minecraftforge.eventbus.api.Event.Result.ALLOW) {
+			} else if (result == Result.ALLOW) {
 				this.remove(RemovalReason.DISCARDED);
 				entity = null;
 			}
@@ -1194,7 +1193,7 @@ public class WaterSnake extends WaterAnimal implements Enemy, RangedAttackMob {
 			return false;
 		}
 
-		if ((amount <= 0.0f) || (source == DamageSource.OUT_OF_WORLD) || (source.getEntity() == null)) {
+		if ((amount <= 0.0f) || (source.is(DamageTypes.OUT_OF_WORLD)) || (source.getEntity() == null)) {
 			return super.hurt(source, amount);
 		}
 
@@ -1230,10 +1229,10 @@ public class WaterSnake extends WaterAnimal implements Enemy, RangedAttackMob {
 	}
 
 	// handle /kill command
-	@Override
-	public void kill() {
-		this.hurt(DamageSource.OUT_OF_WORLD, Float.MAX_VALUE);
-	}
+//	@Override
+//	public void kill() {
+//		this.hurt(DamageSource.OUT_OF_WORLD, Float.MAX_VALUE);
+//	}
 
 	@Override
 	public void performRangedAttack(LivingEntity p0, float p1) {

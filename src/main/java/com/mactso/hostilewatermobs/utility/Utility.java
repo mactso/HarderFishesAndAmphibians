@@ -31,10 +31,10 @@ import net.minecraft.world.phys.AABB;
 import net.minecraftforge.registries.ForgeRegistries;
 
 public class Utility {
-	
+
 	final static int TWO_SECONDS = 40;
 	private static final Logger LOGGER = LogManager.getLogger();
-	
+
 	public static String NONE = "none";
 	public static String BEACH = "beach";
 	public static String BADLANDS = "badlands";
@@ -55,23 +55,21 @@ public class Utility {
 	public static String SWAMP = "swamp";
 	public static String TAIGA = "taiga";
 	public static String UNDERGROUND = "underground";
-	
-	
-	
-	public static void debugMsg (int level, String dMsg) {
 
-		if (MyConfig.getDebugLevel() > level-1) {
-			LOGGER.info("L"+level + ":" + dMsg);
+	public static void debugMsg(int level, String dMsg) {
+
+		if (MyConfig.getDebugLevel() > level - 1) {
+			LOGGER.info("L" + level + ":" + dMsg);
 		}
-		
+
 	}
 
-	public static void debugMsg (int level, BlockPos pos, String dMsg) {
+	public static void debugMsg(int level, BlockPos pos, String dMsg) {
 
-		if (MyConfig.getDebugLevel() > level-1) {
-			LOGGER.info("L"+level+" ("+pos.getX()+","+pos.getY()+","+pos.getZ()+"): " + dMsg);
+		if (MyConfig.getDebugLevel() > level - 1) {
+			LOGGER.info("L" + level + " (" + pos.getX() + "," + pos.getY() + "," + pos.getZ() + "): " + dMsg);
 		}
-		
+
 	}
 
 	public static void sendBoldChat(Player p, String chatMessage, ChatFormatting textColor) {
@@ -93,7 +91,7 @@ public class Utility {
 	public static boolean isInBubbleColumn(LevelAccessor level, BlockPos pos) {
 		return level.getBlockState(pos).is(Blocks.BUBBLE_COLUMN);
 	}
-	
+
 	public static boolean isOcean(LevelAccessor level, BlockPos pos) {
 
 		String bC = Utility.getBiomeCategory(level.getBiome(pos));
@@ -109,44 +107,42 @@ public class Utility {
 
 	}
 
-	
-	public static <T extends Entity> boolean isOverCrowded(LevelAccessor level, Class<T> entityClass, BlockPos pos, int crowdValue) {
-        if (level.getEntitiesOfClass(entityClass,
-                new AABB(pos.north(20).west(20).above(6), pos.south(20).east(20).below(6))).size() > crowdValue)
-            return true;
-        return false;
-    }
-	
-	
+	public static <T extends Entity> boolean isOverCrowded(LevelAccessor level, Class<T> entityClass, BlockPos pos,
+			int crowdValue) {
+		if (level.getEntitiesOfClass(entityClass,
+				new AABB(pos.north(20).west(20).above(6), pos.south(20).east(20).below(6))).size() > crowdValue)
+			return true;
+		return false;
+	}
+
 	public static boolean isSpawnRateThrottled(LevelAccessor level, int throttleChance) {
 		if (level.getRandom().nextInt(100) < throttleChance) {
 			return true;
 		}
 		return false;
 	}
-	
 
-	public static boolean updateEffect(LivingEntity e, int amplifier,  MobEffect mobEffect, int duration) {
+	public static boolean updateEffect(LivingEntity e, int amplifier, MobEffect mobEffect, int duration) {
 		MobEffectInstance ei = e.getEffect(mobEffect);
 		if (amplifier == 10) {
-			amplifier = 20;  // player "plaid" speed.
+			amplifier = 20; // player "plaid" speed.
 		}
 		if (ei != null) {
 			if (amplifier > ei.getAmplifier()) {
 				e.removeEffect(mobEffect);
-			} 
+			}
 			if (amplifier == ei.getAmplifier() && ei.getDuration() > 10) {
 				return false;
 			}
 			if (ei.getDuration() > 10) {
 				return false;
 			}
-			e.removeEffect(mobEffect);			
+			e.removeEffect(mobEffect);
 		}
 		e.addEffect(new MobEffectInstance(mobEffect, duration, amplifier, true, true));
 		return true;
 	}
-	
+
 	public static boolean populateEntityType(EntityType<?> et, ServerLevel level, BlockPos savePos, int range,
 			int modifier) {
 		boolean isBaby = false;
@@ -158,7 +154,7 @@ public class Utility {
 		boolean persistant = false;
 		return populateEntityType(et, level, savePos, range, modifier, persistant, isBaby);
 	}
-	
+
 	public static boolean populateEntityType(EntityType<?> et, ServerLevel level, BlockPos savePos, int range,
 			int modifier, boolean persistant, boolean isBaby) {
 		int numZP;
@@ -182,67 +178,77 @@ public class Utility {
 		}
 		return true;
 	}
-	
+
 	public static boolean isOutside(BlockPos pos, ServerLevel serverLevel) {
 		return serverLevel.getHeightmapPos(Types.MOTION_BLOCKING_NO_LEAVES, pos) == pos;
 	}
 
-	
 	public static String getBiomeCategory(Holder<Biome> testBiome) {
-		
-	if (testBiome.is(BiomeTags.HAS_VILLAGE_DESERT))
-		return Utility.DESERT;
-	if (testBiome.is(BiomeTags.IS_FOREST))
-		return Utility.FOREST;
-	if (testBiome.is(BiomeTags.IS_BEACH))
-		return Utility.BEACH;
-	if (testBiome.is(BiomeTags.HAS_VILLAGE_SNOWY))
-		return Utility.ICY;		
-	if (testBiome.is(BiomeTags.IS_JUNGLE))
-		return Utility.JUNGLE;		
-	if (testBiome.is(BiomeTags.IS_OCEAN))
-		return Utility.OCEAN;		
-	if (testBiome.is(BiomeTags.IS_DEEP_OCEAN))
-		return Utility.OCEAN;		
-	if (testBiome.is(BiomeTags.HAS_VILLAGE_PLAINS))
-		return Utility.PLAINS;		
-	if (testBiome.is(BiomeTags.IS_RIVER))
-		return Utility.RIVER;		
-	if (testBiome.is(BiomeTags.HAS_VILLAGE_SAVANNA))
-		return Utility.SAVANNA;		
-	if (testBiome.is(BiomeTags.HAS_SWAMP_HUT))
-		return Utility.SWAMP;		
-	if (testBiome.is(BiomeTags.HAS_RUINED_PORTAL_SWAMP))
-		return Utility.SWAMP;		
-	if (testBiome.is(BiomeTags.IS_TAIGA))
-		return Utility.TAIGA;		
-	if (testBiome.is(BiomeTags.IS_BADLANDS))
-		return Utility.BADLANDS;		
-	if (testBiome.is(BiomeTags.IS_MOUNTAIN))
-		return Utility.EXTREME_HILLS;		
-	if (testBiome.is(BiomeTags.IS_NETHER))
-		return Utility.NETHER;		
-	
-	return NONE;
 
-}
-	
-	
-	
-	public static Item getItemFromString (String name)
-	{
+		if (testBiome.is(BiomeTags.HAS_VILLAGE_DESERT))
+			return Utility.DESERT;
+		if (testBiome.is(BiomeTags.IS_FOREST))
+			return Utility.FOREST;
+		if (testBiome.is(BiomeTags.IS_BEACH))
+			return Utility.BEACH;
+		if (testBiome.is(BiomeTags.HAS_VILLAGE_SNOWY))
+			return Utility.ICY;
+		if (testBiome.is(BiomeTags.IS_JUNGLE))
+			return Utility.JUNGLE;
+		if (testBiome.is(BiomeTags.IS_OCEAN))
+			return Utility.OCEAN;
+		if (testBiome.is(BiomeTags.IS_DEEP_OCEAN))
+			return Utility.OCEAN;
+		if (testBiome.is(BiomeTags.HAS_VILLAGE_PLAINS))
+			return Utility.PLAINS;
+		if (testBiome.is(BiomeTags.IS_RIVER))
+			return Utility.RIVER;
+		if (testBiome.is(BiomeTags.HAS_VILLAGE_SAVANNA))
+			return Utility.SAVANNA;
+		if (testBiome.is(BiomeTags.HAS_SWAMP_HUT))
+			return Utility.SWAMP;
+		if (testBiome.is(BiomeTags.HAS_RUINED_PORTAL_SWAMP))
+			return Utility.SWAMP;
+		if (testBiome.is(BiomeTags.IS_TAIGA))
+			return Utility.TAIGA;
+		if (testBiome.is(BiomeTags.IS_BADLANDS))
+			return Utility.BADLANDS;
+		if (testBiome.is(BiomeTags.IS_MOUNTAIN))
+			return Utility.EXTREME_HILLS;
+		if (testBiome.is(BiomeTags.IS_NETHER))
+			return Utility.NETHER;
+
+		return NONE;
+
+	}
+
+	public static boolean isBiomeWet(Biome bv, BlockPos pos) {
+
+		if (!bv.getModifiedClimateSettings().hasPrecipitation()) {
+			return false;
+		}
+
+		if (bv.getModifiedClimateSettings().downfall() < 0.75f) {
+			return false;
+		}
+
+		if (!bv.warmEnoughToRain(pos)) {
+			return false;
+		}
+
+		return true;
+
+	}
+
+	public static Item getItemFromString(String name) {
 		Item ret = Items.PAPER;
 		try {
 			ResourceLocation key = new ResourceLocation(name);
-			if (ForgeRegistries.ITEMS.containsKey(key))
-			{
+			if (ForgeRegistries.ITEMS.containsKey(key)) {
 				ret = ForgeRegistries.ITEMS.getValue(key);
-			}
-			else
+			} else
 				LOGGER.warn("Unknown item: " + name);
-		}
-		catch (Exception e)
-		{
+		} catch (Exception e) {
 			LOGGER.warn("Bad item: " + name);
 		}
 		return ret;

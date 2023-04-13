@@ -24,6 +24,7 @@ import net.minecraft.sounds.SoundEvent;
 import net.minecraft.sounds.SoundEvents;
 import net.minecraft.sounds.SoundSource;
 import net.minecraft.tags.BiomeTags;
+import net.minecraft.tags.DamageTypeTags;
 import net.minecraft.tags.FluidTags;
 import net.minecraft.util.Mth;
 import net.minecraft.util.RandomSource;
@@ -32,6 +33,7 @@ import net.minecraft.util.valueproviders.UniformInt;
 import net.minecraft.world.Difficulty;
 import net.minecraft.world.DifficultyInstance;
 import net.minecraft.world.damagesource.DamageSource;
+import net.minecraft.world.damagesource.DamageTypes;
 import net.minecraft.world.effect.MobEffect;
 import net.minecraft.world.effect.MobEffectInstance;
 import net.minecraft.world.effect.MobEffects;
@@ -80,6 +82,8 @@ import net.minecraft.world.level.pathfinder.AmphibiousNodeEvaluator;
 import net.minecraft.world.level.pathfinder.BlockPathTypes;
 import net.minecraft.world.level.pathfinder.PathFinder;
 import net.minecraft.world.phys.Vec3;
+import net.minecraftforge.event.ForgeEventFactory;
+import net.minecraftforge.eventbus.api.Event.Result;
 
 public class Gurty extends PathfinderMob implements NeutralMob, Enemy {
 
@@ -131,7 +135,7 @@ public class Gurty extends PathfinderMob implements NeutralMob, Enemy {
 				l = 0;
 			}
 
-			BlockPos blockpos = new BlockPos((double) k + gurty.getX(), (double) l + gurty.getY(),
+			BlockPos blockpos = BlockPos.containing((double) k + gurty.getX(), (double) l + gurty.getY(),
 					(double) i1 + gurty.getZ());
 			gurty.setTravelPos(blockpos);
 			gurty.setTravelling(true);
@@ -253,7 +257,7 @@ public class Gurty extends PathfinderMob implements NeutralMob, Enemy {
 				}
 
 				if (vector3d1 != null && !isNearNest
-						&& !gurty.level.getBlockState(new BlockPos(vector3d1)).is(Blocks.WATER)) {
+						&& !gurty.level.getBlockState(BlockPos.containing(vector3d1.x,vector3d1.y,vector3d1.z)).is(Blocks.WATER)) {
 					vector3d1 = DefaultRandomPos.getPosTowards(gurty, 16, 5, vector3d,
 							(double) ((float) Math.PI / 10F));
 				}
@@ -758,7 +762,8 @@ public class Gurty extends PathfinderMob implements NeutralMob, Enemy {
 
 		
 		Biome bv = level.getBiome(pos).value();
-		if (!bv.isHumid() && !bv.warmEnoughToRain(pos)) {
+
+		if (!Utility.isBiomeWet( bv, pos )) {
 			return true;
 		}
 
@@ -837,7 +842,8 @@ public class Gurty extends PathfinderMob implements NeutralMob, Enemy {
 		if (source.getEntity() != null && source.getEntity() instanceof Mob) {
 			damageAmount *= 0.50f; // Gurties take less damage from monsters
 		}
-		if (source.isProjectile()) {
+		
+		if (source.is(DamageTypeTags.IS_PROJECTILE)) {
 			damageAmount *= 0.66f; // reduce projectile damage by 33% thick skin
 		}
 		float baseDefense = MyConfig.getGurtyBaseDefense();
@@ -855,24 +861,26 @@ public class Gurty extends PathfinderMob implements NeutralMob, Enemy {
 			}
 		}
 
-		if (source.getMsgId() == DamageSource.FALL.getMsgId()) {
+		if (source.is(DamageTypes.FALL)) {
 			damageAmount *= 0.5f;
 		}
-		if (source.getMsgId() == DamageSource.SWEET_BERRY_BUSH.getMsgId()) {
+		if (source.is(DamageTypes.SWEET_BERRY_BUSH)) {
 			damageAmount = 0.0f; // thick leathery skin.
 		}
-		if (source.getMsgId() == DamageSource.CACTUS.getMsgId()) {
+		if (source.is(DamageTypes.CACTUS)) {
 			damageAmount = 0.0f; // thick leathery skin.
 			return;
 		}
 		// resistant to magic and magic thorns
-		if (source.getMsgId() == DamageSource.MAGIC.getMsgId()) {
+		if (source.is(DamageTypes.MAGIC)) {			
 			damageAmount *= 0.66f; // partial magic immunity
 		}
-		if (source.isBypassArmor()) {
+		
+		if (source.is(DamageTypeTags.BYPASSES_ARMOR)) {
 			damageAmount *= 0.66f; // partial magic immunity
 		}
-		if (source.isExplosion()) {
+
+		if (source.is(DamageTypes.EXPLOSION)) {
 			damageAmount *= 0.1f; // strong explosion resistance
 		}
 		super.actuallyHurt(source, damageAmount);
@@ -919,11 +927,11 @@ public class Gurty extends PathfinderMob implements NeutralMob, Enemy {
 			this.remove(RemovalReason.DISCARDED);
 		} else if (!this.isPersistenceRequired() && !this.requiresCustomPersistence()) {
 			Entity entity = this.level.getNearestPlayer(this, -1.0D);
-			net.minecraftforge.eventbus.api.Event.Result result = net.minecraftforge.event.ForgeEventFactory.canEntityDespawn(this);
-			if (result == net.minecraftforge.eventbus.api.Event.Result.DENY) {
+			Result result = ForgeEventFactory.canEntityDespawn(this, (ServerLevelAccessor) this.getLevel());
+			if (result == Result.DENY) {
 				noActionTime = 0;
 				entity = null;
-			} else if (result == net.minecraftforge.eventbus.api.Event.Result.ALLOW) {
+			} else if (result == Result.ALLOW) {
 				removeNest();
 				this.remove(RemovalReason.DISCARDED);
 				entity = null;
@@ -1000,7 +1008,7 @@ public class Gurty extends PathfinderMob implements NeutralMob, Enemy {
 
 		BlockPos pos = blockPosition();
 		setNestPos(pos);
-		Block b = worldIn.getBlockState(pos).getBlock();
+//		Block b = worldIn.getBlockState(pos).getBlock();
 		setTravelPos(BlockPos.ZERO);
 		int nestCount = 0;
 		// Prevent nestSpam
@@ -1132,7 +1140,7 @@ public class Gurty extends PathfinderMob implements NeutralMob, Enemy {
 			return false;
 		}
 
-		if (source == DamageSource.OUT_OF_WORLD) {
+		if (source.is(DamageTypes.IN_WALL)) {
 			return super.hurt(source, amount);
 		}
 
@@ -1140,15 +1148,14 @@ public class Gurty extends PathfinderMob implements NeutralMob, Enemy {
 			Entity entity = source.getEntity();
 
 			// gurty thorns damage in melee when angry.
-
-			if ((!source.isProjectile()) && (this.isAngry())) {
+			if ((!source.is(DamageTypeTags.IS_PROJECTILE)) && (this.isAngry())) {
 				float thornDamage = 1.5f;
 				if (entity.level.getDifficulty() == Difficulty.NORMAL) {
 					thornDamage = 2.0f;
 				} else if (entity.level.getDifficulty() == Difficulty.HARD) {
 					thornDamage = 3.0f;
 				}
-				entity.hurt(DamageSource.thorns((Entity) this), thornDamage);
+				entity.hurt(entity.level.damageSources().thorns((Entity) this), thornDamage);
 			}
 
 			if (entity instanceof LivingEntity) {
@@ -1184,10 +1191,10 @@ public class Gurty extends PathfinderMob implements NeutralMob, Enemy {
 	}
 
 // handle /kill command
-	@Override
-	public void kill() {
-		this.hurt(DamageSource.OUT_OF_WORLD, Float.MAX_VALUE);
-	}
+//	@Override
+//	public void kill() {
+//		this.hurt(DamageSource.OUT_OF_WORLD,null,null, Float.MAX_VALUE);
+//	}
 
 	@Override
 	protected void playStepSound(final BlockPos p_180429_1_, final BlockState p_180429_2_) {

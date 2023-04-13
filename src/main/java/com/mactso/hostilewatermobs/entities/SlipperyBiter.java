@@ -11,7 +11,6 @@ import com.mactso.hostilewatermobs.utility.Utility;
 
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.Holder;
-import net.minecraft.core.Vec3i;
 import net.minecraft.core.particles.ParticleOptions;
 import net.minecraft.core.particles.ParticleTypes;
 import net.minecraft.nbt.CompoundTag;
@@ -153,9 +152,9 @@ public class SlipperyBiter extends WaterAnimal implements NeutralMob, Enemy {
 				if ((distanceSq > 80) && (distanceSq < 125)) {
 					Level w = parentEntity.getCommandSenderWorld();
 					Vec3 v = entity.getLookAngle();
-					Vec3i vI = new Vec3i(v.x() * -4, v.y(), v.z() * -4);
-					BlockPos tempPos = new BlockPos(entity.getX() + vI.getX(), entity.getY() + 1 + vI.getY(),
-							entity.getZ() + vI.getZ());
+					Vec3 vI = new Vec3 (v.x() * -4, v.y(), v.z() * -4);
+					BlockPos tempPos = BlockPos.containing(entity.getX() + vI.x, entity.getY() + 1 + vI.y,
+							entity.getZ() + vI.z());
 					if (w.getFluidState(tempPos).is(FluidTags.WATER)) {
 						w.setBlockAndUpdate(biterPos, Blocks.AIR.defaultBlockState());
 						w.playSound((Player) null, biterPos, SoundEvents.ENDERMAN_TELEPORT, SoundSource.HOSTILE, 0.5f,
@@ -321,7 +320,9 @@ public class SlipperyBiter extends WaterAnimal implements NeutralMob, Enemy {
 
 		// support for unknown modded wet biomes.
 		Biome bv = level.getBiome(pos).value();
-		if (!bv.isHumid() && !bv.warmEnoughToRain(pos)) {
+		
+
+		if (!Utility.isBiomeWet( bv, pos )) {
 			return mobCap + 3;
 		}
 
@@ -415,7 +416,8 @@ public class SlipperyBiter extends WaterAnimal implements NeutralMob, Enemy {
 			return false;
 
 		Biome bv = level.getBiome(pos).value();
-		if (!bv.isHumid() && !bv.warmEnoughToRain(pos)) {
+		
+		if (!Utility.isBiomeWet( bv, pos )) {
 			return true;
 		}
 

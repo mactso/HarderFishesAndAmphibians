@@ -22,6 +22,7 @@ import net.minecraft.util.RandomSource;
 import net.minecraft.world.Difficulty;
 import net.minecraft.world.DifficultyInstance;
 import net.minecraft.world.damagesource.DamageSource;
+import net.minecraft.world.damagesource.DamageTypes;
 import net.minecraft.world.entity.EntityType;
 import net.minecraft.world.entity.LivingEntity;
 import net.minecraft.world.entity.MobSpawnType;
@@ -43,14 +44,12 @@ import net.minecraft.world.entity.animal.Turtle;
 import net.minecraft.world.entity.monster.Enemy;
 import net.minecraft.world.entity.monster.Guardian;
 import net.minecraft.world.entity.monster.Monster;
-import net.minecraft.world.entity.npc.Villager;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.level.Level;
 import net.minecraft.world.level.LevelAccessor;
 import net.minecraft.world.level.LightLayer;
 import net.minecraft.world.level.ServerLevelAccessor;
 import net.minecraft.world.level.biome.Biome;
-import net.minecraft.world.level.block.Blocks;
 
 public class RiverGuardian extends Guardian implements Enemy {
 
@@ -433,7 +432,7 @@ public class RiverGuardian extends Guardian implements Enemy {
 //		isWarm = (biomename.contains("warm") && !(biomename.contains("lukewarm"))) || biomename.contains("swamp")
 //				|| biomename.contains("jungle") || biomename.contains("desert") || tC == TempCategory.WARM;
 
-		if (!biome.isHumid() && biome.warmEnoughToRain(pos)) {
+		if (!Utility.isBiomeWet( biome, pos )) {
 			workingSubType = WARM_RIVER_GUARDIAN;
 			if (pos.getY() < 29) {
 				workingSubType = ALBINO_RIVER_GUARDIAN;
@@ -490,15 +489,13 @@ public class RiverGuardian extends Guardian implements Enemy {
 
 	@Override
 	public boolean hurt(DamageSource source, float amount) {
-		if (source == null) {
-			source = DamageSource.GENERIC;
-		}
+
+	
 		if (amount < 0) {
 			amount = 0;
 		}
 
-		String type = source.msgId;
-		if (type.equals("thorns")) {
+		if (source.is(DamageTypes.THORNS)) {
 			amount = 0;
 		}
 

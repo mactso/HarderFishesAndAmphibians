@@ -1,12 +1,12 @@
 package com.mactso.hostilewatermobs.entities;
 
+import com.mactso.hostilewatermobs.utility.Utility;
+
 import net.minecraft.core.particles.ParticleTypes;
 import net.minecraft.network.protocol.Packet;
 import net.minecraft.network.protocol.game.ClientGamePacketListener;
 import net.minecraft.network.protocol.game.ClientboundAddEntityPacket;
 import net.minecraft.util.Mth;
-import net.minecraft.world.damagesource.DamageSource;
-import net.minecraft.world.effect.MobEffectInstance;
 import net.minecraft.world.effect.MobEffects;
 import net.minecraft.world.entity.Entity;
 import net.minecraft.world.entity.EntityType;
@@ -82,29 +82,19 @@ public class WaterSnakePoisonSpit extends LlamaSpit {
 		}
 	}
 
-	protected void onHitEntity(EntityHitResult targetRayTraceResult) {
-		super.onHitEntity(targetRayTraceResult);
-
-		if (!(targetRayTraceResult.getEntity() instanceof LivingEntity)) {
-			return;
+	
+	
+	protected void onHitEntity(EntityHitResult hitResult) {
+		super.onHitEntity(hitResult);
+		if ((hitResult.getEntity() instanceof LivingEntity targetEntity)) {
+			Entity owner = this.getOwner();
+            targetEntity.hurt(owner.level.damageSources().mobProjectile(this, targetEntity),0.25F);  // direct damage from attack is small.
+            Utility.updateEffect(targetEntity, 1, MobEffects.POISON,160);
 		}
-		LivingEntity targetEntity = (LivingEntity) targetRayTraceResult.getEntity();
-		Entity spitOwnerEntity = this.getOwner(); // who owns the projectile (the snake).
-		if (spitOwnerEntity instanceof WaterSnake) {
-            targetEntity.hurt(DamageSource.indirectMobAttack(this, (LivingEntity) spitOwnerEntity).setProjectile(),
-					0.25F);  // direct damage from attack is small.
-			MobEffectInstance ei =  targetEntity.getEffect(MobEffects.POISON);
-    		if (ei != null) {
-    			if (ei.getDuration() > 10) return;
-    			if (ei.getAmplifier() > 0) return;
-    		}
-    		targetEntity.removeEffect(MobEffects.POISON);
-			targetEntity.addEffect(new MobEffectInstance(MobEffects.POISON, 160, 1));
-
-		}
-
 	}
 
+	
+	
 	protected void onHitBlock(BlockHitResult p_230299_1_) {
 		super.onHitBlock(p_230299_1_);
 		if (!this.level.isClientSide) {
