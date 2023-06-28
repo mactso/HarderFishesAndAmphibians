@@ -56,7 +56,8 @@ public class WaterSnakePoisonSpit extends LlamaSpit {
 	public void tick() {
 		super.tick();
 		Vec3 vector3d = this.getDeltaMovement();
-		HitResult raytraceresult = ProjectileUtil.getHitResult(this, this::canHitEntity);
+		// TODO : Suspicious change here.  Confirm method name change
+		HitResult raytraceresult = ProjectileUtil.getHitResultOnMoveVector(this, this::canHitEntity);
 		if (raytraceresult != null && raytraceresult.getType() != HitResult.Type.MISS
 				&& !net.minecraftforge.event.ForgeEventFactory.onProjectileImpact(this, raytraceresult)) {
 			this.onHit(raytraceresult);
@@ -68,7 +69,7 @@ public class WaterSnakePoisonSpit extends LlamaSpit {
 		this.updateRotation();
 		float f = 0.99F;
 		float f1 = 0.06F;
-		if (this.level.getBlockStates(this.getBoundingBox()).noneMatch(BlockBehaviour.BlockStateBase::isAir)) {
+		if (this.level().getBlockStates(this.getBoundingBox()).noneMatch(BlockBehaviour.BlockStateBase::isAir)) {
 			this.remove(RemovalReason.DISCARDED);
 		} else if (this.isInWaterOrBubble()) {
 			this.remove(RemovalReason.DISCARDED);
@@ -88,16 +89,17 @@ public class WaterSnakePoisonSpit extends LlamaSpit {
 		super.onHitEntity(hitResult);
 		if ((hitResult.getEntity() instanceof LivingEntity targetEntity)) {
 			Entity owner = this.getOwner();
-            targetEntity.hurt(owner.level.damageSources().mobProjectile(this, targetEntity),0.25F);  // direct damage from attack is small.
+            targetEntity.hurt(owner.level().damageSources().mobProjectile(this, targetEntity),0.25F);  // direct damage from attack is small.
             Utility.updateEffect(targetEntity, 1, MobEffects.POISON,160);
 		}
 	}
 
 	
 	
+	@SuppressWarnings("resource")
 	protected void onHitBlock(BlockHitResult p_230299_1_) {
 		super.onHitBlock(p_230299_1_);
-		if (!this.level.isClientSide) {
+		if (!this.level().isClientSide) {
 			this.remove(RemovalReason.DISCARDED);
 		}
 

@@ -68,11 +68,11 @@ public class RiverGuardian extends Guardian implements Enemy {
 			int huntingRange = 170;
 
 			// more aggressive in darkness
-			int lightLevel = parentEntity.level.getMaxLocalRawBrightness(parentEntity.blockPosition());
+			int lightLevel = parentEntity.level().getMaxLocalRawBrightness(parentEntity.blockPosition());
 			huntingRange = huntingRange + ((10 - lightLevel) * 10);
 			// more aggressive in some biomes
 
-			String bC = Utility.getBiomeCategory(entity.level.getBiome(entity.blockPosition()));
+			String bC = Utility.getBiomeCategory(entity.level().getBiome(entity.blockPosition()));
 
 			if (bC == Utility.OCEAN) {
 				huntingRange += 49;

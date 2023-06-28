@@ -111,7 +111,7 @@ public class WaterSnakeModel<T extends Entity> extends ListModel<T> {
 	    	headNeckAngle =0.1f+Mth.sin(PI/4);
 	    }
 	    
-	    float attackAnim= (float) snake.startAttackTime - snake.level.getGameTime();
+	    float attackAnim= (float) snake.startAttackTime - snake.level().getGameTime();
 	    if (isAttacking) {
 		    Utility.debugMsg(2, "attackAnim: "+attackAnim);
 	    }
@@ -121,7 +121,7 @@ public class WaterSnakeModel<T extends Entity> extends ListModel<T> {
 	    	headNeckAngle += Mth.sin(attackAnim/32);
 	    }
 
-	    float spitAnim= (float) snake.startSpittingTime - snake.level.getGameTime();
+	    float spitAnim= (float) snake.startSpittingTime - snake.level().getGameTime();
 	    if (isAttacking) {
 	    	Utility.debugMsg(2, "spitAnim: "+spitAnim);
 	    }
@@ -142,7 +142,7 @@ public class WaterSnakeModel<T extends Entity> extends ListModel<T> {
         neck.yRot = swaySpeed * Mth.cos(ageInTicks * 0.1f);
 	    
 	    jaw.xRot = 0.2f+Mth.sin(ageInTicks*jawSpeed)*0.1f; // up and down
-	    if (snake.hissingTime+12 > entity.level.getGameTime()) {
+	    if (snake.hissingTime+12 > entity.level().getGameTime()) {
 		    jaw.xRot = 0.6f+Mth.sin(ageInTicks*jawSpeed)*0.1f; // up and down
 	    }
 	    

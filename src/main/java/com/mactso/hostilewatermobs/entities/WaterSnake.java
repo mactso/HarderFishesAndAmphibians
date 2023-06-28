@@ -112,7 +112,7 @@ public class WaterSnake extends WaterAnimal implements Enemy, RangedAttackMob {
 			if (watersnake.getRandom().nextInt(this.chance) != 0) {
 				return false;
 			}
-			if (!watersnake.level.isDay()) {
+			if (!watersnake.level().isDay()) {
 				if (watersnake.isGoingNest()) {
 					return false;
 				}
@@ -130,7 +130,7 @@ public class WaterSnake extends WaterAnimal implements Enemy, RangedAttackMob {
 			int k = random.nextInt(128) - 64;
 			int l = random.nextInt(9) - 4;
 			int i1 = random.nextInt(128) - 64;
-			if ((double) l + watersnake.getY() > (double) (watersnake.level.getSeaLevel() - 1)) {
+			if ((double) l + watersnake.getY() > (double) (watersnake.level().getSeaLevel() - 1)) {
 				l = 0;
 			}
 
@@ -170,7 +170,7 @@ public class WaterSnake extends WaterAnimal implements Enemy, RangedAttackMob {
 				}
 
 				if (vector3d1 != null && !isNearNest
-						&& !watersnake.level.getBlockState(BlockPos.containing(vector3d1)).is(Blocks.WATER)) {
+						&& !watersnake.level().getBlockState(BlockPos.containing(vector3d1)).is(Blocks.WATER)) {
 					vector3d1 = DefaultRandomPos.getPosTowards(watersnake, 16, 5, vector3d,
 							(double) ((float) Math.PI / 10F));
 				}
@@ -266,7 +266,7 @@ public class WaterSnake extends WaterAnimal implements Enemy, RangedAttackMob {
 				}
 
 				if (vector3d1 != null && !isNearNest
-						&& !watersnake.level.getBlockState(BlockPos.containing(vector3d1)).is(Blocks.WATER)) {
+						&& !watersnake.level().getBlockState(BlockPos.containing(vector3d1)).is(Blocks.WATER)) {
 					vector3d1 = DefaultRandomPos.getPosTowards(watersnake, 16, 5, vector3d,
 							(double) ((float) Math.PI / 10F));
 				}
@@ -315,7 +315,7 @@ public class WaterSnake extends WaterAnimal implements Enemy, RangedAttackMob {
 		 */
 		public boolean canContinueToUse() {
 			return !watersnake.isInWater() && this.tryTicks <= 1200
-					&& this.isValidTarget(watersnake.level, this.blockPos);
+					&& this.isValidTarget(watersnake.level(), this.blockPos);
 		}
 
 		/**
@@ -326,7 +326,7 @@ public class WaterSnake extends WaterAnimal implements Enemy, RangedAttackMob {
 			if (watersnake.isGoingNest()) {
 				return false;
 			}
-			if (!watersnake.level.isDay()) {
+			if (!watersnake.level().isDay()) {
 				return false;
 			}
 			if (watersnake.random.nextInt(chance) == 0) {
@@ -397,7 +397,7 @@ public class WaterSnake extends WaterAnimal implements Enemy, RangedAttackMob {
 				if (!parentEntity.getNestPos().closerToCenterThan(parentEntity.position(), 16.0D)) {
 					parentEntity.setSpeed(Math.max(parentEntity.getSpeed() / 2.0F, 0.11F));
 				}
-			} else if (parentEntity.onGround) {
+			} else if (parentEntity.onGround()) {
 				parentEntity.setSpeed(Math.max(parentEntity.getSpeed() / 1.9F, 0.17F));
 			}
 
@@ -426,11 +426,11 @@ public class WaterSnake extends WaterAnimal implements Enemy, RangedAttackMob {
 			if (this.mob instanceof WaterSnake) {
 				WaterSnake watersnake = (WaterSnake) this.mob;
 				if (watersnake.isTravelling()) {
-					return this.level.getBlockState(pos).is(Blocks.WATER);
+					return this.mob.level().getBlockState(pos).is(Blocks.WATER);
 				}
 			}
 
-			return !this.level.getBlockState(pos.below()).isAir();
+			return !this.mob.level().getBlockState(pos.below()).isAir();
 		}
 	}
 
@@ -448,11 +448,11 @@ public class WaterSnake extends WaterAnimal implements Enemy, RangedAttackMob {
 			if (mob.getLastHurtByMob() == null) {
 				return false;
 			}
-			if (mob.level.getDifficulty() == Difficulty.PEACEFUL) {
+			if (mob.level().getDifficulty() == Difficulty.PEACEFUL) {
 				return false;
 			}
 			// hmm this was "level"... now it's blockgetter. double check this.
-			BlockPos blockpos = this.lookForWater((BlockGetter) this.mob.level, this.mob, 7);
+			BlockPos blockpos = this.lookForWater((BlockGetter) this.mob.level(), this.mob, 7);
 			if (blockpos != null) {
 				this.posX = (double) blockpos.getX();
 				this.posY = (double) blockpos.getY();
@@ -630,7 +630,7 @@ public class WaterSnake extends WaterAnimal implements Enemy, RangedAttackMob {
 				final boolean followingTargetEvenIfNotSeen) {
 			super((PathfinderMob) snakeIn, speedBoost, followingTargetEvenIfNotSeen);
 			this.snake = snakeIn;
-			snakeIn.startAttackTime = snake.level.getGameTime() + 16;
+			snakeIn.startAttackTime = snake.level().getGameTime() + 16;
 		}
 
 		public void start() {
@@ -659,13 +659,13 @@ public class WaterSnake extends WaterAnimal implements Enemy, RangedAttackMob {
 			super(snakeIn, speedModifier, attackIntervalMin, attackIntervalMax, attackRadius);
 			this.snake = snakeIn;
 			this.attackRadius = attackRadius;
-			snakeIn.startSpittingTime = snake.level.getGameTime() + 16;
+			snakeIn.startSpittingTime = snake.level().getGameTime() + 16;
 
 		}
 
 		public void start() {
 			super.start();
-			snake.startSpittingTime = snake.level.getGameTime() + 16;
+			snake.startSpittingTime = snake.level().getGameTime() + 16;
 			Utility.debugMsg(2, "Start Spitting");
 			this.snake.setAggressive(true);
 		}
@@ -978,12 +978,12 @@ public class WaterSnake extends WaterAnimal implements Enemy, RangedAttackMob {
 	 */
 	@Override
 	public void checkDespawn() {
-		if (this.level.getDifficulty() == Difficulty.PEACEFUL && this.shouldDespawnInPeaceful()) {
+		if (this.level().getDifficulty() == Difficulty.PEACEFUL && this.shouldDespawnInPeaceful()) {
 			this.remove(RemovalReason.DISCARDED);
 		} else if (!this.isPersistenceRequired() && !this.requiresCustomPersistence()) {
-			Entity entity = this.level.getNearestPlayer(this, -1.0D);
+			Entity entity = this.level().getNearestPlayer(this, -1.0D);
 			Result result = ForgeEventFactory
-					.canEntityDespawn(this, (ServerLevelAccessor) this.getLevel());
+					.canEntityDespawn(this, (ServerLevelAccessor) this.level());
 			if (result == Result.DENY) {
 				noActionTime = 0;
 				entity = null;
@@ -1060,7 +1060,7 @@ public class WaterSnake extends WaterAnimal implements Enemy, RangedAttackMob {
 		nestPos = helperFindExistingNest(pos);
 		if (nestPos == null) {
 			setNestPos(pos);
-			level.setBlockAndUpdate(pos, Blocks.GRASS.defaultBlockState());
+			this.level().setBlockAndUpdate(pos, Blocks.GRASS.defaultBlockState());
 		} else {
 			setNestPos(nestPos);
 		}
@@ -1083,7 +1083,7 @@ public class WaterSnake extends WaterAnimal implements Enemy, RangedAttackMob {
 	}
 
 	protected SoundEvent getAngrySound() {
-		this.hissingTime = this.level.getGameTime();
+		this.hissingTime = this.level().getGameTime();
 		return ModSounds.WATER_SNAKE_ANGRY;
 	}
 
@@ -1140,18 +1140,19 @@ public class WaterSnake extends WaterAnimal implements Enemy, RangedAttackMob {
 		return this.tailHeight;
 	}
 
+	@SuppressWarnings("resource")
 	@Nullable
 	public LivingEntity getTargetedEntity() {
 		if (!this.hasTargetedEntity()) {
 			return null;
 		}
-		if (!this.level.isClientSide) {
+		if (!this.level().isClientSide) {
 			return this.getTarget();
 		}
 		if (this.targetedEntity != null) {
 			return this.targetedEntity;
 		}
-		final Entity targetEntity = this.level
+		final Entity targetEntity = this.level()
 				.getEntity((int) this.entityData.get((EntityDataAccessor<Integer>) WaterSnake.TARGET_ENTITY));
 		if (targetEntity instanceof LivingEntity) {
 			return this.targetedEntity = (LivingEntity) targetEntity;
@@ -1177,7 +1178,7 @@ public class WaterSnake extends WaterAnimal implements Enemy, RangedAttackMob {
 		for (int iY = 0; iY < 5; iY++) {
 			for (int iX = -7; iX < 7; iX++) {
 				for (int iZ = -7; iZ < 7; iZ++) {
-					if (level.getBlockState(pos.west(iX).above(nestY[iY]).north(iZ)).getBlock() == Blocks.CORNFLOWER) {
+					if (this.level().getBlockState(pos.west(iX).above(nestY[iY]).north(iZ)).getBlock() == Blocks.CORNFLOWER) {
 						return pos.west(iX).above(nestY[iY]).north(iZ);
 					}
 				}
@@ -1186,24 +1187,25 @@ public class WaterSnake extends WaterAnimal implements Enemy, RangedAttackMob {
 		return null;
 	}
 
+	@SuppressWarnings("resource")
 	@Override
 	public boolean hurt(DamageSource source, float amount) {
 
-		if ((this.level.isClientSide) || (this.isDeadOrDying()) || this.isInvulnerableTo(source)) {
+		if ((this.level().isClientSide) || (this.isDeadOrDying()) || this.isInvulnerableTo(source)) {
 			return false;
 		}
 
-		if ((amount <= 0.0f) || (source.is(DamageTypes.OUT_OF_WORLD)) || (source.getEntity() == null)) {
+		if ((amount <= 0.0f) || (source.is(DamageTypes.FELL_OUT_OF_WORLD)) || (source.getEntity() == null)) {
 			return super.hurt(source, amount);
 		}
 
 		if (source.getEntity() instanceof LivingEntity) {
 			Entity entity = source.getEntity();
-			if (entity.level.getDifficulty() != Difficulty.PEACEFUL) {
+			if (entity.level().getDifficulty() != Difficulty.PEACEFUL) {
 				setTarget((LivingEntity) entity);
 				setTargetedEntity(entity.getId());
 			}
-			angryTime = level.getGameTime() + ANGER_INTENSE;
+			angryTime = this.level().getGameTime() + ANGER_INTENSE;
 		}
 		return super.hurt(source, amount);
 	}
@@ -1217,7 +1219,7 @@ public class WaterSnake extends WaterAnimal implements Enemy, RangedAttackMob {
 	}
 
 	protected boolean isNestingTime() {
-		long time = this.level.getDayTime() % 24000;
+		long time = this.level().getDayTime() % 24000;
 		if ((time > 11000 && time < 11250) || (time > 250 && time < 500)) {
 			return true;
 		}
@@ -1286,7 +1288,7 @@ public class WaterSnake extends WaterAnimal implements Enemy, RangedAttackMob {
 
 	private void removeNest() {
 		if (hasNest) {
-			level.setBlockAndUpdate(this.blockPosition(), Blocks.AIR.defaultBlockState());
+			this.level().setBlockAndUpdate(this.blockPosition(), Blocks.AIR.defaultBlockState());
 		}
 	}
 
@@ -1308,7 +1310,7 @@ public class WaterSnake extends WaterAnimal implements Enemy, RangedAttackMob {
 	}
 
 	public void setAngry(boolean bool) {
-		this.angryTime = this.level.getGameTime();
+		this.angryTime = this.level().getGameTime();
 		this.entityData.set((EntityDataAccessor<Boolean>) WaterSnake.ANGRY, bool);
 	}
 
@@ -1350,7 +1352,7 @@ public class WaterSnake extends WaterAnimal implements Enemy, RangedAttackMob {
 			setAngry(false);
 			this.getAttribute(Attributes.FOLLOW_RANGE).setBaseValue(21.0F);
 		} else {
-			this.angryTime = this.level.getGameTime() + ANGER_MILD;
+			this.angryTime = this.level().getGameTime() + ANGER_MILD;
 			this.setTargetedEntity(entityIn.getId());
 			if (entityIn instanceof ServerPlayer) {
 				this.getAttribute(Attributes.FOLLOW_RANGE).setBaseValue(42.0F);
@@ -1373,17 +1375,17 @@ public class WaterSnake extends WaterAnimal implements Enemy, RangedAttackMob {
 	}
 
 	private void spit(final LivingEntity p_190713_1_) {
-		final WaterSnakePoisonSpit lvt_2_1_ = new WaterSnakePoisonSpit(this.level, this);
+		final WaterSnakePoisonSpit lvt_2_1_ = new WaterSnakePoisonSpit(this.level(), this);
 		final double lvt_3_1_ = p_190713_1_.getX() - this.getX();
 		final double lvt_5_1_ = p_190713_1_.getY(0.3333333333333333) - lvt_2_1_.getY();
 		final double lvt_7_1_ = p_190713_1_.getZ() - this.getZ();
 		final double lvt_9_1_ = Math.sqrt(lvt_3_1_ * lvt_3_1_ + lvt_7_1_ * lvt_7_1_) * 0.2d;
 		lvt_2_1_.shoot(lvt_3_1_, lvt_5_1_ + lvt_9_1_, lvt_7_1_, 1.5f, 10.0f);
 		if (!this.isSilent()) {
-			this.level.playSound((Player) null, this.getX(), this.getY(), this.getZ(), SoundEvents.LLAMA_SPIT,
+			this.level().playSound((Player) null, this.getX(), this.getY(), this.getZ(), SoundEvents.LLAMA_SPIT,
 					this.getSoundSource(), 1.0f, 1.0f + (this.random.nextFloat() - this.random.nextFloat()) * 0.2f);
 		}
-		this.level.addFreshEntity((Entity) lvt_2_1_);
+		this.level().addFreshEntity((Entity) lvt_2_1_);
 		this.didSpit = true;
 	}
 

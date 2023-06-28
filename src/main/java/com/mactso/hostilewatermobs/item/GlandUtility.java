@@ -28,14 +28,14 @@ public class GlandUtility {
 
 	private static void makeBubblesIfInWater(final LivingEntity livingEntityIn) {
 		if (livingEntityIn.isInWater()) {
-			RandomSource rand = livingEntityIn.level.getRandom();
+			RandomSource rand = livingEntityIn.level().getRandom();
 			Vec3 pos = livingEntityIn.getEyePosition(1.0f);
 			Vec3 lookVector = livingEntityIn.getLookAngle();
 			for (int i = 0; i < 31; ++i) {
 				double x = pos.x + (lookVector.x * 1.0D) - .5d + rand.nextDouble();
 				double y = pos.y + (lookVector.y * 0.1D) - .5d + rand.nextDouble();
 				double z = pos.z + (lookVector.z * 1.0D) - .5d + rand.nextDouble();
-				livingEntityIn.level.addParticle(ParticleTypes.BUBBLE, x, y, z, 0.0D, 0.05D, 0.0D);
+				livingEntityIn.level().addParticle(ParticleTypes.BUBBLE, x, y, z, 0.0D, 0.05D, 0.0D);
 			}
 		}
 	}

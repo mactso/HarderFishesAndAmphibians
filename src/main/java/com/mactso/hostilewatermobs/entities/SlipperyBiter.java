@@ -141,7 +141,7 @@ public class SlipperyBiter extends WaterAnimal implements NeutralMob, Enemy {
 		}
 
 		public void trySlipperyDartingMove() {
-			if (parentEntity.slipperyTimer > parentEntity.level.getGameTime()) {
+			if (parentEntity.slipperyTimer > parentEntity.level().getGameTime()) {
 				return;
 			}
 
@@ -495,26 +495,27 @@ public class SlipperyBiter extends WaterAnimal implements NeutralMob, Enemy {
 		compound.putByte("SubType", (byte) getSubType());
 	}
 
+	@SuppressWarnings("resource")
 	@Override
 	public void aiStep() {
 		if (this.isAlive()) {
 
-			if (!this.level.isClientSide) {
-				this.updatePersistentAnger((ServerLevel) this.level, false);
+			if (!this.level().isClientSide) {
+				this.updatePersistentAnger((ServerLevel) this.level(), false);
 			}
 
-			if (this.level.isClientSide) {
+			if (this.level().isClientSide) {
 
 				this.clientSideTailAnimationO = this.clientSideTailAnimation;
 				if (!this.isInWater()) {
 					this.clientSideTailAnimationSpeed = 1.8f;
 					final Vec3 workMotion = this.getDeltaMovement();
 					if (workMotion.y > 0.0 && this.clientSideTouchedGround && !this.isSilent()) {
-						this.level.playLocalSound(this.getX(), this.getY(), this.getZ(), this.getFlopSound(),
+						this.level().playLocalSound(this.getX(), this.getY(), this.getZ(), this.getFlopSound(),
 								this.getSoundSource(), 1.0f, 1.0f, false);
 					}
 					this.clientSideTouchedGround = (workMotion.y < 0.0
-							&& this.level.loadedAndEntityCanStandOn(this.blockPosition().below(), (Entity) this));
+							&& this.level().loadedAndEntityCanStandOn(this.blockPosition().below(), (Entity) this));
 				} else if (this.isMoving()) {
 					if (this.clientSideTailAnimationSpeed < 0.5f) {
 						this.clientSideTailAnimationSpeed = 4.0f;
@@ -529,7 +530,7 @@ public class SlipperyBiter extends WaterAnimal implements NeutralMob, Enemy {
 				if (this.isMoving() && this.isInWater()) {
 					final Vec3 workLookVector = this.getViewVector(0.0f);
 					for (int lvt_2_1_ = 0; lvt_2_1_ < 2; ++lvt_2_1_) {
-						this.level.addParticle((ParticleOptions) ParticleTypes.BUBBLE,
+						this.level().addParticle((ParticleOptions) ParticleTypes.BUBBLE,
 								this.getRandomX(0.5) - workLookVector.x * 1.5,
 								this.getRandomY() - workLookVector.y * 1.5,
 								this.getRandomZ(0.5) - workLookVector.z * 1.5, 0.0, 0.0, 0.0);
@@ -545,15 +546,15 @@ public class SlipperyBiter extends WaterAnimal implements NeutralMob, Enemy {
 
 			if (this.isInWaterOrBubble()) {
 				this.setAirSupply(300);
-			} else if (this.onGround) {
+			} else if (this.onGround()) {
 				this.setDeltaMovement(
 						this.getDeltaMovement().add((double) (((this.random.nextFloat() * 2.0f) - 1.0f) * 0.4f), 0.5,
 								(double) (((this.random.nextFloat() * 2.0f) - 1.0f) * 0.4f)));
 				this.setYRot(this.random.nextFloat() * 360.0f);
-				this.onGround = false;
+				this.setOnGround(false);
 				this.hasImpulse = true;
-				if (!level.isClientSide()) {
-					level.playSound((Player) null, this.blockPosition(), this.getFlopSound(), SoundSource.HOSTILE, 1.0f,
+				if (!this.level().isClientSide()) {
+					level().playSound((Player) null, this.blockPosition(), this.getFlopSound(), SoundSource.HOSTILE, 1.0f,
 							1.0f);
 				}
 
@@ -659,18 +660,19 @@ public class SlipperyBiter extends WaterAnimal implements NeutralMob, Enemy {
 		return entityData.get(SUB_TYPE);
 	}
 
+	@SuppressWarnings("resource")
 	@Nullable
 	public LivingEntity getTargetedEntity() {
 		if (!this.hasTargetedEntity()) {
 			return null;
 		}
-		if (!this.level.isClientSide) {
+		if (!this.level().isClientSide) {
 			return this.getTarget();
 		}
 		if (this.targetedEntity != null) {
 			return this.targetedEntity;
 		}
-		final Entity targetEntity = this.level
+		final Entity targetEntity = this.level()
 				.getEntity((int) this.entityData.get((EntityDataAccessor<Integer>) SlipperyBiter.TARGET_ENTITY));
 		if (targetEntity instanceof LivingEntity) {
 			return this.targetedEntity = (LivingEntity) targetEntity;

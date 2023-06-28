@@ -1,2 +1,2 @@
-# HarderFishesAndAmphibians
-Implements a few harder fishes and amphibians to make the rivers, lakes, oceans, and flooded underwater caves more dangerous.
+# Hostile Water Mobs
+mod_description=Adds hostile water mobs (with several variations), custom loot making underwater more dangerous and interesting.

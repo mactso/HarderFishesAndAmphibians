@@ -75,7 +75,6 @@ import net.minecraft.world.level.LevelReader;
 import net.minecraft.world.level.LightLayer;
 import net.minecraft.world.level.ServerLevelAccessor;
 import net.minecraft.world.level.biome.Biome;
-import net.minecraft.world.level.block.Block;
 import net.minecraft.world.level.block.Blocks;
 import net.minecraft.world.level.block.state.BlockState;
 import net.minecraft.world.level.pathfinder.AmphibiousNodeEvaluator;
@@ -114,7 +113,7 @@ public class Gurty extends PathfinderMob implements NeutralMob, Enemy {
 			if (gurty.getRandom().nextInt(this.chance) != 0) {
 				return false;
 			}
-			if (!gurty.level.isDay()) {
+			if (!gurty.level().isDay()) {
 				if (gurty.isGoingNest()) {
 					return false;
 				}
@@ -131,7 +130,7 @@ public class Gurty extends PathfinderMob implements NeutralMob, Enemy {
 			int k = random.nextInt(128) - 64;
 			int l = random.nextInt(9) - 4;
 			int i1 = random.nextInt(128) - 64;
-			if ((double) l + gurty.getY() > (double) (gurty.level.getSeaLevel() - 1)) {
+			if ((double) l + gurty.getY() > (double) (gurty.level().getSeaLevel() - 1)) {
 				l = 0;
 			}
 
@@ -167,7 +166,7 @@ public class Gurty extends PathfinderMob implements NeutralMob, Enemy {
 					int i = Mth.floor(vector3d1.x);
 					int j = Mth.floor(vector3d1.z);
 					int k = 34;
-					if (!gurty.level.hasChunksAt(i - 34, 0, j - 34, i + 34, 0, j + 34)) {
+					if (!gurty.level().hasChunksAt(i - 34, 0, j - 34, i + 34, 0, j + 34)) {
 						vector3d1 = null;
 					}
 				}
@@ -257,7 +256,7 @@ public class Gurty extends PathfinderMob implements NeutralMob, Enemy {
 				}
 
 				if (vector3d1 != null && !isNearNest
-						&& !gurty.level.getBlockState(BlockPos.containing(vector3d1.x,vector3d1.y,vector3d1.z)).is(Blocks.WATER)) {
+						&& !gurty.level().getBlockState(BlockPos.containing(vector3d1.x,vector3d1.y,vector3d1.z)).is(Blocks.WATER)) {
 					vector3d1 = DefaultRandomPos.getPosTowards(gurty, 16, 5, vector3d,
 							(double) ((float) Math.PI / 10F));
 				}
@@ -305,7 +304,7 @@ public class Gurty extends PathfinderMob implements NeutralMob, Enemy {
 		 * Returns whether an in-progress EntityAIBase should continue executing
 		 */
 		public boolean canContinueToUse() {
-			return !gurty.isInWater() && this.tryTicks <= 1200 && this.isValidTarget(gurty.level, this.blockPos);
+			return !gurty.isInWater() && this.tryTicks <= 1200 && this.isValidTarget(gurty.level(), this.blockPos);
 		}
 
 		/**
@@ -316,7 +315,7 @@ public class Gurty extends PathfinderMob implements NeutralMob, Enemy {
 			if (gurty.isGoingNest()) {
 				return false;
 			}
-			if (!gurty.level.isDay()) {
+			if (!gurty.level().isDay()) {
 				return false;
 			}
 			if (gurty.random.nextInt(chance) == 0) {
@@ -380,7 +379,7 @@ public class Gurty extends PathfinderMob implements NeutralMob, Enemy {
 				if (!gurty.getNestPos().closerToCenterThan(gurty.position(), 16.0D)) {
 					gurty.setSpeed(Math.max(gurty.getSpeed() / 2.0F, 0.11F));
 				}
-			} else if (gurty.onGround) {
+			} else if (gurty.onGround()) {
 				gurty.setSpeed(Math.max(gurty.getSpeed() / 1.9F, 0.17F));
 			}
 
@@ -410,11 +409,11 @@ public class Gurty extends PathfinderMob implements NeutralMob, Enemy {
 			if (this.mob instanceof Gurty) {
 				Gurty gurty = (Gurty) this.mob;
 				if (gurty.isTravelling()) {
-					return this.level.getBlockState(pos).is(Blocks.WATER);
+					return gurty.level().getBlockState(pos).is(Blocks.WATER);
 				}
 			}
 
-			return !this.level.getBlockState(pos.below()).isAir();
+			return !this.mob.level().getBlockState(pos.below()).isAir();
 		}
 	}
 
@@ -432,10 +431,10 @@ public class Gurty extends PathfinderMob implements NeutralMob, Enemy {
 			if (mob.getLastHurtByMob() == null) {
 				return false;
 			}
-			if (mob.level.getDifficulty() == Difficulty.PEACEFUL) {
+			if (mob.level().getDifficulty() == Difficulty.PEACEFUL) {
 				return false;
 			}
-			BlockPos blockpos = this.lookForWater(this.mob.level, this.mob, 7); // used to be 7, 4. parm gone.
+			BlockPos blockpos = this.lookForWater(this.mob.level(), this.mob, 7); // used to be 7, 4. parm gone.
 			if (blockpos != null) {
 				this.posX = (double) blockpos.getX();
 				this.posY = (double) blockpos.getY();
@@ -723,7 +722,8 @@ public class Gurty extends PathfinderMob implements NeutralMob, Enemy {
 			int zD = rand.nextInt(maxXZ + maxXZ) - maxXZ;
 			int yD = rand.nextInt(maxY + maxY) - maxY;
 			if (blockPos.getY() + yD > 0 && blockPos.getY() + yD < 254) {
-				if (world.getBlockState(blockPos).getMaterial().isSolid()) {
+				// Tags.Blocks. may be used eventually)  There is a method that returns true for properties.forceSolidOn or if the VoxelShape is big enough.
+				if (world.getBlockState(blockPos).isSolid()) {
 					return Vec3.atBottomCenterOf(blockPos.east(xD).above(yD).west(zD));
 				}
 			}
@@ -922,12 +922,12 @@ public class Gurty extends PathfinderMob implements NeutralMob, Enemy {
 	 */
 	@Override
 	public void checkDespawn() {
-		if (this.level.getDifficulty() == Difficulty.PEACEFUL && this.shouldDespawnInPeaceful()) {
+		if (this.level().getDifficulty() == Difficulty.PEACEFUL && this.shouldDespawnInPeaceful()) {
 			removeNest();
 			this.remove(RemovalReason.DISCARDED);
 		} else if (!this.isPersistenceRequired() && !this.requiresCustomPersistence()) {
-			Entity entity = this.level.getNearestPlayer(this, -1.0D);
-			Result result = ForgeEventFactory.canEntityDespawn(this, (ServerLevelAccessor) this.getLevel());
+			Entity entity = this.level().getNearestPlayer(this, -1.0D);
+			Result result = ForgeEventFactory.canEntityDespawn(this, (ServerLevelAccessor) this.level());
 			if (result == Result.DENY) {
 				noActionTime = 0;
 				entity = null;
@@ -1015,7 +1015,7 @@ public class Gurty extends PathfinderMob implements NeutralMob, Enemy {
 		for (int i = -5; i < 6; i++) {
 			for (int j = -5; j < 6; j++) {
 				for (int k = -1; k < 2; k++) {
-					if (level.getBlockState(pos.west(i).north(j).above(k)).getBlock() == ModBlocks.NEST_BLOCK) {
+					if (this.level().getBlockState(pos.west(i).north(j).above(k)).getBlock() == ModBlocks.NEST_BLOCK) {
 						nestCount++;
 						if (nestCount > 3) {
 							break;
@@ -1025,7 +1025,7 @@ public class Gurty extends PathfinderMob implements NeutralMob, Enemy {
 			}
 		}
 		if (nestCount == 0) {
-			level.setBlockAndUpdate(pos, ModBlocks.NEST_BLOCK.defaultBlockState());
+			this.level().setBlockAndUpdate(pos, ModBlocks.NEST_BLOCK.defaultBlockState());
 			this.hasNest = true;
 		}
 
@@ -1097,18 +1097,19 @@ public class Gurty extends PathfinderMob implements NeutralMob, Enemy {
 		return this.tailHeight;
 	}
 
+	@SuppressWarnings("resource")
 	@Nullable
 	public LivingEntity getTargetedEntity() {
 		if (!this.hasTargetedEntity()) {
 			return null;
 		}
-		if (!this.level.isClientSide) {
+		if (!this.level().isClientSide) {
 			return this.getTarget();
 		}
 		if (this.targetedEntity != null) {
 			return this.targetedEntity;
 		}
-		final Entity targetEntity = this.level
+		final Entity targetEntity = this.level()
 				.getEntity((int) this.entityData.get((EntityDataAccessor<Integer>) Gurty.TARGET_ENTITY));
 		if (targetEntity instanceof LivingEntity) {
 			return this.targetedEntity = (LivingEntity) targetEntity;
@@ -1124,6 +1125,7 @@ public class Gurty extends PathfinderMob implements NeutralMob, Enemy {
 		return (int) this.entityData.get((EntityDataAccessor<Integer>) Gurty.TARGET_ENTITY) != 0;
 	}
 
+	@SuppressWarnings("resource")
 	@Override
 	public boolean hurt(DamageSource source, float amount) {
 
@@ -1136,7 +1138,7 @@ public class Gurty extends PathfinderMob implements NeutralMob, Enemy {
 			amount = 0;
 		}
 
-		if ((this.level.isClientSide) || (this.isDeadOrDying()) || this.isInvulnerableTo(source)) {
+		if ((this.level().isClientSide) || (this.isDeadOrDying()) || this.isInvulnerableTo(source)) {
 			return false;
 		}
 
@@ -1150,21 +1152,21 @@ public class Gurty extends PathfinderMob implements NeutralMob, Enemy {
 			// gurty thorns damage in melee when angry.
 			if ((!source.is(DamageTypeTags.IS_PROJECTILE)) && (this.isAngry())) {
 				float thornDamage = 1.5f;
-				if (entity.level.getDifficulty() == Difficulty.NORMAL) {
+				if (entity.level().getDifficulty() == Difficulty.NORMAL) {
 					thornDamage = 2.0f;
-				} else if (entity.level.getDifficulty() == Difficulty.HARD) {
+				} else if (entity.level().getDifficulty() == Difficulty.HARD) {
 					thornDamage = 3.0f;
 				}
-				entity.hurt(entity.level.damageSources().thorns((Entity) this), thornDamage);
+				entity.hurt(entity.level().damageSources().thorns((Entity) this), thornDamage);
 			}
 
 			if (entity instanceof LivingEntity) {
-				if (entity.level.getDifficulty() != Difficulty.PEACEFUL) {
+				if (entity.level().getDifficulty() != Difficulty.PEACEFUL) {
 					setTarget((LivingEntity) entity);
 					setTargetedEntity(entity.getId());
 				}
 			}
-			angerTime = (int) level.getGameTime() + ANGER_INTENSE;
+			angerTime = (int) this.level().getGameTime() + ANGER_INTENSE;
 
 		}
 		return super.hurt(source, amount);
@@ -1179,7 +1181,7 @@ public class Gurty extends PathfinderMob implements NeutralMob, Enemy {
 	}
 
 	protected boolean isNestingTime() {
-		long time = this.level.getDayTime() % 24000;
+		long time = this.level().getDayTime() % 24000;
 		if ((time > 11000 && time < 11250) || (time > 250 && time < 500)) {
 			return true;
 		}
@@ -1242,15 +1244,15 @@ public class Gurty extends PathfinderMob implements NeutralMob, Enemy {
 
 	private void removeNest() {
 		if (hasNest) {
-			level.setBlockAndUpdate(this.getNestPos(), Blocks.AIR.defaultBlockState());
+			this.level().setBlockAndUpdate(this.getNestPos(), Blocks.AIR.defaultBlockState());
 		}
 	}
 
 	@Override
 	public boolean requiresCustomPersistence() {
 
-		if (this.level instanceof ServerLevel) {
-			int gurtyCount = ((ServerLevel) this.level).getEntities(ModEntities.GURTY, (entity) -> true).size();
+		if (this.level() instanceof ServerLevel) {
+			int gurtyCount = ((ServerLevel) this.level()).getEntities(ModEntities.GURTY, (entity) -> true).size();
 			if (gurtyCount < 3) {
 				return true;
 			}
@@ -1304,7 +1306,7 @@ public class Gurty extends PathfinderMob implements NeutralMob, Enemy {
 			setAngry(false);
 			this.getAttribute(Attributes.FOLLOW_RANGE).setBaseValue(21.0F);
 		} else {
-			this.angerTime = (int) this.level.getGameTime() + ANGER_MILD;
+			this.angerTime = (int) this.level().getGameTime() + ANGER_MILD;
 			this.setTargetedEntity(entityIn.getId());
 			if (entityIn instanceof ServerPlayer) {
 				this.getAttribute(Attributes.FOLLOW_RANGE).setBaseValue(42.0F);
