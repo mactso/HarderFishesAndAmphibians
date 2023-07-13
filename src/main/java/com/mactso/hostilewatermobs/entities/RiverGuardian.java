@@ -72,7 +72,7 @@ public class RiverGuardian extends Guardian implements Enemy {
 			huntingRange = huntingRange + ((10 - lightLevel) * 10);
 			// more aggressive in some biomes
 
-			String bC = Utility.getBiomeCategory(entity.level().getBiome(entity.blockPosition()));
+			String bC = Utility.getBiomeCategory(entity.level(), entity.level().getBiome(entity.blockPosition()));
 
 			if (bC == Utility.OCEAN) {
 				huntingRange += 49;
@@ -235,7 +235,7 @@ public class RiverGuardian extends Guardian implements Enemy {
 			return mobCap;
 		}
 
-		String bC = Utility.getBiomeCategory(level.getBiome(pos));
+		String bC = Utility.getBiomeCategory(level,level.getBiome(pos));
 		if (bC == Utility.RIVER) {
 			mobCap += 9;
 			return mobCap;
@@ -333,7 +333,7 @@ public class RiverGuardian extends Guardian implements Enemy {
 
 	private static boolean isFailBiomeLimits(LevelAccessor level, BlockPos pos) {
 
-		String bC = Utility.getBiomeCategory(level.getBiome(pos));
+		String bC = Utility.getBiomeCategory(level, level.getBiome(pos));
 		if (bC == Utility.MUSHROOM || bC == Utility.THEEND) {
 			return true;
 		}

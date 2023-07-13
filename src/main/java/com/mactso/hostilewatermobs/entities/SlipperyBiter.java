@@ -224,15 +224,15 @@ public class SlipperyBiter extends WaterAnimal implements NeutralMob, Enemy {
 				}
 			}
 
-			Level w = entity.getCommandSenderWorld();
+			Level level = entity.getCommandSenderWorld();
 
 			if (entity instanceof Turtle) {
 				return false;
 			}
 
 			boolean targetInWater = false;
-			if ((w.getFluidState(entity.blockPosition()).is(FluidTags.WATER))
-					|| (w.getFluidState(entity.blockPosition().above()).is(FluidTags.WATER))) {
+			if ((level.getFluidState(entity.blockPosition()).is(FluidTags.WATER))
+					|| (level.getFluidState(entity.blockPosition().above()).is(FluidTags.WATER))) {
 				targetInWater = true;
 			}
 
@@ -256,21 +256,21 @@ public class SlipperyBiter extends WaterAnimal implements NeutralMob, Enemy {
 			// 1 to ~500
 			int distanceSq = (int) entity.distanceToSqr(this.parentEntity);
 
-			String bC = Utility.getBiomeCategory(w.getBiome(this.parentEntity.blockPosition()));
+			String bC = Utility.getBiomeCategory(level,level.getBiome(this.parentEntity.blockPosition()));
 			// a little less aggressive in swamps
 			if ((bC == Utility.SWAMP) && (distanceSq > 255)) {
 				if (aa % 3 == 0) {
-					w.playSound((Player) entity, entity.blockPosition(), ModSounds.SLIPPERY_BITER_AMBIENT,
+					level.playSound((Player) entity, entity.blockPosition(), ModSounds.SLIPPERY_BITER_AMBIENT,
 							SoundSource.HOSTILE, 1.0f, 1.0f);
 				}
 				return false;
 			}
 
 			// less aggressive in light, more aggressive in the dark
-			int lightLevel = w.getMaxLocalRawBrightness(this.parentEntity.blockPosition());
+			int lightLevel = level.getMaxLocalRawBrightness(this.parentEntity.blockPosition());
 			if ((lightLevel > 13) && (distanceSq > 255)) {
 				if (aa % 3 == 0) {
-					w.playSound((Player) entity, entity.blockPosition(), ModSounds.SLIPPERY_BITER_AMBIENT,
+					level.playSound((Player) entity, entity.blockPosition(), ModSounds.SLIPPERY_BITER_AMBIENT,
 							SoundSource.HOSTILE, 1.0f, 1.0f);
 				}
 				return false;
@@ -278,7 +278,7 @@ public class SlipperyBiter extends WaterAnimal implements NeutralMob, Enemy {
 
 			if (distanceSq > 524) {
 				if (aa % 3 == 0) {
-					w.playSound((Player) entity, entity.blockPosition(), ModSounds.SLIPPERY_BITER_AMBIENT,
+					level.playSound((Player) entity, entity.blockPosition(), ModSounds.SLIPPERY_BITER_AMBIENT,
 							SoundSource.HOSTILE, 1.0f, 1.0f);
 				}
 				return false;
@@ -286,7 +286,7 @@ public class SlipperyBiter extends WaterAnimal implements NeutralMob, Enemy {
 
 			this.parentEntity.setTarget(entity);
 			this.parentEntity.setTargetedEntity(entity.getId());
-			w.playSound((Player) null, entity.blockPosition(), ModSounds.SLIPPERY_BITER_AMBIENT, SoundSource.HOSTILE,
+			level.playSound((Player) null, entity.blockPosition(), ModSounds.SLIPPERY_BITER_AMBIENT, SoundSource.HOSTILE,
 					1.0f, 1.0f);
 			return true;
 		}
@@ -313,7 +313,7 @@ public class SlipperyBiter extends WaterAnimal implements NeutralMob, Enemy {
 			return mobCap + 7;
 		}
 
-		String bC = Utility.getBiomeCategory(level.getBiome(pos));
+		String bC = Utility.getBiomeCategory(level, level.getBiome(pos));
 		if (bC == Utility.SWAMP) {
 			return mobCap + 5;
 		}
@@ -404,7 +404,7 @@ public class SlipperyBiter extends WaterAnimal implements NeutralMob, Enemy {
 
 	private static boolean isFailBiomeLimits(LevelAccessor level, BlockPos pos) {
 
-		String bC = Utility.getBiomeCategory(level.getBiome(pos));
+		String bC = Utility.getBiomeCategory(level, level.getBiome(pos));
 		if (bC == Utility.MUSHROOM || bC == Utility.THEEND) {
 			return true;
 		}

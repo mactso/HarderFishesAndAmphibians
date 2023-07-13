@@ -12,6 +12,7 @@ import net.minecraft.core.Holder;
 import net.minecraft.resources.ResourceKey;
 import net.minecraft.world.entity.EntityType;
 import net.minecraft.world.entity.MobCategory;
+import net.minecraft.world.level.LevelAccessor;
 import net.minecraft.world.level.biome.Biome;
 import net.minecraft.world.level.biome.MobSpawnSettings.SpawnerData;
 import net.minecraft.world.level.levelgen.structure.Structure;
@@ -34,7 +35,7 @@ public class SpawnData {
 		int sbSC = MyConfig.getSlipperyBiterSpawnWeight();
 		int wsSC = MyConfig.getWatersnakeSpawnWeight();
 		MobSpawnSettingsBuilder builder = builderIn.getMobSpawnSettings();
-		String biomeCategory = Utility.getBiomeCategory(biome);
+		String biomeCategory = Utility.getBiomeCategory((LevelAccessor) null, biome);
 		
 		
 		if (biomeCategory == Utility.THEEND) {

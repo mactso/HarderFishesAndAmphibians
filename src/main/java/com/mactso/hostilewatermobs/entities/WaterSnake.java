@@ -566,34 +566,34 @@ public class WaterSnake extends WaterAnimal implements Enemy, RangedAttackMob {
 				return false;
 			}
 
-			Level w = entity.getCommandSenderWorld();
+			Level level = entity.getCommandSenderWorld();
 
 			// rarely attack random fish and other creatures in range.
 			if (!(entity instanceof Player)) {
-				if (w.random.nextInt(600) != 100) {
+				if (level.random.nextInt(600) != 100) {
 					parentEntity.setTarget(null);
 					return false;
 				}
 			}
 
 			// a little less aggressive in swamps
-			String bC = Utility.getBiomeCategory(w.getBiome(parentEntity.blockPosition()));
+			String bC = Utility.getBiomeCategory(level, level.getBiome(parentEntity.blockPosition()));
 			if ((bC == Utility.SWAMP)) {
 				dstToEntitySq += 64;
 			}
 
 			// less aggressive in light
-			int lightLevel = w.getMaxLocalRawBrightness(this.parentEntity.blockPosition());
+			int lightLevel = level.getMaxLocalRawBrightness(this.parentEntity.blockPosition());
 			if (lightLevel > 13) {
 				dstToEntitySq += 81;
 			}
 
-			if (w.isRaining()) {
+			if (level.isRaining()) {
 				dstToEntitySq *= 0.6f;
 			}
 
-			if ((w.getFluidState(entity.blockPosition()).is(FluidTags.WATER))
-					|| (w.getFluidState(entity.blockPosition().above()).is(FluidTags.WATER))) {
+			if ((level.getFluidState(entity.blockPosition()).is(FluidTags.WATER))
+					|| (level.getFluidState(entity.blockPosition().above()).is(FluidTags.WATER))) {
 				dstToEntitySq *= 0.75f;
 			}
 
@@ -608,7 +608,7 @@ public class WaterSnake extends WaterAnimal implements Enemy, RangedAttackMob {
 					int playSound = parentEntity.random.nextInt(50);
 
 					if ((dstToEntitySq < 900) && (playSound == 21)) {
-						w.playSound(null, entity.blockPosition(), ModSounds.WATER_SNAKE_AMBIENT, SoundSource.HOSTILE,
+						level.playSound(null, entity.blockPosition(), ModSounds.WATER_SNAKE_AMBIENT, SoundSource.HOSTILE,
 								0.35f, 1.0f);
 					}
 				}
@@ -617,7 +617,7 @@ public class WaterSnake extends WaterAnimal implements Enemy, RangedAttackMob {
 			}
 
 			parentEntity.setTarget(entity);
-			w.playSound(null, parentEntity.blockPosition(), ModSounds.WATER_SNAKE_ANGRY, SoundSource.HOSTILE, 1.0f,
+			level.playSound(null, parentEntity.blockPosition(), ModSounds.WATER_SNAKE_ANGRY, SoundSource.HOSTILE, 1.0f,
 					1.0f);
 			return true;
 		}
@@ -708,7 +708,7 @@ public class WaterSnake extends WaterAnimal implements Enemy, RangedAttackMob {
 
 		int waterBonus = TwoGuysLib.fastRandomBlockCount(level, Blocks.WATER, pos, NUM_WATER_CHECKS);
 
-		String bC = Utility.getBiomeCategory(level.getBiome(pos));
+		String bC = Utility.getBiomeCategory(level, level.getBiome(pos));
 		if ((bC == Utility.OCEAN) || (bC == Utility.RIVER) || (bC == Utility.SWAMP) || (bC == Utility.BEACH)) {
 			mobCap += 1 + (waterBonus / 2);
 			return mobCap;
@@ -776,7 +776,7 @@ public class WaterSnake extends WaterAnimal implements Enemy, RangedAttackMob {
 
 	private static boolean isFailBiomeLimits(LevelAccessor level, BlockPos pos) {
 
-		String bC = Utility.getBiomeCategory(level.getBiome(pos));
+		String bC = Utility.getBiomeCategory(level, level.getBiome(pos));
 		if (bC == Utility.MUSHROOM || bC == Utility.THEEND) {
 			return true;
 		}

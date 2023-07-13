@@ -14,6 +14,7 @@ import com.mactso.hostilewatermobs.utility.Utility;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.Holder;
 import net.minecraft.core.Vec3i;
+import net.minecraft.core.registries.Registries;
 import net.minecraft.nbt.CompoundTag;
 import net.minecraft.network.syncher.EntityDataAccessor;
 import net.minecraft.network.syncher.EntityDataSerializers;
@@ -548,34 +549,34 @@ public class Gurty extends PathfinderMob implements NeutralMob, Enemy {
 				return false;
 			}
 
-			Level w = entity.getCommandSenderWorld();
+			Level level = entity.getCommandSenderWorld();
 
 			// rarely attack random fish and other creatures in range.
 			if (!(entity instanceof Player)) {
-				if (w.random.nextInt(600) != 100) {
+				if (level.random.nextInt(600) != 100) {
 					parentEntity.setTarget(null);
 					return false;
 				}
 			}
 
 			// a little less aggressive in swamps
-			String bC = Utility.getBiomeCategory(w.getBiome(parentEntity.blockPosition()));
+			String bC = Utility.getBiomeCategory(level, level.getBiome(parentEntity.blockPosition()));
 			if ((bC == Utility.SWAMP)) {
 				dstToEntitySq += 64;
 			}
 
 			// less aggressive in light
-			int lightLevel = w.getMaxLocalRawBrightness(this.parentEntity.blockPosition());
+			int lightLevel = level.getMaxLocalRawBrightness(this.parentEntity.blockPosition());
 			if (lightLevel > 13) {
 				dstToEntitySq += 81;
 			}
 
-			if (w.isRaining()) {
+			if (level.isRaining()) {
 				dstToEntitySq *= 0.6f;
 			}
 
-			if ((w.getFluidState(entity.blockPosition()).is(FluidTags.WATER))
-					|| (w.getFluidState(entity.blockPosition().above()).is(FluidTags.WATER))) {
+			if ((level.getFluidState(entity.blockPosition()).is(FluidTags.WATER))
+					|| (level.getFluidState(entity.blockPosition().above()).is(FluidTags.WATER))) {
 				dstToEntitySq *= 0.75f;
 			}
 
@@ -590,7 +591,7 @@ public class Gurty extends PathfinderMob implements NeutralMob, Enemy {
 					int playSound = parentEntity.random.nextInt(50);
 
 					if ((dstToEntitySq < 900) && (playSound == 21)) {
-						w.playSound(null, entity.blockPosition(), ModSounds.GURTY_AMBIENT, SoundSource.HOSTILE, 0.35f, 1.0f);
+						level.playSound(null, entity.blockPosition(), ModSounds.GURTY_AMBIENT, SoundSource.HOSTILE, 0.35f, 1.0f);
 					}
 				}
 				parentEntity.setTarget(null);
@@ -598,7 +599,7 @@ public class Gurty extends PathfinderMob implements NeutralMob, Enemy {
 			}
 
 			parentEntity.setTarget(entity);
-			w.playSound(null, parentEntity.blockPosition(), ModSounds.GURTY_ANGRY, SoundSource.HOSTILE, 1.0f, 1.0f);
+			level.playSound(null, parentEntity.blockPosition(), ModSounds.GURTY_ANGRY, SoundSource.HOSTILE, 1.0f, 1.0f);
 			return true;
 		}
 	}
@@ -634,7 +635,7 @@ public class Gurty extends PathfinderMob implements NeutralMob, Enemy {
 
 		int mobCap = MyConfig.getGurtySpawnCap() + level.getServer().getPlayerCount();
 
-		String bC = Utility.getBiomeCategory(level.getBiome(pos));
+		String bC = Utility.getBiomeCategory(level, level.getBiome(pos));
 		if (bC == Utility.RIVER) {
 			mobCap += 7;
 			return mobCap;
@@ -755,14 +756,16 @@ public class Gurty extends PathfinderMob implements NeutralMob, Enemy {
 
 	private static boolean isFailBiomeLimits(LevelAccessor level, BlockPos pos) {
 
-		String bC = Utility.getBiomeCategory(level.getBiome(pos));
+		
+		String bC = Utility.getBiomeCategory(level, level.getBiome(pos));
 		if (bC == Utility.MUSHROOM || bC == Utility.THEEND) {
 			return true;
 		}
 
-		
 		Biome bv = level.getBiome(pos).value();
 
+		String keyPrefix = level.registryAccess().registryOrThrow(Registries.BIOME).getKey(bv).toString();
+		
 		if (!Utility.isBiomeWet( bv, pos )) {
 			return true;
 		}
@@ -775,11 +778,6 @@ public class Gurty extends PathfinderMob implements NeutralMob, Enemy {
 		if (b.is(BiomeTags.HAS_DESERT_PYRAMID)) {
 			return true;
 		}		
-
-		if (b.is(BiomeTags.HAS_END_CITY)) {
-			return true;
-		}		
-
 
 		return false;
 

@@ -8,6 +8,7 @@ import com.mactso.hostilewatermobs.config.MyConfig;
 import net.minecraft.ChatFormatting;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.Holder;
+import net.minecraft.core.registries.Registries;
 import net.minecraft.network.chat.Component;
 import net.minecraft.network.chat.MutableComponent;
 import net.minecraft.resources.ResourceLocation;
@@ -94,7 +95,7 @@ public class Utility {
 
 	public static boolean isOcean(LevelAccessor level, BlockPos pos) {
 
-		String bC = Utility.getBiomeCategory(level.getBiome(pos));
+		String bC = Utility.getBiomeCategory(level, level.getBiome(pos));
 		if (bC == Utility.OCEAN) {
 			return true;
 		}
@@ -183,8 +184,18 @@ public class Utility {
 		return serverLevel.getHeightmapPos(Types.MOTION_BLOCKING_NO_LEAVES, pos) == pos;
 	}
 
-	public static String getBiomeCategory(Holder<Biome> testBiome) {
+	public static String getBiomeCategory(LevelAccessor level, Holder<Biome> testBiome) {
 
+		Biome b = testBiome.value();
+		
+		if (!(level == null)) {
+			String keyPrefix = level.registryAccess().registryOrThrow(Registries.BIOME).getKey(b).toString();
+			if (keyPrefix.equals("minecraft:mushroom_fields")) {
+				return Utility.MUSHROOM;
+			}
+		
+		}
+		
 		if (testBiome.is(BiomeTags.HAS_VILLAGE_DESERT))
 			return Utility.DESERT;
 		if (testBiome.is(BiomeTags.IS_FOREST))
@@ -217,6 +228,8 @@ public class Utility {
 			return Utility.EXTREME_HILLS;
 		if (testBiome.is(BiomeTags.IS_NETHER))
 			return Utility.NETHER;
+		if (testBiome.is(BiomeTags.IS_END))
+			return Utility.THEEND;
 
 		return NONE;
 
