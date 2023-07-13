@@ -884,14 +884,13 @@ public class WaterSnake extends WaterAnimal implements Enemy, RangedAttackMob {
 
 	private LivingEntity targetedEntity;
 
-	@SuppressWarnings("deprecation")
 	public WaterSnake(EntityType<? extends WaterSnake> type, Level worldIn) {
 
 		super(type, worldIn);
 		this.xpReward = 7;
 		this.setPathfindingMalus(BlockPathTypes.WATER, 0.0f);
 		this.moveControl = new WaterSnake.MoveHelperController(this);
-		this.maxUpStep = 1.0f;
+		this.setMaxUpStep(1.0f);
 		this.nestProtectionDistSq = MyConfig.getGurtyNestDistance();
 		nestProtectionDistSq = (nestProtectionDistSq * nestProtectionDistSq) + 3;
 		// this.setBoundingBox(new AxisA);
