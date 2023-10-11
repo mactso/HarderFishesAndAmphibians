@@ -88,8 +88,7 @@ public class WaterSnakePoisonSpit extends LlamaSpit {
 	protected void onHitEntity(EntityHitResult hitResult) {
 		super.onHitEntity(hitResult);
 		if ((hitResult.getEntity() instanceof LivingEntity targetEntity)) {
-			Entity owner = this.getOwner();
-            targetEntity.hurt(owner.level().damageSources().mobProjectile(this, targetEntity),0.25F);  // direct damage from attack is small.
+            targetEntity.hurt(this.level().damageSources().mobProjectile(this, targetEntity),0.25F);  // direct damage from attack is small.
             Utility.updateEffect(targetEntity, 1, MobEffects.POISON,160);
 		}
 	}

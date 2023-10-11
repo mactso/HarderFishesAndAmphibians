@@ -829,7 +829,7 @@ public class Gurty extends PathfinderMob implements NeutralMob, Enemy {
 		this.xpReward = 7;
 		this.setPathfindingMalus(BlockPathTypes.WATER, 0.0f);
 		this.moveControl = new Gurty.MoveHelperController(this);
-		this.maxUpStep = 1.0f;
+		this.setMaxUpStep(1.0f);
 		this.nestProtectionDistSq = MyConfig.getGurtyNestDistance();
 		nestProtectionDistSq = (nestProtectionDistSq * nestProtectionDistSq) + 3;
 	}
