@@ -10,7 +10,7 @@ import com.mactso.hostilewatermobs.client.model.WaterSnakeModel;
 import com.mactso.hostilewatermobs.config.MyConfig;
 import com.mactso.hostilewatermobs.entities.ModEntities;
 import com.mactso.hostilewatermobs.item.ModItems;
-import com.mactso.hostilewatermobs.item.crafting.HostileWaterMobsRecipe;
+//import com.mactso.hostilewatermobs.item.crafting.HostileWaterMobsRecipe;
 import com.mactso.hostilewatermobs.sound.ModSounds;
 import com.mactso.hostilewatermobs.utility.ModBiomeModifier;
 import com.mactso.hostilewatermobs.utility.ModStructureModifier;
@@ -65,8 +65,8 @@ public class Main {
 				ModSounds.register(event.getForgeRegistry());
 			else if (key.equals(ForgeRegistries.Keys.ENTITY_TYPES))
 				ModEntities.register(event.getForgeRegistry());
-			else if (key.equals(ForgeRegistries.Keys.RECIPE_SERIALIZERS))
-				event.getForgeRegistry().register(HostileWaterMobsRecipe.NAME, HostileWaterMobsRecipe.SERIALIZER);
+//			else if (key.equals(ForgeRegistries.Keys.RECIPE_SERIALIZERS))
+//				event.getForgeRegistry().register(HostileWaterMobsRecipe.NAME, HostileWaterMobsRecipe.SERIALIZER);
 			else if (key.equals(ForgeRegistries.Keys.STRUCTURE_MODIFIER_SERIALIZERS))
 				ModStructureModifier.register(event.getForgeRegistry());
 			else if (key.equals(ForgeRegistries.Keys.BIOME_MODIFIER_SERIALIZERS))

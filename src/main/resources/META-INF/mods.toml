@@ -1,5 +1,5 @@
 modLoader="javafml"
-loaderVersion="[46,)"
+loaderVersion="[48,)"
 license="MIT License"
 [[mods]]
 modId="hostilewatermobs"
@@ -13,13 +13,13 @@ description='Hostile Water Mobs.'
 [[dependencies.hostilewatermobs]]
     modId="forge"
     mandatory=true
-    versionRange="[46,)"
+    versionRange="[48,)"
     ordering="NONE"
     side="BOTH"
 
 [[dependencies.hostilewatermobs]]
     modId="minecraft"
     mandatory=true
-    versionRange="[1.20,1.21)"
+    versionRange="[1.20.2,1.21)"
     ordering="NONE"
     side="BOTH"
